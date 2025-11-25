@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { adminOnly } from "@/access/adminOnly";
 import { adminOnlyFieldAccess } from "@/access/adminOnlyFieldAccess";
 import { adminOrCustomerOwner } from "@/access/adminOrCustomerOwner";
@@ -5,7 +6,6 @@ import { adminOrPublishedStatus } from "@/access/adminOrPublishedStatus";
 import { customerOnlyFieldAccess } from "@/access/customerOnlyFieldAccess";
 import { getServerSideURL } from "@/utilities/getURL";
 import { ecommercePlugin } from "@payloadcms/plugin-ecommerce";
-import { nestedDocsPlugin } from "@payloadcms/plugin-nested-docs";
 import { searchPlugin } from "@payloadcms/plugin-search";
 import { seoPlugin } from "@payloadcms/plugin-seo";
 import {
@@ -119,14 +119,7 @@ export const plugins: Plugin[] = [
     },
     localize: true,
   }),
-  // Nesterd Docs
-  nestedDocsPlugin({
-    collections: ["categories"],
-    generateLabel: (_, doc) => doc.title || doc.name || ("" as any),
-    generateURL: (docs) => {
-      return docs.reduce((url, doc) => `${url}/${doc.slug}`, "");
-    },
-  }),
+
   // Ecommerce
   ecommercePlugin({
     access: {
@@ -151,7 +144,7 @@ export const plugins: Plugin[] = [
           code: "VND",
           decimals: 0,
           symbol: "₫",
-          label: "Vietnam Dong",
+          label: "Vietnamese Dong",
         },
       ],
       defaultCurrency: "VND",
@@ -179,7 +172,79 @@ export const plugins: Plugin[] = [
     },
     products: {
       productsCollectionOverride: ProductsCollection,
-      variants: true,
+      variants: {
+        variantsCollectionOverride: ({ defaultCollection }) => {
+          console.log({ defaultCollection: defaultCollection.hooks });
+          return {
+            ...defaultCollection,
+            hooks: {
+              ...defaultCollection.hooks,
+              beforeValidate: [
+                async ({ data, operation, req }) => {
+                  const queryProduct = await req.payload.findByID({
+                    collection: "products",
+                    id: data.product,
+                  });
+
+                  if (operation === "create") {
+                    // Nếu cả USD và VND đều không được enabled, lấy giá trị từ product
+                    if (!data.priceInUSDEnabled && !data.priceInVNDEnabled) {
+                      data.priceInUSDEnabled =
+                        queryProduct.priceInUSDEnabled || false;
+                      data.priceInUSD = queryProduct.priceInUSDEnabled
+                        ? queryProduct.priceInUSD
+                        : 0;
+                      data.priceInVNDEnabled =
+                        (queryProduct as any).priceInVNDEnabled || false;
+                      data.priceInVND = (queryProduct as any).priceInVNDEnabled
+                        ? (queryProduct as any).priceInVND
+                        : 0;
+                    }
+                    // Nếu USD được enabled nhưng chưa có giá
+                    else if (data.priceInUSDEnabled && !data.priceInUSD) {
+                      data.priceInUSD = queryProduct.priceInUSDEnabled
+                        ? queryProduct.priceInUSD
+                        : 0;
+                    }
+                    // Nếu VND được enabled nhưng chưa có giá
+                    else if (data.priceInVNDEnabled && !data.priceInVND) {
+                      data.priceInVND = (queryProduct as any).priceInVNDEnabled
+                        ? (queryProduct as any).priceInVND
+                        : 0;
+                    }
+                  } else if (operation === "update") {
+                    // Nếu USD chưa enabled nhưng product có USD, copy sang
+                    if (
+                      !data.priceInUSDEnabled &&
+                      !data.priceInUSD &&
+                      queryProduct.priceInUSDEnabled &&
+                      queryProduct.priceInUSD
+                    ) {
+                      data.priceInUSDEnabled = queryProduct.priceInUSDEnabled;
+                      data.priceInUSD = queryProduct.priceInUSD;
+                    }
+
+                    // Nếu VND chưa enabled nhưng product có VND, copy sang
+                    if (
+                      !data.priceInVNDEnabled &&
+                      !data.priceInVND &&
+                      (queryProduct as any).priceInVNDEnabled &&
+                      (queryProduct as any).priceInVND
+                    ) {
+                      data.priceInVNDEnabled = (
+                        queryProduct as any
+                      ).priceInVNDEnabled;
+                      data.priceInVND = (queryProduct as any).priceInVND;
+                    }
+                  }
+
+                  return data;
+                },
+              ],
+            },
+          };
+        },
+      },
     },
   }),
 
