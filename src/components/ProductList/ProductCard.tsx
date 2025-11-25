@@ -2,9 +2,9 @@
 
 import { Product, VariantType } from "@/payload-types";
 import { Lang } from "@/types";
-import { formatPrice } from "@/utilities/convertPrice";
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { Suspense, useMemo, useState } from "react";
+import { Price } from "../Price";
 import ProductImage from "./ProductImage";
 import { SizeSelector } from "./SizeSelector";
 
@@ -55,9 +55,11 @@ export const ProductCard = ({ doc, lang }: { doc: Product; lang: Lang }) => {
         </Link>
         {doc.variantTypes?.map((vt: string | VariantType) => {
           const variantType = vt as VariantType;
+
           if (variantType.name === "size") {
             return (
               <SizeSelector
+                key={variantType.id}
                 variantSelect={
                   (selectedGalleryItem?.variantOption as any)?.label as string
                 }
@@ -82,11 +84,24 @@ export const ProductCard = ({ doc, lang }: { doc: Product; lang: Lang }) => {
         </Link>
 
         {doc.priceInUSDEnabled && currentPrice && (
-          <p className="flex items-center gap-2">
+          <div className="flex items-center gap-2">
             <span className="text-sm md:text-[18px] font-semibold text-neutral-900">
-              {formatPrice(currentPrice, lang)}
+              <Suspense fallback={<span>...</span>}>
+                <Price
+                  amount={currentPrice}
+                  lang={lang}
+                  priceInUSD={currentPrice}
+                  enablePriceUSD={
+                    currentVariant
+                      ? currentVariant.priceInUSDEnabled
+                      : doc.priceInUSDEnabled
+                  }
+                  priceInVND={(doc as any).priceInVND}
+                  enablePriceVND={(doc as any).enablePriceVND}
+                />
+              </Suspense>
             </span>
-          </p>
+          </div>
         )}
       </div>
 
