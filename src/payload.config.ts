@@ -7,6 +7,7 @@ import { fileURLToPath } from 'url';
 // i18n Translations
 // ---
 import { mongooseAdapter } from '@payloadcms/db-mongodb';
+import { nodemailerAdapter } from '@payloadcms/email-nodemailer';
 import { Categories } from './collections/Categories';
 import { EmailSubscribe } from './collections/EmailSubscribe';
 import { Media } from './collections/Media';
@@ -86,7 +87,21 @@ export default buildConfig({
     enableTable:true,
     
   }),
-  //email: nodemailerAdapter(),
+  email: nodemailerAdapter(
+    {
+       defaultFromAddress: 'info@payloadcms.com',
+    defaultFromName: 'Payload',
+    // Nodemailer transportOptions
+    transportOptions: {
+      host: process.env.EMAIL_HOST,
+      port: process.env.EMAIL_PORT || 587,
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
+      },
+    },
+    }
+  ),
   endpoints: [],
   globals: golobalCollections,
   plugins: [
