@@ -6,6 +6,7 @@ import { adminOrPublishedStatus } from "@/access/adminOrPublishedStatus";
 import { customerOnlyFieldAccess } from "@/access/customerOnlyFieldAccess";
 import { getServerSideURL } from "@/utilities/getURL";
 import { ecommercePlugin } from "@payloadcms/plugin-ecommerce";
+import { stripeAdapter } from "@payloadcms/plugin-ecommerce/payments/stripe";
 import { searchPlugin } from "@payloadcms/plugin-search";
 import { seoPlugin } from "@payloadcms/plugin-seo";
 import {
@@ -150,25 +151,65 @@ export const plugins: Plugin[] = [
       defaultCurrency: "VND",
     },
     payments: {
-      // paymentMethods: [
-      //   stripeAdapter({
-      //     secretKey: process.env.STRIPE_SECRET_KEY!,
-      //     publishableKey: process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!,
-      //     webhookSecret: process.env.STRIPE_WEBHOOKS_SIGNING_SECRET!,
-      //     webhooks: {
-      //       "payment_intent.succeeded": ({ event, req, stripe }) => {
-      //         console.log("🎉 Payment intent succeeded:", event.id);
-      //         console.log("Event data:", JSON.stringify(event.data, null, 2));
-      //         req.payload.logger.info(`Payment succeeded: ${event.id}`);
-      //       },
-      //       "payment_intent.payment_failed": ({ event, req, stripe }) => {
-      //         console.log("❌ Payment failed:", event.id);
-      //         console.log("Event data:", JSON.stringify(event.data, null, 2));
-      //         req.payload.logger.error(`Payment failed: ${event.id}`);
-      //       },
-      //     },
-      //   }),
-      // ],
+      paymentMethods: [
+        stripeAdapter({
+          secretKey: process.env.STRIPE_SECRET_KEY!,
+          publishableKey: process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!,
+          webhookSecret: process.env.STRIPE_WEBHOOKS_SIGNING_SECRET!,
+          webhooks: {
+            "payment_intent.succeeded": async ({ event, req, stripe }) => {
+            const paymentIntent = event.data.object as any;
+            const paymentIntentID = paymentIntent.id;
+            req.payload.logger.info(`Payment succeeded for PI: ${paymentIntentID}`);
+
+            try {
+              const { docs: transactions } = await req.payload.find({
+                collection: "transactions",
+                where: {
+                  "stripe.paymentIntentID": {
+                    equals: paymentIntentID,
+                  },
+                },
+              });
+
+              const transaction = transactions?.[0];
+
+              if (transaction && transaction.customerEmail) {
+                await req.payload.sendEmail({
+                  to: transaction.customerEmail,
+                  from: "noreply@moon.co",
+                  subject: "Order Confirmation - Moon co.",
+                  html: `
+                    <h1>Thank you for your order!</h1>
+                    <p>Your payment was successful.</p>
+                    <p>Transaction ID: ${transaction.id}</p>
+                    <p>Amount: ${(transaction.amount || 0) / 100} ${
+                    transaction.currency
+                  }</p>
+                  `,
+                });
+                req.payload.logger.info(
+                  `Order confirmation email sent to ${transaction.customerEmail}`
+                );
+              } else {
+                req.payload.logger.warn(
+                  `Transaction not found for PaymentIntent: ${paymentIntentID}`
+                );
+              }
+            } catch (err) {
+              req.payload.logger.error(
+                `Error processing payment success webhook: ${err}`
+              );
+            }
+          },
+            "payment_intent.payment_failed": ({ event, req, stripe }) => {
+              console.log("❌ Payment failed:", event.id);
+              console.log("Event data:", JSON.stringify(event.data, null, 2));
+              req.payload.logger.error(`Payment failed: ${event.id}`);
+            },
+          },
+        }),
+      ],
     },
     products: {
       productsCollectionOverride: ProductsCollection,

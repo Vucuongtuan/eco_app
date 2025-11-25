@@ -11,6 +11,8 @@ type Props = {
   className?: string;
   as?: "span" | "p";
   lang: Lang;
+    currencyCode?: string
+  
 };
 
 export const Price = ({
@@ -24,6 +26,7 @@ export const Price = ({
   enablePriceUSD,
   priceInVND,
   enablePriceVND,
+   currencyCode: currencyCodeFromProps,
 }: Props & React.ComponentProps<"p"> & {
   priceInUSD?: number | null;
   enablePriceUSD?: boolean | null;
