@@ -17,7 +17,8 @@ type CMSLinkType = {
   } | null
   size?: ButtonProps['size'] | null
   type?: 'custom' | 'reference' | null
-  url?: string | null
+  url?: string | null,
+  isLink?: boolean
 }
 
 export const CMSLink: React.FC<CMSLinkType> = (props) => {
@@ -30,6 +31,7 @@ export const CMSLink: React.FC<CMSLinkType> = (props) => {
     reference,
     size: sizeFromProps,
     url,
+    isLink = false
   } = props
 
   const href =
@@ -43,7 +45,12 @@ export const CMSLink: React.FC<CMSLinkType> = (props) => {
 
   const newTabProps = newTab ? { rel: 'noopener noreferrer', target: '_blank' } : {}
   
-  
+  if(isLink){
+    return <Link className={cn(className)} href={href} {...newTabProps}>
+        {label && label}
+        {children && children}
+      </Link>
+  }
 
   return (
     <Button asChild className={className}>
