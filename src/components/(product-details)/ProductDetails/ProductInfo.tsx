@@ -61,7 +61,7 @@ export function ProductInfo({
         <ChevronRight className="h-3 w-3" aria-hidden="true" />
         <span className="text-foreground">{data.title}</span>
       </nav>
-      <header className="py-4 space-y-4">
+      <header className="py-2 space-y-2">
         <motion.h1
           className="font-serif text-lg leading-tight tracking-tight text-foreground lg:text-2xl"
           initial={{ opacity: 0 }}
@@ -79,19 +79,20 @@ export function ProductInfo({
         >
           <div className="flex items-center gap-2">
             {variantName && (
-              <span className="text-sm text-muted-foreground">
-                {t("variantField")}: {variantName} --- 123
-              </span>
+              <>
+                <span className="text-sm text-muted-foreground">
+                  {t("variantField")}: {variantName}
+                </span>
+                <span
+                  className="h-1 w-1 rounded-full bg-muted-foreground/40"
+                  aria-hidden="true"
+                />
+              </>
             )}
-            <span
-              className="h-1 w-1 rounded-full bg-muted-foreground/40"
-              aria-hidden="true"
-            />
-            {displayStock && (
-              <span className="text-green-600">{t("inStock")} sss</span>
-            )}
-            {!displayStock && (
-              <span className="text-red-600">{t("outOfStock")} oo</span>
+            {displayStock ? (
+              <span className="text-green-600">{t("inStock")}</span>
+            ) : (
+              <span className="text-red-600">{t("outOfStock")}</span>
             )}
           </div>
         </motion.div>
@@ -104,6 +105,7 @@ export function ProductInfo({
           aria-label={t("priceProduct")}
         >
           <Price lang={lang} {...price} />
+          
         </motion.div>
       </header>
       <div className="h-px bg-gray-300" role="separator" aria-hidden="true" />
