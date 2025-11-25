@@ -37,7 +37,7 @@ export default async function PageTemplate({ params }: PageProps) {
       ) : (
         <h1 className="sr-only">{doc?.meta?.title || doc?.title}</h1>
       )}
-      <RenderBlocks blocks={doc.sections} />
+      <RenderBlocks blocks={doc.sections} lang={lang as Lang} />
     </>
   );
 }

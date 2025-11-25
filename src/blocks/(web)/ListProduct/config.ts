@@ -1,3 +1,4 @@
+import { defaultLexical } from "@/fields/defaultLexical";
 import { layout } from "@/fields/layout";
 import { spacingField } from "@/fields/spacingField";
 import { Block } from "payload";
@@ -40,7 +41,10 @@ export const ListProducts: Block = {
                   value: "tags",
                 },
               ],
+              defaultValue: "categories",
+              required: true,
             },
+           
             {
               name: "categories",
               type: "relationship",
@@ -68,6 +72,35 @@ export const ListProducts: Block = {
                 condition: (_, { type }) => type === "tags",
               },
             },
+             {
+              name:"enableMedia",
+              type:"checkbox",
+              defaultValue:false
+            },
+            {
+              name:"media",
+              type:"upload",
+              relationTo:"media",
+              admin:{
+                condition:(_, { configs ,enableMedia}) => configs?.ui === 'carousel' && enableMedia ,
+              }
+            },
+            {
+              name:"caption",
+              type:"richText",
+              localized:true,
+                  editor: defaultLexical({
+                    headingSizes: ["h2", "h3", "h4"],
+                    enableHeading: true,
+                    enableTextState: true,
+                    enableLink: true,
+                    enableTable: true,
+                    enableBlock: true,
+                  }),
+              admin:{
+                condition:(_, { configs ,enableMedia}) => configs?.ui === 'carousel' && enableMedia ,
+              }
+            },
           ],
         },
         {
@@ -89,11 +122,6 @@ export const ListProducts: Block = {
                   value: "carousel",
                 },
               ],
-            },
-            {
-              name: "gap",
-              type: "number",
-              defaultValue: 20,
             },
           ],
         },

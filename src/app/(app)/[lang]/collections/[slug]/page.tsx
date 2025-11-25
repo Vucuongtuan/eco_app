@@ -1,3 +1,4 @@
+import MetaTitle from "@/components/MetaTitle";
 import ProductList from "@/components/ProductList";
 import { findCategoryBySlug, findListProductByCategory } from "@/service/pages";
 import { Lang } from "@/types";
@@ -23,18 +24,18 @@ interface Props {
 export default async function PageCollection({ params }: Props) {
   "use memo"; // react compiler mode
   const { lang, slug } = await params;
-  const [category, products] = await Promise.all([
-    memoizingCache({ slug, lang: lang as Lang }),
-    findListProductByCategory({ lang: lang as Lang, slug }),
-  ]);
+
+  const category = await  memoizingCache({ slug, lang: lang as Lang });
+  
   if (!category || !category.id) return notFound();
+  const products = await findListProductByCategory({ lang: lang as Lang, slug,categoryId:category.id });
   return (
     <>
-      {/* <MetaTitle
+      <MetaTitle
         title={category.title}
         description={category.description || ""}
-      /> */}
-      {/* <ListProduct data={products}/> */}
+      />
+      {/* <ListProduct data={products} /> */}
       {!products ? null : (
         <Suspense>
           <ProductList

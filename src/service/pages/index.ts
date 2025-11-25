@@ -69,29 +69,33 @@ export const findListProductByCategory = ({
   lang,
   slug,
   limit,
+  categoryId
 }: {
   lang: Lang;
   slug: string;
   limit?: number;
+  categoryId: string;
 }) => {
   return cacheFunc(
     async () => {
+      const gender = slug.split("-")[0] === 'men' ? 'men' : 'women';
       const [result, err] = await query<ResponseDocs<Product>>((payload) => {
         return payload.find({
           collection: "products",
           where: {
             or: [
               {
-                "taxonomies.category.slug": {
-                  equals: slug,
+                "taxonomies.category": {
+                  in: [categoryId],
                 },
-              },
-              {
-                "taxonomies.subCategory.slug": {
-                  contains: slug,
+                "taxonomies.gender": {
+                  equals: gender,
                 },
               },
             ],
+            _status: {
+              equals: "published",
+            },
           },
 
           limit: limit || 10,
