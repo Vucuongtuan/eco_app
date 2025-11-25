@@ -1,0 +1,122 @@
+import { Media } from '@/components/Media'
+import { Price } from '@/components/Price'
+import { Media as MediaType, Product, Variant } from '@/payload-types'
+import { Lang } from '@/types'
+import Link from 'next/link'
+
+type Props = {
+  product: Product
+  style?: 'compact' | 'default'
+  variant?: Variant
+  quantity?: number
+  /**
+   * Force all formatting to a particular currency.
+   */
+  currencyCode?: string
+  lang: Lang
+}
+
+export const ProductItem: React.FC<Props> = ({
+  product,
+  quantity,
+  variant,
+  lang,
+}) => {
+  const { title } = product
+
+  const metaImage =
+    product.meta?.image && typeof product.meta?.image !== 'string' ? product.meta.image : undefined
+
+  const firstGalleryImage =
+    typeof product.gallery?.[0]?.image !== 'string' ? product.gallery?.[0]?.image : undefined
+
+  let image = firstGalleryImage || metaImage
+
+  const isVariant = Boolean(variant) && typeof variant === 'object'
+
+  if (isVariant) {
+    const imageVariant = product.gallery?.find((item) => {
+      if (!item.variantOption) return false
+      const variantOptionID =
+        typeof item.variantOption === 'object' ? item.variantOption.id : item.variantOption
+
+      const hasMatch = variant?.options?.some((option) => {
+        if (typeof option === 'object') return option.id === variantOptionID
+        else return option === variantOptionID
+      })
+
+      return hasMatch
+    })
+    console.log({imageVariant,product,variant:variant.options})
+    if (imageVariant && typeof imageVariant.image !== 'string') {
+      image = imageVariant.image as string
+    }
+  }
+
+  const itemPrice = variant?.priceInUSD || product.priceInUSD
+  //  options: [ [Object], [Object] ],
+  // can get label color & value size 
+  const query = (() => {
+  let params = {} as any;
+  if(!variant) return null;
+  variant.options.forEach(opt => {
+    if(typeof opt !== 'object') return;
+    const label = opt.label.toLowerCase();
+
+    if (label.includes("size")) {
+      params.size = opt.value;
+    } else {
+      params.variant = opt.label; 
+    }
+  });
+
+  return new URLSearchParams(params).toString();
+})();
+
+
+  const itemURL = `/products/${product.slug}${variant ? `?${query}` : ''}`
+
+  return (
+    <div className="flex items-center gap-4">
+      <div className="flex items-stretch justify-stretch h-20 w-20 p-2 rounded-lg border">
+        <div className="relative w-full h-full">
+          {image && typeof image !== 'string' && (
+            <Media className="" fill imgClassName="rounded-lg object-cover" resource={image as MediaType} />
+          )}
+        </div>
+      </div>
+      <div className="flex grow justify-between items-center">
+        <div className="flex flex-col gap-1">
+          <p className="font-medium text-lg">
+            <Link href={itemURL}>{title}</Link>
+          </p>
+          {variant && (
+            <p className="text-sm font-mono text-primary/50 tracking-[0.1em]">
+              {variant.options
+                ?.map((option) => {
+                  if (typeof option === 'object') return option.label
+                  return null
+                })
+                .join(', ')}
+            </p>
+          )}
+          <div>
+            {'x'}
+            {quantity}
+          </div>
+        </div>
+
+        {itemPrice && quantity && (
+          <div className="text-right">
+            <p className="font-medium text-lg">Subtotal</p>
+            <Price
+              className="font-mono text-primary/50 text-sm"
+              amount={itemPrice * quantity}
+              lang={lang}
+            />
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
