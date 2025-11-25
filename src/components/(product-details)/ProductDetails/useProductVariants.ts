@@ -37,14 +37,14 @@ export function useProductVariants(doc: Product) {
   });
   const handleColorChange = (colorOption: any) => {
     setSelectedColor(colorOption);
-    const params = new URLSearchParams(searchParams);
+    const params = new URLSearchParams(window.location.search);
     if (colorOption.id !== (colorVariants[0].variantOption as any).id) {
       params.set("variant", colorOption.label);
     } else {
       params.delete("variant");
     }
     const newUrl = `${window.location.pathname}?${params.toString()}`;
-    router.replace(newUrl, { scroll: false });
+    window.history.replaceState(null, "", newUrl);
   };
 
   // Size
@@ -64,18 +64,52 @@ export function useProductVariants(doc: Product) {
       const foundSize = sizeVariants.find((s) => s.value === sizeParam);
       return foundSize || sizeVariants[0];
     }
-    return sizeVariants.length > 0 ? sizeVariants[0] : null;
+
+    if (sizeVariants.length > 0) {
+      // Smart Default: Find first size with inventory > 0 for the selected color (or default color)
+      // Note: selectedColor might not be fully initialized here if it depends on state, 
+      // but we initialized it with a function so we can replicate that logic or use the result if we were inside an effect.
+      // However, useState initializers run once. selectedColor is also state.
+      // We need to determine the effective color here to check stock.
+      
+      let effectiveColor = null;
+      const variantParam = searchParams.get("variant");
+      if (variantParam && colorVariants.length > 0) {
+        const foundItem = colorVariants.find((item) => {
+          const option = item.variantOption as any;
+          return option?.value === variantParam || option?.label === variantParam;
+        });
+        effectiveColor = foundItem?.variantOption || null;
+      } else if (colorVariants.length > 0) {
+        effectiveColor = colorVariants[0].variantOption as any;
+      }
+
+      if (effectiveColor) {
+        const firstInStockSize = sizeVariants.find((size) => {
+           const matchingVariant = variants.find((v) => {
+             const hasColor = v.options?.some((opt: any) => opt.id === effectiveColor.id);
+             const hasSize = v.options?.some((opt: any) => opt.id === size.id);
+             return hasColor && hasSize;
+           });
+           return matchingVariant && (matchingVariant.inventory || 0) > 0;
+        });
+        if (firstInStockSize) return firstInStockSize;
+      }
+      
+      return sizeVariants[0];
+    }
+    return null;
   });
   const handleSizeChange = (size: any) => {
     setSelectedSize(size);
-    const params = new URLSearchParams(searchParams);
+    const params = new URLSearchParams(window.location.search);
     if (size.id !== sizeVariants[0].id) {
       params.set("size", size.value.toUpperCase());
     } else {
       params.delete("size");
     }
     const newUrl = `${window.location.pathname}?${params.toString()}`;
-    router.replace(newUrl, { scroll: false });
+    window.history.replaceState(null, "", newUrl);
   };
 
   const [selectedVariant, setSelectedVariant] = useState<Variant | null>(null);

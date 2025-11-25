@@ -12,7 +12,7 @@ export function ColorSelector({
   selectedGalleryItem,
 }: ColorSelectorProps) {
   return (
-    <div className="flex flex-col space-y-6 mt-6">
+    <div className="flex flex-col space-y-4 mt-4">
       <div>
         <h4 className="text-sm font-medium mb-3">Colors</h4>
         <div className="flex gap-2">

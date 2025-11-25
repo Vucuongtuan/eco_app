@@ -7,10 +7,11 @@ import React, { Fragment } from "react";
 
 import { cn } from "@/lib/utils";
 import { Page } from "@/payload-types";
+import { Lang } from "@/types";
 import { spacing } from "@/utilities/cssVariable";
 import { CarouselBlock } from "./Carousel/Components";
 import { ColumnMedia } from "./ColumnMedia/Component";
-import { ListProductsComp } from "./ListProduct/Component";
+import ListProductsComp from "./ListProduct/Component";
 import { RowBlock } from "./Row/Component";
 
 const blockComponents = {
@@ -23,7 +24,9 @@ const blockComponents = {
 };
 export const RenderBlocks: React.FC<{
   blocks: Page["sections"];
+  lang: Lang;
 }> = (props) => {
+
   const { blocks } = props;
   const hasBlocks = blocks && Array.isArray(blocks) && blocks.length > 0;
 
@@ -40,7 +43,7 @@ export const RenderBlocks: React.FC<{
               return (
                 <section
                   className={cn(
-                    idx !== 0 && `${spacing(block.spacing || "none")}`,
+                    idx !== 0 && `${spacing(block.spacing || block.configs?.spacing || "none")}`,
                     idx === 0 && ""
                   )}
                   style={
@@ -53,7 +56,12 @@ export const RenderBlocks: React.FC<{
                 >
                   {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
                   {/* @ts-ignore - weird type mismatch here */}
-                  <Block id={toKebabCase(blockName!)} {...block} idx={idx} />
+                  <Block
+                    id={toKebabCase(blockName!)}
+                    {...block}
+                    idx={idx}
+                    lang={props.lang}
+                  />
                 </section>
               );
             }

@@ -44,7 +44,7 @@ export function resolveLink(linkItem: { link: LinkItem }) {
     }
     if (relationTo === "categories" && typeof value !== "number") {
       const c = value as Category;
-      return `/collection/${c.slug}`;
+      return `/collections/${c.slug}`;
     }
     if (relationTo === "products" && typeof value !== "number") {
       const p = value as Product;

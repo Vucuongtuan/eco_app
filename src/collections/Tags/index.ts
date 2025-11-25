@@ -12,6 +12,12 @@ export const Tags: CollectionConfig = {
       vi: "Hashtag",
     },
   },
+  admin: {
+    useAsTitle: "title",
+  },
+  defaultPopulate: {
+    title: true,
+  },
   access: {
     read: () => true,
     create: () => true,
@@ -28,7 +34,10 @@ export const Tags: CollectionConfig = {
     {
       name: "title",
       type: "text",
-      localized: true,
+    },
+    {
+      name: "title_en",
+      type: "text",
     },
     // ...slugField("title", {}, true),
     // {
