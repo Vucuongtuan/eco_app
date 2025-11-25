@@ -73,6 +73,8 @@ export default function ProductDetails(props: ProductDetailsProps) {
           sizeVariants={sizeVariants}
           selectedSize={selectedSize}
           onSizeChange={handleSizeChange}
+          variants={doc.variants?.docs as any[]}
+          selectedColor={selectedColor}
         />
         <ProductAction
           product={currentData as Product}

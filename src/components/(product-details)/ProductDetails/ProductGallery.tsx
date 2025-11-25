@@ -24,7 +24,7 @@ export function ProductGallery({ currentData }: ProductGalleryProps) {
               key={index}
               resource={m}
               fill
-              className="aspect-figStyle w-full h-full relative"
+              fClassName="aspect-figStyle w-full h-full relative"
               imgClassName="object-cover"
               imgSize={"large"}
             />
