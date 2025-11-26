@@ -45,6 +45,10 @@ const applySearchForCollection = ['categories', 'products',  'posts']
 const applySEOForCollection = ['categories', 'products',  'posts', 'pages']
 
 export default buildConfig({
+  cors: {
+    origins: ["http://localhost:3000"],
+    headers: ["*"],
+  },
   debug:true,
   admin: {
     components: {
