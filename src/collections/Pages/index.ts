@@ -5,8 +5,10 @@ import { adminOrPublishedStatus } from "@/access/adminOrPublishedStatus";
 import { Carousel } from "@/blocks/(web)/Carousel/config";
 import { ColumnMedia } from "@/blocks/(web)/ColumnMedia/config";
 import { Content } from "@/blocks/(web)/Content/config";
+import { InfoList } from "@/blocks/(web)/InfoList/config";
 import { ListProducts } from "@/blocks/(web)/ListProduct/config";
 import { MediaBlock } from "@/blocks/(web)/MediaBlock/config";
+import { Model } from "@/blocks/(web)/Model/config";
 import { RowBlock } from "@/blocks/(web)/Row/config";
 import { SpotlightMedia } from "@/blocks/(web)/SpotlightMedia/config";
 import { slugField } from "@/fields/slug";
@@ -90,7 +92,9 @@ export const Pages: CollectionConfig = {
                 RowBlock,
                 Carousel,
                 ListProducts,
-                SpotlightMedia
+                SpotlightMedia,
+                InfoList,
+                Model
               ],
             },
           ],
