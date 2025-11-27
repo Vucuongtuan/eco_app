@@ -8,6 +8,7 @@ import { Content } from "@/blocks/(web)/Content/config";
 import { ListProducts } from "@/blocks/(web)/ListProduct/config";
 import { MediaBlock } from "@/blocks/(web)/MediaBlock/config";
 import { RowBlock } from "@/blocks/(web)/Row/config";
+import { SpotlightMedia } from "@/blocks/(web)/SpotlightMedia/config";
 import { slugField } from "@/fields/slug";
 import { generatePreviewPath } from "@/utilities/generatePreviewPath";
 import { revalidateDelete, revalidatePage } from "./hooks/revalidatePage";
@@ -89,6 +90,7 @@ export const Pages: CollectionConfig = {
                 RowBlock,
                 Carousel,
                 ListProducts,
+                SpotlightMedia
               ],
             },
           ],
