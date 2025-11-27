@@ -1,7 +1,14 @@
 {
+  "common": {
+    "home": "Trang chủ"
+  },
   "block": {
     "hero": {
       "cta": "Xem ngay"
+    },
+    "modal": {
+      "close": "Đóng",
+      "understood": "Đã hiểu"
     }
   },
   "login": {

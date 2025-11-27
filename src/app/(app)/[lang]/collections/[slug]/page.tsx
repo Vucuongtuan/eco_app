@@ -1,3 +1,4 @@
+import { Breadcrumbs } from "@/components/Breadcrumbs";
 import MetaTitle from "@/components/MetaTitle";
 import ProductList from "@/components/ProductList";
 import { findCategoryBySlug, findListProductByCategory } from "@/service/pages";
@@ -31,6 +32,15 @@ export default async function PageCollection({ params }: Props) {
   const products = await findListProductByCategory({ lang: lang as Lang, slug,categoryId:category.id });
   return (
     <>
+     {/* Breadcrumbs */}
+     <section className="max-w-screen-3xl mx-auto px-16 py-5 ">
+      <Breadcrumbs breadcrumbs={[{
+        label: category.title,
+        href: `/collections/${category.slug}`,
+      }]} />
+      </section>
+
+      {/* Title Category */}
       <MetaTitle
         title={category.title}
         description={category.description || ""}

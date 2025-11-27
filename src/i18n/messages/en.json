@@ -1,4 +1,13 @@
 {
+  "common": {
+    "home": "Home"
+  },
+  "block": {
+    "modal": {
+      "close": "Close",
+      "understood": "Got it"
+    }
+  },
   "login": {
     "title": "Login",
     "email_label": "Email",

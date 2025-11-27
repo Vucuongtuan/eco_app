@@ -13,14 +13,14 @@ export default function MetaTitle(props: MetaTitleProps) {
   return (
     <Comp
       className={cn(
-        `w-full  mx-auto px-16 py-20`,
+        `w-full  mx-auto px-16 py-5`,
         `max-w-screen-3xl border-b  border-neutral-300`,
         align === "center" && "text-center",
         align === "right" && "text-right",
         align === "left" && "text-left"
       )}
     >
-      <h1 className="text-9xl font-bold ">{title}</h1>
+      <h1 className="text-3xl md:text-4xl lg:text-5xl font-semibold tracking-tight text-foreground">{title}</h1>
       {description && <p>{description}</p>}
     </Comp>
   );
