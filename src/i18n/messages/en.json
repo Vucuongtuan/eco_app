@@ -2,6 +2,38 @@
   "common": {
     "home": "Home"
   },
+  "productFilter": {
+    "title": "Filter & Sort",
+    "filterButton": "Filter & Sort",
+    "sort": {
+      "label": "SORT BY",
+      "bestSelling": "Best Selling",
+      "newest": "Newest",
+      "priceLowHigh": "Price: Low to High",
+      "priceHighLow": "Price: High to Low"
+    },
+    "priceRange": {
+      "label": "PRICE",
+      "under100k": "Under 100,000₫",
+      "100to300k": "100,000₫ - 300,000₫",
+      "300to500k": "300,000₫ - 500,000₫",
+      "over500k": "Over 500,000₫"
+    },
+    "size": {
+      "label": "SIZE"
+    },
+    "color": {
+      "label": "COLOR"
+    },
+    "tags": {
+      "label": "TAGS",
+      "searchPlaceholder": "Search tags...",
+      "noResults": "No tags found"
+    },
+    "clearAll": "CLEAR ALL",
+    "viewProducts": "VIEW PRODUCTS ({count})",
+    "showingResults": "Showing {count} products"
+  },
   "block": {
     "modal": {
       "close": "Close",
