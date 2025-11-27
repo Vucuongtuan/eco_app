@@ -11,8 +11,11 @@ import { Lang } from "@/types";
 import { spacing } from "@/utilities/cssVariable";
 import { CarouselBlock } from "./Carousel/Components";
 import { ColumnMedia } from "./ColumnMedia/Component";
+import InfoListComponent from "./InfoList/Component";
 import ListProductsComp from "./ListProduct/Component";
+import ModelComponent from "./Model/Component";
 import { RowBlock } from "./Row/Component";
+import SpotlightMediaComponent from "./SpotlightMedia/Component";
 
 const blockComponents = {
   content: ContentBlock,
@@ -21,6 +24,9 @@ const blockComponents = {
   carousel: CarouselBlock,
   rowBlock: RowBlock,
   ListProducts: ListProductsComp,
+  SpotlightMedia:SpotlightMediaComponent,
+  InfoList:InfoListComponent,
+  Model:ModelComponent
 };
 export const RenderBlocks: React.FC<{
   blocks: Page["sections"];

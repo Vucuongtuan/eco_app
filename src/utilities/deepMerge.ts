@@ -32,3 +32,28 @@ export function deepMerge<T, R>(target: T, source: R): T {
 
   return output
 }
+
+
+
+interface Price {
+  amount: number;
+  enable: boolean;
+}
+
+
+export function deepPrice ({price_vn,price_en,lang}: {price_vn: Price, price_en: Price,lang: Lang}) {
+  if(lang === 'vi') {
+    if(!price_vn.enable) {
+    if(!price_en.enable) return 0
+       return price_en.amount
+    };
+    return price_vn.amount;
+  }
+  if(lang === 'en') {
+    if(!price_en.enable) {
+  if(!price_vn.enable) return 0
+      return price_vn.amount
+    };
+    return price_en.amount || 0;
+  }
+}

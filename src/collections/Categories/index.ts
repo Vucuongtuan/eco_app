@@ -4,11 +4,8 @@ import { CollectionConfig } from "payload";
 
 export const Categories: CollectionConfig = {
   slug: "categories",
-  folders: {
-    browseByFolder: true,
-  },
+
   // tree: true,
-  trash: true,
   labels: {
     singular: {
       en: "Category",
@@ -36,7 +33,6 @@ export const Categories: CollectionConfig = {
   // defaultPopulate: ["title", "description", "slug"],
   // defaultPopulate: ["title", "description", "slug"],
   hooks: {
-    beforeChange: [],
   },
   fields: [...baseField, ...slugField("title", {}, false)],
 };

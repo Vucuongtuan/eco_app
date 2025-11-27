@@ -329,7 +329,7 @@ export const CheckoutPage: React.FC = () => {
           {/* @ts-ignore */}
           {paymentData && paymentData?.["clientSecret"] && (
             <div className="pb-16">
-              <h2 className="font-medium text-3xl">Payment</h2>
+              <h2 className="font-medium text-3xl">Payment</h2> 
               {error && <p>{`Error: ${error}`}</p>}
               <Elements
                 options={{
@@ -425,8 +425,14 @@ export const CheckoutPage: React.FC = () => {
                 if (imageVariant && typeof imageVariant.image !== "string") {
                   image = imageVariant.image;
                 }
-              }
 
+                
+
+                price = variant.priceInUSDEnabled ? variant.priceInUSD : product.priceInUSD;
+
+                // const priceSroft = 
+              }
+        
               return (
                 <div className="flex items-start gap-4" key={index}>
                   <div className="flex items-stretch justify-stretch h-20 w-20 p-2 rounded-lg border">
@@ -436,7 +442,8 @@ export const CheckoutPage: React.FC = () => {
                           className=""
                           fill
                           imgClassName="rounded-lg"
-                          resource={image as MediaType}
+                          // @ts-expect-error
+                          resource={image[0] as MediaType}
                         />
                       )}
                     </div>
@@ -476,6 +483,23 @@ export const CheckoutPage: React.FC = () => {
               amount={cart.subtotal || 0}
               lang={locale as Lang}
             />
+          </div>
+
+          {/* Note Test */}
+          <div className="gap-2">
+<div className="note formal">
+  <span className="uppercase">Note</span>
+  <p>Đây là dự án phát triển cá nhân nên hiện tại chưa kích hoạt thanh toán thực tế.</p>
+  <p>Giá trị hiển thị trong giỏ hàng chỉ mang tính chất thử nghiệm (test data).</p>
+  <p>Bạn có thể sử dụng các thẻ test của Stripe để kiểm tra quy trình thanh toán. Khi thanh toán thực tế được cấu hình, chúng tôi sẽ gửi thông báo qua email của bạn.</p>
+  <p>Thẻ test Stripe (ví dụ):</p>
+  <ul>
+    <li>4242 4242 4242 4242 — Visa (thanh toán thành công)</li>
+    <li>4000 0000 0000 0002 — Card bị từ chối (declined)</li>
+    <li>4000 0000 0000 3220 — Yêu cầu 3D Secure (test flow)</li>
+  </ul>
+</div>
+
           </div>
         </div>
       )}

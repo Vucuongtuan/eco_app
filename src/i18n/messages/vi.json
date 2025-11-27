@@ -1,7 +1,46 @@
 {
+  "common": {
+    "home": "Trang chủ"
+  },
+  "productFilter": {
+    "title": "Bộ lọc & Sắp xếp",
+    "filterButton": "Bộ lọc & Sắp xếp",
+    "sort": {
+      "label": "SẮP XẾP",
+      "bestSelling": "Bán chạy nhất",
+      "newest": "Mới nhất",
+      "priceLowHigh": "Giá: Thấp đến Cao",
+      "priceHighLow": "Giá: Cao đến Thấp"
+    },
+    "priceRange": {
+      "label": "GIÁ",
+      "under100k": "Dưới 100,000₫",
+      "100to300k": "100,000₫ - 300,000₫",
+      "300to500k": "300,000₫ - 500,000₫",
+      "over500k": "Trên 500,000₫"
+    },
+    "size": {
+      "label": "KÍCH THƯỚC"
+    },
+    "color": {
+      "label": "MÀU SẮC"
+    },
+    "tags": {
+      "label": "TAGS",
+      "searchPlaceholder": "Tìm kiếm tags...",
+      "noResults": "Không tìm thấy tags"
+    },
+    "clearAll": "XÓA TẤT CẢ",
+    "viewProducts": "XEM SẢN PHẨM ({count})",
+    "showingResults": "Hiển thị {count} sản phẩm"
+  },
   "block": {
     "hero": {
       "cta": "Xem ngay"
+    },
+    "modal": {
+      "close": "Đóng",
+      "understood": "Đã hiểu"
     }
   },
   "login": {

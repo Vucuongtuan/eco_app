@@ -43,7 +43,7 @@ export function ProductInfo({
     >
       <nav
         aria-label="Breadcrumb"
-        className="flex items-center gap-2 text-xs text-muted-foreground"
+        className="flex items-center gap-2 text-sm text-muted-foreground mb-2"
       >
         <Link
           href={"/" + lang}
@@ -51,17 +51,17 @@ export function ProductInfo({
         >
           {t("breadcrumb.home")}
         </Link>
-        <ChevronRight className="h-3 w-3" aria-hidden="true" />
+        <ChevronRight className="h-4 w-4" aria-hidden="true" />
         <Link
           href={"/" + lang + "/" + category.slug}
           className="transition-colors hover:text-foreground"
         >
           {category.title}
         </Link>
-        <ChevronRight className="h-3 w-3" aria-hidden="true" />
+        <ChevronRight className="h-4 w-4" aria-hidden="true" />
         <span className="text-foreground">{data.title}</span>
       </nav>
-      <header className="py-2 space-y-2">
+      <header className="space-y-2">
         <motion.h1
           className="font-serif text-lg leading-tight tracking-tight text-foreground lg:text-2xl"
           initial={{ opacity: 0 }}
