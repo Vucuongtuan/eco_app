@@ -83,6 +83,7 @@ export const plugins: Plugin[] = [
     fields: overrideSEOFields,
     generateImage: ({ doc }) => doc.image,
   }),
+
   searchPlugin({
     collections: applySearchForCollection,
     defaultPriorities: {
@@ -215,7 +216,6 @@ export const plugins: Plugin[] = [
       productsCollectionOverride: ProductsCollection,
       variants: {
         variantsCollectionOverride: ({ defaultCollection }) => {
-          console.log({ defaultCollection: defaultCollection.hooks });
           return {
             ...defaultCollection,
             hooks: {
