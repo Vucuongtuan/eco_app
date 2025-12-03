@@ -55,7 +55,6 @@ export const Reviews: CollectionConfig = {
       },
       min: 1,
       max: 5,
-      required: true,
       admin: {
         condition: (data) => !data.parent, // Only show/require rating if not a reply
       },
@@ -85,6 +84,19 @@ export const Reviews: CollectionConfig = {
       label: {
         vi: "Phản hồi của",
         en: "Reply To",
+      },
+    },
+    {
+      name: "replies",
+      type: "relationship",
+      relationTo: "reviews",
+      hasMany: true,
+      label: {
+        vi: "Các phản hồi",
+        en: "Replies",
+      },
+      admin: {
+        condition: (data) => !data.parent, // Only show for root reviews
       },
     },
   ],

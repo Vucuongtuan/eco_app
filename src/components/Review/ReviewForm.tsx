@@ -1,6 +1,7 @@
 "use client";
 
 import { createReview } from "@/service/actions";
+import { useTranslations } from "next-intl";
 import { ClipboardEvent, DragEvent, useRef, useState } from "react";
 
 interface ReviewFormProps {
@@ -9,7 +10,8 @@ interface ReviewFormProps {
   onSuccess?: () => void;
 }
 
-export default function ReviewForm({userId, productId, onSuccess }: ReviewFormProps) {
+export default function ReviewForm({ userId, productId, onSuccess }: ReviewFormProps) {
+  const t = useTranslations("review");
   const [rating, setRating] = useState(0);
   const [hoverRating, setHoverRating] = useState(0);
   const [comment, setComment] = useState("");
@@ -31,7 +33,7 @@ export default function ReviewForm({userId, productId, onSuccess }: ReviewFormPr
     const newFiles = Array.from(files).filter(file => file.type.startsWith('image/'));
     
     if (images.length + newFiles.length > MAX_IMAGES) {
-      setError(`Bạn chỉ có thể upload tối đa ${MAX_IMAGES} hình ảnh`);
+      setError(t("error.maxImages", { max: MAX_IMAGES }));
       setTimeout(() => setError(""), 3000);
       return;
     }
@@ -86,7 +88,7 @@ export default function ReviewForm({userId, productId, onSuccess }: ReviewFormPr
     e.preventDefault();
     
     if (rating === 0) {
-      setError("Vui lòng chọn số sao đánh giá");
+      setError(t("error.ratingRequired"));
       return;
     }
 
@@ -95,7 +97,6 @@ export default function ReviewForm({userId, productId, onSuccess }: ReviewFormPr
     setSuccess(false);
 
     try {
-      // Upload images first
       const mediaIds: string[] = [];
       
       if (images.length > 0) {
@@ -108,16 +109,13 @@ export default function ReviewForm({userId, productId, onSuccess }: ReviewFormPr
             body: formData,
           });
           
-          if (!response.ok) {
-            throw new Error("Failed to upload image");
-          }
+          if (!response.ok) throw new Error(t("error.uploadFailed"));
           
           const data = await response.json();
           mediaIds.push(data.id);
         }
       }
 
-      // Create review with uploaded media IDs
       await createReview({
         userId,
         productId,
@@ -132,28 +130,28 @@ export default function ReviewForm({userId, productId, onSuccess }: ReviewFormPr
       setImages([]);
       setImagePreviews([]);
       
-      if (onSuccess) {
-        onSuccess();
-      }
+      if (onSuccess) onSuccess();
 
       setTimeout(() => setSuccess(false), 3000);
     } catch (err: any) {
-      setError(err.message || "Có lỗi xảy ra khi gửi đánh giá");
+      setError(err.message || t("error.generic"));
     } finally {
       setIsSubmitting(false);
     }
   };
 
+  const ratingLabels = {
+    1: t("ratingLabels.1"),
+    2: t("ratingLabels.2"),
+    3: t("ratingLabels.3"),
+    4: t("ratingLabels.4"),
+    5: t("ratingLabels.5")
+  };
+
   return (
-    <div className="bg-white border border-gray-200 rounded-lg p-6 mb-6">
-      <h3 className="text-lg font-medium mb-4">Viết đánh giá của bạn</h3>
-      
-      <form onSubmit={handleSubmit}>
-        {/* Rating Stars */}
-        <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Đánh giá <span className="text-red-500">*</span>
-          </label>
+    <div className="mb-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div className="flex items-center gap-4">
           <div className="flex gap-1">
             {[1, 2, 3, 4, 5].map((star) => (
               <button
@@ -162,110 +160,54 @@ export default function ReviewForm({userId, productId, onSuccess }: ReviewFormPr
                 onClick={() => setRating(star)}
                 onMouseEnter={() => setHoverRating(star)}
                 onMouseLeave={() => setHoverRating(0)}
-                className="text-3xl focus:outline-none transition-colors"
+                className="text-2xl focus:outline-none transition-transform hover:scale-110"
               >
-                <span
-                  className={
-                    star <= (hoverRating || rating)
-                      ? "text-yellow-400"
-                      : "text-gray-300"
-                  }
-                >
+                <span className={star <= (hoverRating || rating) ? "text-yellow-400" : "text-gray-200"}>
                   ★
                 </span>
               </button>
             ))}
           </div>
-          {rating > 0 && (
-            <p className="text-sm text-gray-600 mt-1">
-              {rating === 1 && "Rất tệ"}
-              {rating === 2 && "Tệ"}
-              {rating === 3 && "Bình thường"}
-              {rating === 4 && "Tốt"}
-              {rating === 5 && "Rất tốt"}
-            </p>
+          {(hoverRating > 0 || rating > 0) && (
+            <span className="text-sm font-medium text-gray-600 animate-in fade-in">
+              {ratingLabels[(hoverRating || rating) as keyof typeof ratingLabels]}
+            </span>
           )}
         </div>
 
-        {/* Comment with Upload */}
-        <div className="mb-4">
-          <label
-            htmlFor="comment"
-            className="block text-sm font-medium text-gray-700 mb-2"
-          >
-            Nhận xét của bạn
-          </label>
-          
-          <div
-            className={`relative border rounded-md ${
-              isDragging ? 'border-blue-500 bg-blue-50' : 'border-gray-300'
-            }`}
-            onDragOver={(e) => {
-              e.preventDefault();
-              setIsDragging(true);
-            }}
-            onDragLeave={() => setIsDragging(false)}
-            onDrop={handleDrop}
-          >
-            {/* Plus Button */}
-            <button
-              type="button"
-              onClick={() => fileInputRef.current?.click()}
-              className="absolute left-3 top-3 w-8 h-8 flex items-center justify-center bg-gray-100 hover:bg-gray-200 rounded-full transition-colors z-10"
-              title="Thêm hình ảnh"
-            >
-              <svg
-                className="w-5 h-5 text-gray-600"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M12 4v16m8-8H4"
-                />
-              </svg>
-            </button>
-
-            {/* Hidden File Input */}
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept="image/*"
-              multiple
-              className="hidden"
-              onChange={(e) => handleFileSelect(e.target.files)}
-            />
-
-            {/* Textarea */}
-            <textarea
-              ref={textareaRef}
-              id="comment"
-              value={comment}
-              onChange={(e) => setComment(e.target.value)}
-              onPaste={handlePaste}
-              rows={4}
-              className="w-full pl-14 pr-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-md resize-none"
-              placeholder="Chia sẻ trải nghiệm của bạn... (Ctrl+V để dán hình ảnh)"
-            />
-          </div>
+        {/* Input Area */}
+        <div 
+          className={`relative group bg-white rounded-xl border transition-all duration-200 ${
+            isDragging ? 'border-blue-400 ring-2 ring-blue-100' : 'border-gray-200 focus-within:border-gray-400 focus-within:shadow-sm'
+          }`}
+          onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
+          onDragLeave={() => setIsDragging(false)}
+          onDrop={handleDrop}
+        >
+          <textarea
+            ref={textareaRef}
+            value={comment}
+            onChange={(e) => setComment(e.target.value)}
+            onPaste={handlePaste}
+            rows={3}
+            className="w-full pl-4 pr-4 py-3 bg-transparent border-none focus:ring-0 resize-none text-sm placeholder:text-gray-400"
+            placeholder={t("placeholder")}
+          />
 
           {/* Image Previews */}
           {imagePreviews.length > 0 && (
-            <div className="mt-3 flex flex-wrap gap-2">
+            <div className="px-4 pb-3 flex flex-wrap gap-2">
               {imagePreviews.map((preview, index) => (
-                <div key={index} className="relative group">
+                <div key={index} className="relative group/image w-16 h-16">
                   <img
                     src={preview}
-                    alt={`Preview ${index + 1}`}
-                    className="w-20 h-20 object-cover rounded-md border border-gray-300"
+                    alt="Preview"
+                    className="w-full h-full object-cover rounded-lg border border-gray-100"
                   />
                   <button
                     type="button"
                     onClick={() => removeImage(index)}
-                    className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center"
+                    className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-black text-white rounded-full opacity-0 group-hover/image:opacity-100 transition-all flex items-center justify-center text-xs shadow-sm hover:scale-110"
                   >
                     ×
                   </button>
@@ -274,33 +216,57 @@ export default function ReviewForm({userId, productId, onSuccess }: ReviewFormPr
             </div>
           )}
 
-          <p className="text-xs text-gray-500 mt-2">
-            💡 Bạn có thể kéo thả hình ảnh vào ô nhập hoặc nhấn Ctrl+V để dán. Tối đa {MAX_IMAGES} ảnh.
-          </p>
+          {/* Toolbar */}
+          <div className="flex items-center justify-between px-3 py-2 border-t border-gray-50 bg-gray-50/50 rounded-b-xl">
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full transition-colors"
+                title={t("uploadImage")}
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                  <circle cx="8.5" cy="8.5" r="1.5"/>
+                  <polyline points="21 15 16 10 5 21"/>
+                </svg>
+              </button>
+              <span className="text-xs text-gray-400 hidden sm:inline-block">
+                {t("maxImages", { max: MAX_IMAGES })}
+              </span>
+            </div>
+
+            <button
+              type="submit"
+              disabled={isSubmitting || (rating === 0 && !comment)}
+              className="px-4 py-1.5 bg-black text-white text-sm font-medium rounded-lg hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm hover:shadow"
+            >
+              {isSubmitting ? t("submitting") : t("submit")}
+            </button>
+          </div>
+
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            multiple
+            className="hidden"
+            onChange={(e) => handleFileSelect(e.target.files)}
+          />
         </div>
 
-        {/* Error Message */}
+        {/* Messages */}
         {error && (
-          <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-700 rounded-md text-sm">
-            {error}
+          <div className="text-sm text-red-600 animate-in fade-in">
+            ⚠️ {error}
           </div>
         )}
-
-        {/* Success Message */}
         {success && (
-          <div className="mb-4 p-3 bg-green-50 border border-green-200 text-green-700 rounded-md text-sm">
-            Đánh giá của bạn đã được gửi thành công!
+          <div className="text-sm text-green-600 animate-in fade-in">
+            ✨ {t("success")}
           </div>
         )}
-
-        {/* Submit Button */}
-        <button
-          type="submit"
-          disabled={isSubmitting}
-          className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-        >
-          {isSubmitting ? "Đang gửi..." : "Gửi đánh giá"}
-        </button>
+        
       </form>
     </div>
   );

@@ -176,9 +176,9 @@ export const findReviewByProduct = async ({
         id: {
           equals: productId,
         },
-        parent: {
-          exists: false,
-        },
+      },
+      parent: {
+        exists: false, // Only get root reviews, not replies
       },
     };
     if (rating) {
@@ -193,7 +193,7 @@ export const findReviewByProduct = async ({
       where,
       limit: limit || 10,
       page: page || 1,
-      depth: 1,
+      depth: 2, // Populate user and replies (with their users)
     });
   });
   if (err) throw err;
@@ -230,18 +230,40 @@ export const replyReview = async ({
   content: string;
 }) => {
   const [result, err] = await query<any>(async (payload) => {
-   
-    // create a reply review - no rating needed for replies
-    return payload.create({
+    // Create reply review with parent field
+    const createReview = await payload.create({
       collection: "reviews",
       data: {
         user: userId,
-        parent: parentId,
         product: productId,
         comment: content,
+        parent: parentId, // Mark as reply
         // No rating for replies
       },
     });
+    
+    // Get current parent review to get existing replies
+    const parentReview = await payload.findByID({
+      collection: "reviews",
+      id: parentId,
+    });
+    
+    // Update parent review to add this reply to replies array
+    const updateParentReview = await payload.update({
+      collection: "reviews",
+      id: parentId,
+      data: {
+        replies: [
+          ...(Array.isArray(parentReview.replies) 
+            ? parentReview.replies.map((r: any) => typeof r === 'string' ? r : r.id)
+            : []),
+          createReview.id,
+        ],
+      },
+    });
+    
+    
+    return updateParentReview;
   });
 
   if (err) throw err;
