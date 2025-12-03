@@ -8,7 +8,6 @@ import { Lang } from "@/types";
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
 import { Suspense } from "react";
-// @ts-expect-error
 import "./globals.css";
 
 /* const { SITE_NAME, TWITTER_CREATOR, TWITTER_SITE } = process.env
