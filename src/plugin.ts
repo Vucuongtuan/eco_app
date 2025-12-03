@@ -18,6 +18,7 @@ import { vercelBlobStorage } from "@payloadcms/storage-vercel-blob";
 import { FieldsOverride } from "node_modules/@payloadcms/plugin-ecommerce/dist/types";
 import { Plugin } from "payload";
 import { ProductsCollection } from "./collections/Products";
+import { templateHtml } from "./utilities/templateHtml";
 export const defaultMeta = {
   brandName: "Moon co.",
   description: {
@@ -159,50 +160,52 @@ export const plugins: Plugin[] = [
           webhookSecret: process.env.STRIPE_WEBHOOKS_SIGNING_SECRET!,
           webhooks: {
             "payment_intent.succeeded": async ({ event, req, stripe }) => {
-            const paymentIntent = event.data.object as any;
-            const paymentIntentID = paymentIntent.id;
-            req.payload.logger.info(`Payment succeeded for PI: ${paymentIntentID}`);
+              const paymentIntent = event.data.object as any;
+              const paymentIntentID = paymentIntent.id;
+              req.payload.logger.info(
+                `Payment succeeded for PI: ${paymentIntentID}`
+              );
 
-            try {
-              const { docs: transactions } = await req.payload.find({
-                collection: "transactions",
-                where: {
-                  "stripe.paymentIntentID": {
-                    equals: paymentIntentID,
+              try {
+                const { docs: transactions } = await req.payload.find({
+                  collection: "transactions",
+                  where: {
+                    "stripe.paymentIntentID": {
+                      equals: paymentIntentID,
+                    },
                   },
-                },
-              });
+                });
 
-              const transaction = transactions?.[0];
+                const transaction = transactions?.[0];
 
-              if (transaction && transaction.customerEmail) {
-                await req.payload.sendEmail({
-                  to: transaction.customerEmail,
-                  from: "noreply@moon.co",
-                  subject: "Order Confirmation - Moon co.",
-                  html: `
+                if (transaction && transaction.customerEmail) {
+                  await req.payload.sendEmail({
+                    to: transaction.customerEmail,
+                    from: "noreply@moon.co",
+                    subject: "Order Confirmation - Moon co.",
+                    html: `
                     <h1>Thank you for your order!</h1>
                     <p>Your payment was successful.</p>
                     <p>Transaction ID: ${transaction.id}</p>
                     <p>Amount: ${(transaction.amount || 0) / 100} ${
-                    transaction.currency
-                  }</p>
+                      transaction.currency
+                    }</p>
                   `,
-                });
-                req.payload.logger.info(
-                  `Order confirmation email sent to ${transaction.customerEmail}`
-                );
-              } else {
-                req.payload.logger.warn(
-                  `Transaction not found for PaymentIntent: ${paymentIntentID}`
+                  });
+                  req.payload.logger.info(
+                    `Order confirmation email sent to ${transaction.customerEmail}`
+                  );
+                } else {
+                  req.payload.logger.warn(
+                    `Transaction not found for PaymentIntent: ${paymentIntentID}`
+                  );
+                }
+              } catch (err) {
+                req.payload.logger.error(
+                  `Error processing payment success webhook: ${err}`
                 );
               }
-            } catch (err) {
-              req.payload.logger.error(
-                `Error processing payment success webhook: ${err}`
-              );
-            }
-          },
+            },
             "payment_intent.payment_failed": ({ event, req, stripe }) => {
               console.log("❌ Payment failed:", event.id);
               console.log("Event data:", JSON.stringify(event.data, null, 2));
@@ -285,6 +288,36 @@ export const plugins: Plugin[] = [
             },
           };
         },
+      },
+    },
+    transactions: {
+      transactionCollectionOverride: ({ defaultCollection }) => {
+        return {
+          ...defaultCollection,
+          hooks: {
+            afterChange: [
+              ...(defaultCollection.hooks?.afterChange || []),
+              // @ts-expect-error
+              async ({ data, req, operation }) => {
+                if (operation === "create") {
+                  const template = templateHtml({
+                    title: "Xác nhận đơn hàng từ Moon co.",
+                    cart: data.cart,
+                    type: "cart",
+                    content: "",
+                  });
+                  // Send order confirmation email
+                  await req.payload.sendEmail({
+                    to: data.customerEmail,
+                    form: "vucuongtuansin1@gmail.com",
+                    subject: "Xác nhận đơn hàng từ Moon co.",
+                    html: template,
+                  });
+                }
+              },
+            ],
+          },
+        };
       },
     },
   }),
