@@ -1,6 +1,7 @@
 import type { Footer } from "@/payload-types";
 
 import { FooterMenu } from "@/components/(layout)/Footer/menu";
+import EmailSubscribeForm from "@/components/form/EmailSubscribeForm";
 import { LogoIcon } from "@/components/icons/logo";
 import { findGlobal } from "@/service/layout";
 import { Lang } from "@/types";
@@ -41,7 +42,9 @@ export async function Footer({ lang }: { lang: Lang }) {
           </Suspense>
 
           {/* Empty flex for alignment */}
-          <div className="md:ml-auto flex flex-col gap-4 items-end"></div>
+          <div className="md:ml-auto flex w-full md:w-1/3 lg:w-1/4  gap-4 items-center  ">
+            <EmailSubscribeForm />
+          </div>
         </div>
       </div>
 
@@ -73,7 +76,7 @@ export async function Footer({ lang }: { lang: Lang }) {
       </div>
 
       {/* Name Site */}
-      <div className="w-full container max-w-screen-3xl mx-auto h-[400px] flex items-center justify-center relative">
+      <div className="w-full container max-w-screen-3xl mx-auto h-[150px] md:h-[250px] lg:h-[350px] xl:h-[400px] flex items-center justify-center relative">
         <LogoIcon className="w-full h-auto" fill />
       </div>
     </footer>

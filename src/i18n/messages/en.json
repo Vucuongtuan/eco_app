@@ -130,5 +130,14 @@
     "setEnvVariables": "then set them as environment variables. See the",
     "readme": "README",
     "forMoreDetails": "for more details."
+  },
+  "emailsubscribe": {
+    "title": "Subscribe to Newsletter",
+    "description": "Subscribe to get the latest updates and offers.",
+    "subscribeSuccess": "Successfully subscribed to the newsletter!",
+    "subscribeError": "Failed to subscribe to the newsletter. Please try again.",
+    "placeholder": "Enter your email",
+    "subscribe": "Subscribe",
+    "subscribing": "Subscribing..."
   }
 }

@@ -142,3 +142,17 @@ export const signup = async ({
     },
   };
 };
+
+export const subscribeNewsletter = async (email: string, locale: Lang) => {
+  const [result, err] = await query<any>((payload) => {
+    return payload.create({
+      collection: "email-subscribe",
+      data: {
+        email,
+        locale: locale || "vi",
+      },
+    });
+  });
+  if (err) throw err;
+  return result;
+};
