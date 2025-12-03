@@ -131,5 +131,14 @@
     "setEnvVariables": "sau đó đặt chúng như biến môi trường. Xem",
     "readme": "README",
     "forMoreDetails": "cho thêm thông tin."
+  },
+  "emailsubscribe": {
+    "title": "Đăng ký nhận bản tin",
+    "description": "Đăng ký để nhận các bản cập nhật và ưu đãi mới nhất.",
+    "subscribeSuccess": "Đăng ký nhận bản tin thành công!",
+    "subscribeError": "Đăng ký nhận bản tin thất bại. Vui lòng thử lại.",
+    "placeholder": "Nhập email của bạn",
+    "subscribe": "Đăng ký",
+    "subscribing": "Đang đăng ký..."
   }
 }
