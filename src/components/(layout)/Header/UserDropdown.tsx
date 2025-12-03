@@ -35,7 +35,6 @@ export function UserDropdown() {
       </Link>
     );
   }
-
   return (
     <div className="relative" ref={dropdownRef}>
       <button
