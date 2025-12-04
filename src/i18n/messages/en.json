@@ -139,5 +139,33 @@
     "placeholder": "Enter your email",
     "subscribe": "Subscribe",
     "subscribing": "Subscribing..."
+  },
+  "review": {
+    "title": "Reviews",
+    "writeReview": "Write your review",
+    "rating": "Rating",
+    "comment": "Your comment",
+    "placeholder": "Share your experience...",
+    "uploadImage": "Add images",
+    "maxImages": "Add images (max {max})",
+    "submit": "Submit Review",
+    "submitting": "Submitting...",
+    "success": "Your review has been submitted successfully!",
+    "error": {
+      "ratingRequired": "Please select a rating",
+      "maxImages": "Max {max} images",
+      "uploadFailed": "Upload failed",
+      "generic": "An error occurred"
+    },
+    "ratingLabels": {
+      "1": "Very Bad",
+      "2": "Bad",
+      "3": "Average",
+      "4": "Good",
+      "5": "Excellent"
+    },
+    "reply": "Reply",
+    "guest": "Guest",
+    "loginRequired": "You need to <span class='font-medium'>login</span> to write a review for this product."
   }
 }

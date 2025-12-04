@@ -55,7 +55,19 @@ export const Reviews: CollectionConfig = {
       },
       min: 1,
       max: 5,
-      required: true,
+      admin: {
+        condition: (data) => !data.parent, // Only show/require rating if not a reply
+      },
+    },
+    {
+      name: "media",
+      type: "upload",
+      relationTo: "media",
+      hasMany: true,
+      label: {
+        vi: "Hình ảnh/Video",
+        en: "Images/Videos",
+      },
     },
     {
       name: "comment",
@@ -66,16 +78,29 @@ export const Reviews: CollectionConfig = {
       },
     },
     {
-      name: "approved",
-      type: "checkbox",
+      name: "parent",
+      type: "relationship",
+      relationTo: "reviews",
       label: {
-        vi: "Đã duyệt",
-        en: "Approved",
+        vi: "Phản hồi của",
+        en: "Reply To",
       },
-      defaultValue: false,
+    },
+    {
+      name: "replies",
+      type: "relationship",
+      relationTo: "reviews",
+      hasMany: true,
+      label: {
+        vi: "Các phản hồi",
+        en: "Replies",
+      },
       admin: {
-        position: "sidebar",
+        condition: (data) => !data.parent, // Only show for root reviews
       },
     },
   ],
+  hooks: {
+  
+  },
 };

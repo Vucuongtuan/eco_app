@@ -1,5 +1,6 @@
 import ProductDetails from "@/components/(product-details)/ProductDetails";
 import { CarouselListProduct } from "@/components/CarouselProduct";
+import Review from "@/components/Review";
 import { Category, Product, Tag } from "@/payload-types";
 import {
   findListProducts,
@@ -57,21 +58,28 @@ export default async function ProductPage({ params }: Props) {
   const { slug, lang } = await params;
   const product = await memoizingCache({ slug, lang: lang as Lang });
   let dataRelatest;
-  if(product.relatedByCategory || product.relatedByTags || product.relatedType){
+  if (
+    product.relatedByCategory ||
+    product.relatedByTags ||
+    product.relatedType
+  ) {
     dataRelatest = await getRelatedProducts(product, lang as Lang);
-  }else{
-    dataRelatest = null
+  } else {
+    dataRelatest = null;
   }
-  
+
   return (
     <>
       <ProductDetails doc={product} lang={lang as Lang} />
+
+      {product.id && (
+        <Suspense>
+          <Review productId={product.id} />
+        </Suspense>
+      )}
       {dataRelatest && (
         <Suspense>
-          <CarouselListProduct
-            items={dataRelatest || []}
-            lang={lang as Lang}
-          />
+          <CarouselListProduct items={dataRelatest || []} lang={lang as Lang} />
         </Suspense>
       )}
     </>

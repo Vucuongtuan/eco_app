@@ -140,5 +140,33 @@
     "placeholder": "Nhập email của bạn",
     "subscribe": "Đăng ký",
     "subscribing": "Đang đăng ký..."
+  },
+  "review": {
+    "title": "Đánh giá",
+    "writeReview": "Viết đánh giá của bạn",
+    "rating": "Đánh giá",
+    "comment": "Nhận xét của bạn",
+    "placeholder": "Chia sẻ trải nghiệm của bạn...",
+    "uploadImage": "Thêm hình ảnh",
+    "maxImages": "Thêm ảnh (tối đa {max} ảnh)",
+    "submit": "Gửi đánh giá",
+    "submitting": "Đang gửi...",
+    "success": "Đánh giá của bạn đã được gửi thành công!",
+    "error": {
+      "ratingRequired": "Vui lòng chọn số sao",
+      "maxImages": "Tối đa {max} hình ảnh",
+      "uploadFailed": "Tải ảnh thất bại",
+      "generic": "Có lỗi xảy ra"
+    },
+    "ratingLabels": {
+      "1": "Rất tệ",
+      "2": "Tệ",
+      "3": "Bình thường",
+      "4": "Tốt",
+      "5": "Tuyệt vời"
+    },
+    "reply": "Trả lời",
+    "guest": "Khách",
+    "loginRequired": "Bạn cần <span class='font-medium'>đăng nhập</span> để viết đánh giá cho sản phẩm này."
   }
 }
