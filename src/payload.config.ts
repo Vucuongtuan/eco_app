@@ -46,9 +46,20 @@ const applySEOForCollection = ['categories', 'products',  'posts', 'pages']
 
 export default buildConfig({
   cors: {
-    origins: ["http://localhost:3000"],
+    origins: [
+      // Web
+      "http://localhost:3000",
+      // Mobile
+      "http://localhost:8081",
+    ],
     headers: ["*"],
   },
+  // 
+  graphQL:{
+    disable:false,
+    schemaOutputFile:'./graphql/schema.graphql',
+  },
+  //
   debug:true,
   admin: {
     components: {
