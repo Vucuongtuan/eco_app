@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import { ListProductsBlock, Product } from "@/payload-types";
+import { Category, ListProductsBlock, Product } from "@/payload-types";
 import { FindProductByType, findProductListByType } from "@/service/blocks";
 import { Lang } from "@/types";
 import { layoutCtn } from "@/utilities/cssVariable";
@@ -17,7 +17,6 @@ export default async function ListProductsComp(props: Props) {
     type,
     products,
     categories,
-    hashTag,
     configs,
     lang,
     //@ts-expect-error
@@ -31,17 +30,15 @@ export default async function ListProductsComp(props: Props) {
   if (type === "products") {
     data = products;
   } else {
+    if (!categories || typeof categories !== "string") return null;
     const result = await findProductListByType({
-      type,
-      categories: categories || [],
-      tags: hashTag || [],
+      categories: categories as Category,
       options: { limit: 16, page: 1 },
       lang
     } as FindProductByType);
     data = result || [];
   }
   if (!data || data.length === 0) return null;
-  console.log({data})
   return (
     <div className={cn(layoutCtn(configs?.layout || "container"),' relative')}>
       <header

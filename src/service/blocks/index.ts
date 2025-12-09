@@ -1,6 +1,6 @@
 import { cacheFunc } from "@/lib/cacheFunc";
 import { query } from "@/lib/tryCatch";
-import { Category, Product, Tag } from "@/payload-types";
+import { Category, Product } from "@/payload-types";
 import { Lang, ResponseDocs } from "@/types";
 import { PaginatedDocs } from "payload";
 
@@ -43,9 +43,7 @@ export const findCategoryShowcase: FindCategoryShowcase = async (
 };
 
 export interface FindProductByType {
-  type: "categories" | "tags";
-  categories?: Category | string;
-  tags?: Tag[] | string[];
+  categories: Category;
   options?: {
     limit: number;
     page: number;
@@ -54,20 +52,17 @@ export interface FindProductByType {
 }
 
 export const findProductListByType = async ({
-  type,
   categories,
-  tags,
   options,
   lang
 
 }: FindProductByType) => {
-  const tag =  type === 'categories' ? (categories as Category).slug || categories : 'tags'
   return cacheFunc(
     async () => {
 
       let where: Record<string, any> = {};
 
-      if (type === "categories" && categories ) {
+      if (categories ) {
         let categoryIds: string;
         if (typeof categories !== 'string') {
           categoryIds = categories.id;
@@ -88,24 +83,7 @@ export const findProductListByType = async ({
           },
         };
       }
-      if (type === "tags" && tags && tags.length > 0) {
-        let tagIds: string[] = [];
-        if (typeof tags[0] !== 'string') {
-          // @ts-expect-error
-          tagIds = tags.map((tag) => tag.id);
-        } else {
-          // @ts-expect-error
-          tagIds = tags;
-        }
-        where = {
-          "taxonomies.tags": {
-            in: tagIds,
-          },
-         _status: {
-              equals: "published",
-            },
-        };
-      }
+   
       const [result, err] = await query<PaginatedDocs<Product>>((payload) => {
         return payload.find({
           collection: "products",
@@ -119,9 +97,9 @@ export const findProductListByType = async ({
       if (err) throw err;
       return result.docs as Product[];
     },
-    [`blockListProduct-${lang}-${type}-${tag}`],
+    [`blockListProduct-${lang}-${categories.slug}`],
     {
-      tags: [`blockListProduct-${lang}-${type}-${tag}`],
+      tags: [`blockListProduct-${lang}-${categories.slug}`],
     }
   )();
 };
