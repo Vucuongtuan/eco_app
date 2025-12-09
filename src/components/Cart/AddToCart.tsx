@@ -1,10 +1,9 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import type { Product, Variant } from "@/payload-types";
 
 import { useCart } from "@payloadcms/plugin-ecommerce/client/react";
-import clsx from "clsx";
 import { useTranslations } from "next-intl";
 import React, { useCallback, useMemo, useState } from "react";
 import { toast } from "sonner";
@@ -89,19 +88,12 @@ export function AddToCart({ product, selectedVariant, quantity }: Props) {
     return false;
   }, [selectedVariant, cart?.items, product]);
 
+
   return (
-    <Button
-      aria-label={t("addToCart")}
-      variant={"outline"}
-      className={clsx({
-        "hover:opacity-90": true,
-        "w-full": true,
-      })}
-      disabled={disabled}
-      onClick={addToCart}
-      type="submit"
-    >
+    <button aria-label={t("addToCart")} onClick={addToCart} disabled={disabled} type="submit" className={
+      cn("w-full py-2 bg-black  text-white text-lg cursor-pointer", disabled && "opacity-50 cursor-not-allowed")
+    }>
       {messageAction}
-    </Button>
-  );
+    </button>
+  )
 }

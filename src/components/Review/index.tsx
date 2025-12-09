@@ -16,7 +16,7 @@ export default function Review({ productId }: { productId: string }) {
   const [limit] = useState(10);
   const [ratingFilter, setRatingFilter] = useState<number | null>(null);
   const [searchText, setSearchText] = useState("");
- const { user } = useAuth();
+  const { user } = useAuth();
   const queryResult = useQuery<any>({
     queryKey: ["reviews", productId, page, limit, ratingFilter, searchText],
     queryFn: () =>
@@ -52,24 +52,28 @@ export default function Review({ productId }: { productId: string }) {
     [refetch, user]
   );
   return (
-    <section className="max-w-screen-2xl container mx-auto py-8">
-      <header className="mb-4">
-        <h2 className="text-lg font-medium">{t("title")} - {user?.email}</h2>
-      </header>
+    <section className="max-w-screen-2xl container mx-auto py-12">
+      {/* Header - Minimalist */}
+      <div className="mb-10">
+        <h2 className="text-xl font-normal text-text-primary tracking-wide">{t("title")}</h2>
+      </div>
 
-      {/* Show form only if user is logged in */}
-      {user ? (
-        <ReviewForm userId={user.id as string} productId={productId} onSuccess={() => refetch()} />
-      ) : (
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
-          <p className="text-blue-800 text-sm">
-            {t.rich("loginRequired", {
-              span: (chunks: any) => <span className="font-medium">{chunks}</span>
-            })}
-          </p>
-        </div>
-      )}
+      {/* Form Section - Clean & Simple */}
+      <div className="rounded-sm mb-12">
+        {user ? (
+          <ReviewForm userId={user.id as string} productId={productId} onSuccess={() => refetch()} />
+        ) : (
+          <div className="bg-primary-light border border-border-light rounded-sm p-5">
+            <p className="text-text-secondary text-sm leading-relaxed">
+              {t.rich("loginRequired", {
+                span: (chunks: any) => <span className="font-normal">{chunks}</span>
+              })}
+            </p>
+          </div>
+        )}
+      </div>
 
+      {/* Filter Section */}
       <ReviewFilter
         rating={ratingFilter}
         onChangeRating={(r) => {
@@ -83,11 +87,16 @@ export default function Review({ productId }: { productId: string }) {
         }}
       />
 
-      <div>
+      {/* Reviews List - Minimalist spacing */}
+      <div className="space-y-6 mt-8">
         {isLoading ? (
-          <p className="text-gray-500">Loading...</p>
+          <div className="text-center py-16">
+            <p className="text-text-muted text-sm">{t("loading")}</p>
+          </div>
         ) : reviews.length === 0 ? (
-          <p className="text-gray-500">No reviews yet.</p>
+          <div className="text-center py-16 bg-primary-background rounded-sm">
+            <p className="text-text-muted text-sm">{t("noReviews")}</p>
+          </div>
         ) : (
           reviews &&
           reviews.length > 0 &&
@@ -101,6 +110,7 @@ export default function Review({ productId }: { productId: string }) {
         )}
       </div>
 
+      {/* Pagination */}
       <ReviewPagination
         page={page}
         totalPages={totalPages}

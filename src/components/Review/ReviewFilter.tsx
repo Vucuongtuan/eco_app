@@ -1,5 +1,7 @@
 "use client";
 
+import { useTranslations } from "next-intl";
+
 export default function ReviewFilter({
   rating,
   onChangeRating,
@@ -11,28 +13,32 @@ export default function ReviewFilter({
   search: string;
   onSearchChange: (v: string) => void;
 }) {
+  const t = useTranslations("review");
+  
   return (
-    <div className="flex gap-2 items-center mb-3">
+    <div className="flex flex-col sm:flex-row gap-3 mb-8">
+      {/* Search Input - Minimalist */}
       <input
         value={search}
         onChange={(e) => onSearchChange(e.target.value)}
-        placeholder="Tìm theo nội dung..."
-        className="flex-1 rounded-md border border-gray-200 px-2 py-1 text-sm"
+        placeholder={t("filter.searchPlaceholder")}
+        className="flex-1 px-4 py-2.5 bg-white border border-border rounded-sm text-sm text-text-primary placeholder:text-text-muted focus:border-text-secondary focus:outline-none transition-colors"
       />
 
+      {/* Rating Filter - Simple */}
       <select
         value={rating ?? ""}
         onChange={(e) =>
           onChangeRating(e.target.value ? Number(e.target.value) : null)
         }
-        className="rounded-md border border-gray-200 bg-white px-2 py-1 text-sm"
+        className="px-4 py-2.5 bg-white border border-border rounded-sm text-sm text-text-primary focus:border-text-secondary focus:outline-none transition-colors cursor-pointer min-w-[140px]"
       >
-        <option value="">Tất cả</option>
-        <option value="5">5 sao</option>
-        <option value="4">4 sao trở lên</option>
-        <option value="3">3 sao trở lên</option>
-        <option value="2">2 sao trở lên</option>
-        <option value="1">1 sao trở lên</option>
+        <option value="">{t("filter.allRatings")}</option>
+        <option value="5">{t("filter.5stars")}</option>
+        <option value="4">{t("filter.4starsPlus")}</option>
+        <option value="3">{t("filter.3starsPlus")}</option>
+        <option value="2">{t("filter.2starsPlus")}</option>
+        <option value="1">{t("filter.1starPlus")}</option>
       </select>
     </div>
   );

@@ -149,9 +149,10 @@ export default function ReviewForm({ userId, productId, onSuccess }: ReviewFormP
   };
 
   return (
-    <div className="mb-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div className="flex items-center gap-4">
+    <div>
+      <form onSubmit={handleSubmit} className="space-y-5">
+        {/* Rating Stars - Minimalist */}
+        <div className="flex items-center gap-3">
           <div className="flex gap-1">
             {[1, 2, 3, 4, 5].map((star) => (
               <button
@@ -160,25 +161,25 @@ export default function ReviewForm({ userId, productId, onSuccess }: ReviewFormP
                 onClick={() => setRating(star)}
                 onMouseEnter={() => setHoverRating(star)}
                 onMouseLeave={() => setHoverRating(0)}
-                className="text-2xl focus:outline-none transition-transform hover:scale-110"
+                className="text-2xl focus:outline-none transition-opacity hover:opacity-80"
               >
-                <span className={star <= (hoverRating || rating) ? "text-yellow-400" : "text-gray-200"}>
+                <span className={star <= (hoverRating || rating) ? "text-yellow-500" : "text-gray-300"}>
                   ★
                 </span>
               </button>
             ))}
           </div>
           {(hoverRating > 0 || rating > 0) && (
-            <span className="text-sm font-medium text-gray-600 animate-in fade-in">
+            <span className="text-sm text-text-secondary">
               {ratingLabels[(hoverRating || rating) as keyof typeof ratingLabels]}
             </span>
           )}
         </div>
 
-        {/* Input Area */}
+        {/* Input Area - Minimalist */}
         <div 
-          className={`relative group bg-white rounded-xl border transition-all duration-200 ${
-            isDragging ? 'border-blue-400 ring-2 ring-blue-100' : 'border-gray-200 focus-within:border-gray-400 focus-within:shadow-sm'
+          className={`relative bg-white border rounded-sm transition-colors ${
+            isDragging ? 'border-text-secondary' : 'border-border focus-within:border-text-secondary'
           }`}
           onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
           onDragLeave={() => setIsDragging(false)}
@@ -189,8 +190,8 @@ export default function ReviewForm({ userId, productId, onSuccess }: ReviewFormP
             value={comment}
             onChange={(e) => setComment(e.target.value)}
             onPaste={handlePaste}
-            rows={3}
-            className="w-full pl-4 pr-4 py-3 bg-transparent border-none focus:ring-0 resize-none text-sm placeholder:text-gray-400"
+            rows={4}
+            className="w-full px-4 py-3 bg-transparent border-none focus:outline-none resize-none text-sm text-text-primary placeholder:text-text-muted"
             placeholder={t("placeholder")}
           />
 
@@ -216,30 +217,21 @@ export default function ReviewForm({ userId, productId, onSuccess }: ReviewFormP
             </div>
           )}
 
-          {/* Toolbar */}
-          <div className="flex items-center justify-between px-3 py-2 border-t border-gray-50 bg-gray-50/50 rounded-b-xl">
-            <div className="flex items-center gap-2">
-              <button
-                type="button"
-                onClick={() => fileInputRef.current?.click()}
-                className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full transition-colors"
-                title={t("uploadImage")}
-              >
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
-                  <circle cx="8.5" cy="8.5" r="1.5"/>
-                  <polyline points="21 15 16 10 5 21"/>
-                </svg>
-              </button>
-              <span className="text-xs text-gray-400 hidden sm:inline-block">
-                {t("maxImages", { max: MAX_IMAGES })}
-              </span>
-            </div>
+          {/* Toolbar - Minimalist */}
+          <div className="flex items-center justify-between px-4 py-3 border-t border-border-light">
+            <button
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              className="text-xs text-text-secondary hover:text-text-primary transition-colors underline"
+              title={t("uploadImage")}
+            >
+              {t("addImageButton", { current: images.length, max: MAX_IMAGES })}
+            </button>
 
             <button
               type="submit"
               disabled={isSubmitting || (rating === 0 && !comment)}
-              className="px-4 py-1.5 bg-black text-white text-sm font-medium rounded-lg hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm hover:shadow"
+              className="px-5 py-2 bg-text-primary text-white text-sm rounded-sm hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed transition-opacity"
             >
               {isSubmitting ? t("submitting") : t("submit")}
             </button>
@@ -255,15 +247,15 @@ export default function ReviewForm({ userId, productId, onSuccess }: ReviewFormP
           />
         </div>
 
-        {/* Messages */}
+        {/* Messages - Simple */}
         {error && (
-          <div className="text-sm text-red-600 animate-in fade-in">
-            ⚠️ {error}
+          <div className="text-sm text-error">
+            {error}
           </div>
         )}
         {success && (
-          <div className="text-sm text-green-600 animate-in fade-in">
-            ✨ {t("success")}
+          <div className="text-sm text-success">
+            {t("success")}
           </div>
         )}
         
