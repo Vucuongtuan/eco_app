@@ -44,7 +44,7 @@ export const findCategoryShowcase: FindCategoryShowcase = async (
 
 export interface FindProductByType {
   type: "categories" | "tags";
-  categories?: Category[] | string[];
+  categories?: Category | string;
   tags?: Tag[] | string[];
   options?: {
     limit: number;
@@ -61,17 +61,17 @@ export const findProductListByType = async ({
   lang
 
 }: FindProductByType) => {
+  const tag =  type === 'categories' ? (categories as Category).slug || categories : 'tags'
   return cacheFunc(
     async () => {
+
       let where: Record<string, any> = {};
 
-      if (type === "categories" && categories && categories.length > 0) {
-        let categoryIds: string[] = [];
-        if (typeof categories[0] !== 'string') {
-          // @ts-expect-error
-          categoryIds = categories.map((category) => category.id);
+      if (type === "categories" && categories ) {
+        let categoryIds: string;
+        if (typeof categories !== 'string') {
+          categoryIds = categories.id;
         } else {
-          // @ts-expect-error
           categoryIds = categories;
         }
         
@@ -79,7 +79,7 @@ export const findProductListByType = async ({
           or: [
             {
               "taxonomies.category": {
-                in: categoryIds,
+                equals: categoryIds,
               },
             },
           ],
@@ -119,9 +119,9 @@ export const findProductListByType = async ({
       if (err) throw err;
       return result.docs as Product[];
     },
-    [`blockListProduct-${lang}-${type}`],
+    [`blockListProduct-${lang}-${type}-${tag}`],
     {
-      tags: [`blockListProduct-${lang}-${type}`],
+      tags: [`blockListProduct-${lang}-${type}-${tag}`],
     }
   )();
 };

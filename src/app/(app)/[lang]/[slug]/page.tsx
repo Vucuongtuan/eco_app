@@ -51,7 +51,7 @@ export async function generateStaticParams() {
   const langVi =
     vi instanceof Error
       ? []
-      : vi.map((item) => ({ lang: "vi" as const, slug: item.slug }));
+      : vi.map((item) => ({  slug: item.slug }));
   const langEn =
     en instanceof Error
       ? []
