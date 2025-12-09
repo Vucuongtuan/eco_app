@@ -26,6 +26,9 @@ importers:
       '@payloadcms/db-mongodb':
         specifier: 3.67.0
         version: 3.67.0(@aws-sdk/credential-providers@3.947.0)(payload@3.67.0(graphql@16.12.0)(typescript@5.7.3))
+      '@payloadcms/email-nodemailer':
+        specifier: ^3.67.0
+        version: 3.67.0(payload@3.67.0(graphql@16.12.0)(typescript@5.7.3))
       '@payloadcms/live-preview-react':
         specifier: 3.67.0
         version: 3.67.0(react-dom@19.2.1(react@19.2.1))(react@19.2.1)
