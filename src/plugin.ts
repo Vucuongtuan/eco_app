@@ -1,9 +1,11 @@
 // @ts-nocheck
-import { adminOnly } from "@/access/adminOnly";
 import { adminOnlyFieldAccess } from "@/access/adminOnlyFieldAccess";
-import { adminOrCustomerOwner } from "@/access/adminOrCustomerOwner";
 import { adminOrPublishedStatus } from "@/access/adminOrPublishedStatus";
 import { customerOnlyFieldAccess } from "@/access/customerOnlyFieldAccess";
+import { isAdmin } from "@/access/isAdmin";
+import {
+  isDocumentOwner
+} from "@/access/isDocumentOwner";
 import { getServerSideURL } from "@/utilities/getURL";
 import { ecommercePlugin } from "@payloadcms/plugin-ecommerce";
 import { stripeAdapter } from "@payloadcms/plugin-ecommerce/payments/stripe";
@@ -126,11 +128,11 @@ export const plugins: Plugin[] = [
   // Ecommerce
   ecommercePlugin({
     access: {
-      adminOnly,
       adminOnlyFieldAccess,
-      adminOrCustomerOwner,
-      adminOrPublishedStatus,
-      customerOnlyFieldAccess,
+    adminOrPublishedStatus,
+    customerOnlyFieldAccess,
+    isAdmin,
+    isDocumentOwner,
     },
     customers: {
       slug: "users",
@@ -222,7 +224,6 @@ export const plugins: Plugin[] = [
           return {
             ...defaultCollection,
             hooks: {
-              ...defaultCollection.hooks,
               beforeValidate: [
                 async ({ data, operation, req }) => {
                   const queryProduct = await req.payload.findByID({
@@ -231,7 +232,6 @@ export const plugins: Plugin[] = [
                   });
 
                   if (operation === "create") {
-                    // Nếu cả USD và VND đều không được enabled, lấy giá trị từ product
                     if (!data.priceInUSDEnabled && !data.priceInVNDEnabled) {
                       data.priceInUSDEnabled =
                         queryProduct.priceInUSDEnabled || false;
