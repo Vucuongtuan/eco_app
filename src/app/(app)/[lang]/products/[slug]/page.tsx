@@ -19,7 +19,7 @@ import { cache, Suspense } from "react";
 export async function generateStaticParams() {
   const products = await findSlugAllProduct();
   return products.flatMap((item) => [
-    { slug: item.slug, lang: "vi" },
+    { slug: item.slug },
     { slug: item.slug, lang: "en" },
   ]);
 }
