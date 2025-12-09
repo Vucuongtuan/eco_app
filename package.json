@@ -4,8 +4,8 @@
   "description": "A blank template to get started with Payload 3.0",
   "license": "MIT",
   "scripts": {
-    "build": "next build",
-    "dev": "next dev --turbo",
+    "build": "next build --webpack",
+    "dev": "next dev",
     "devsafe": "rm -rf .next && cross-env NODE_OPTIONS=--no-deprecation next dev ",
     "generate:importmap": "cross-env NODE_OPTIONS=--no-deprecation payload generate:importmap",
     "generate:types": "cross-env PAYLOAD_NO_PRETTIER=true NODE_OPTIONS=--no-deprecation payload generate:types",
