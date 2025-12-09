@@ -15,7 +15,8 @@
     "test": "pnpm run test:int && pnpm run test:e2e",
     "test:e2e": "cross-env NODE_OPTIONS=\"--no-deprecation --no-experimental-strip-types\" pnpm exec playwright test",
     "test:int": "cross-env NODE_OPTIONS=--no-deprecation vitest run --config ./vitest.config.mts",
-    "migrate": "cross-env NODE_TLS_REJECT_UNAUTHORIZED=0 payload migrate"
+    "migrate": "cross-env NODE_TLS_REJECT_UNAUTHORIZED=0 payload migrate",
+    "deploy:worker": "wrangler publish"
   },
   "dependencies": {
     "@dnd-kit/utilities": "^3.2.2",
