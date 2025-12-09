@@ -36,6 +36,7 @@ export default async function ListProductsComp(props: Props) {
       categories: categories || [],
       tags: hashTag || [],
       options: { limit: 16, page: 1 },
+      lang
     } as FindProductByType);
     data = result || [];
   }

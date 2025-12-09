@@ -8,7 +8,6 @@ import { SpotlightMediaBlock } from "./config";
 
 export default function SpotlightMediaComponent(props:SpotlightMediaBlock) {
     const {title,features,configs,media} = props
-    console.log({features})
     return (
         <div className={cn(layoutCtn(configs.layout || 'container'),)}>
             <div className="relative w-full h-screen">
@@ -24,9 +23,8 @@ export default function SpotlightMediaComponent(props:SpotlightMediaBlock) {
                     {features && features.length > 0 && (
                         <div className="flex flex-wrap gap-4 items-center">
                             {features.map((f:any, index) => (
-                                <>
+                                <div key={f.id}>
                                 <CMSLink
-                                    key={f.id}
                                     className="text-white px-0"
                                     {...f.link}
                                 />
@@ -35,7 +33,7 @@ export default function SpotlightMediaComponent(props:SpotlightMediaBlock) {
                                         <span className="text-white">{'>'}</span>
                                     )
                                 }
-                                </>
+                                </div>
                             ))}
                         </div>
                     )}

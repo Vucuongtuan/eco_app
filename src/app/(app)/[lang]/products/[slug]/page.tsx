@@ -9,7 +9,7 @@ import {
 } from "@/service/products";
 import { Lang } from "@/types";
 import { generateMeta } from "@/utilities/generateMeta";
-import { cache, Suspense } from "react";
+import { Suspense } from "react";
 
 /*
  * Generate static params for all products
@@ -24,9 +24,6 @@ export async function generateStaticParams() {
   ]);
 }
 
-// Memoizing data cache using React cache
-const memoizingCache = cache(findProductBySlug);
-// ---
 
 async function getRelatedProducts(product: Product, lang: Lang) {
   const slugCategory = (product.taxonomies?.category as Category)?.slug;
@@ -56,7 +53,7 @@ interface Props {
 export default async function ProductPage({ params }: Props) {
   "use memo"; // react compiler mode **annotation**
   const { slug, lang } = await params;
-  const product = await memoizingCache({ slug, lang: lang as Lang });
+  const product = await findProductBySlug({ slug, lang: lang as Lang });
   let dataRelatest;
   if (
     product.relatedByCategory ||
@@ -88,7 +85,7 @@ export default async function ProductPage({ params }: Props) {
 
 export async function generateMetadata({ params }: Props) {
   const { slug, lang } = await params;
-  const product = await memoizingCache({
+  const product = await findProductBySlug({
     slug,
     lang: lang as Lang,
   });

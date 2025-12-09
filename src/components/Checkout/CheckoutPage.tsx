@@ -37,6 +37,7 @@ const stripe = loadStripe(apiKey);
 
 export const CheckoutPage: React.FC = () => {
   const { user } = useAuth();
+  
   const router = useRouter();
   const { cart } = useCart();
   const [error, setError] = useState<null | string>(null);

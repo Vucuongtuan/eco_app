@@ -1,7 +1,7 @@
 import { cacheFunc } from "@/lib/cacheFunc";
 import { query } from "@/lib/tryCatch";
 import { Category, Product, Tag } from "@/payload-types";
-import { ResponseDocs } from "@/types";
+import { Lang, ResponseDocs } from "@/types";
 import { PaginatedDocs } from "payload";
 
 /*
@@ -50,6 +50,7 @@ export interface FindProductByType {
     limit: number;
     page: number;
   };
+  lang: Lang;
 }
 
 export const findProductListByType = async ({
@@ -57,6 +58,8 @@ export const findProductListByType = async ({
   categories,
   tags,
   options,
+  lang
+
 }: FindProductByType) => {
   return cacheFunc(
     async () => {
@@ -103,7 +106,6 @@ export const findProductListByType = async ({
             },
         };
       }
-
       const [result, err] = await query<PaginatedDocs<Product>>((payload) => {
         return payload.find({
           collection: "products",
@@ -111,14 +113,15 @@ export const findProductListByType = async ({
           limit: options?.limit || 16,
           page: options?.page || 1,
           sort: "-publishedAt",
+          locale: lang,
         });;
       });
       if (err) throw err;
       return result.docs as Product[];
     },
-    [`blockListProduct-${type}`],
+    [`blockListProduct-${lang}-${type}`],
     {
-      tags: [`blockListProduct:${type}`],
+      tags: [`blockListProduct-${lang}-${type}`],
     }
   )();
 };

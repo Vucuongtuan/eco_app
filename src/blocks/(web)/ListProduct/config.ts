@@ -49,7 +49,6 @@ export const ListProducts: Block = {
               name: "categories",
               type: "relationship",
               relationTo: "categories",
-              hasMany: true,
               admin: {
                 condition: (_, { type }) => type === "categories",
               },

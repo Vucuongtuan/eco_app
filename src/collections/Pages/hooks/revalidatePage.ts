@@ -8,6 +8,7 @@ export const revalidatePage: CollectionAfterChangeHook<Page> = ({
   doc,
   previousDoc,
   req: { payload, context },
+  
 }) => {
   if (!context.disableRevalidate) {
     if (doc._status === 'published') {
@@ -16,6 +17,7 @@ export const revalidatePage: CollectionAfterChangeHook<Page> = ({
       payload.logger.info(`Revalidating page at path: ${path}`)
 
       revalidatePath(path)
+      revalidatePath(`/en/${path}`)
       //revalidateTag('pages-sitemap')
     }
 
@@ -26,6 +28,7 @@ export const revalidatePage: CollectionAfterChangeHook<Page> = ({
       payload.logger.info(`Revalidating old page at path: ${oldPath}`)
 
       revalidatePath(oldPath)
+      revalidatePath(`/en/${oldPath}`)
       //revalidateTag('pages-sitemap')
     }
   }

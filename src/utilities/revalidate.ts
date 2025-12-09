@@ -31,3 +31,25 @@ export const revalidate = async ({
     }
   }
 };
+export async function rv({
+  paths = [],
+  tags = [],
+}: {
+  paths?: string[];
+  tags?: string[];
+}) {
+  const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ;
+  const url = `${SITE_URL}/api/revalidate`;
+  try {
+    await fetch(url, {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+        authorization: `Bearer ${process.env.REVALIDATE_SECRET!}`,
+      },
+      body: JSON.stringify({ paths, tags }),
+    });
+  } catch (error) {
+    console.error("Revalidate error:", (error as Error).message);
+  }
+}
