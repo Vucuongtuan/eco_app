@@ -58,6 +58,7 @@ export default buildConfig({
   graphQL:{
     disable:false,
     schemaOutputFile:'./graphql/schema.graphql',
+    
   },
   //
   debug:true,

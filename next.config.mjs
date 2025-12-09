@@ -27,14 +27,13 @@ const nextConfig = {
   },
 
   // react compiler
-
+  reactCompiler:true,
   //  Experimental Beta
   experimental: {
     // Use React Compiler
     // reactCompiler: {
     //   compilationMode: "annotation",
     // },
-    reactCompiler: true,
 
     inlineCss: true,
 
