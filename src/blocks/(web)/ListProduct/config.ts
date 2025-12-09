@@ -36,10 +36,6 @@ export const ListProducts: Block = {
                   label: "Products",
                   value: "products",
                 },
-                {
-                  label: "Tags",
-                  value: "tags",
-                },
               ],
               defaultValue: "categories",
               required: true,
@@ -60,15 +56,6 @@ export const ListProducts: Block = {
               hasMany: true,
               admin: {
                 condition: (_, { type }) => type === "products",
-              },
-            },
-            {
-              name: "hashTag",
-              type: "relationship",
-              relationTo: "tags",
-              hasMany: true,
-              admin: {
-                condition: (_, { type }) => type === "tags",
               },
             },
              {
