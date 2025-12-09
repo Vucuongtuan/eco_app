@@ -148,6 +148,7 @@
     "comment": "Nhận xét của bạn",
     "placeholder": "Chia sẻ trải nghiệm của bạn...",
     "uploadImage": "Thêm hình ảnh",
+    "addImageButton": "+ Thêm ảnh ({current}/{max})",
     "maxImages": "Thêm ảnh (tối đa {max} ảnh)",
     "submit": "Gửi đánh giá",
     "submitting": "Đang gửi...",
@@ -167,6 +168,21 @@
     },
     "reply": "Trả lời",
     "guest": "Khách",
-    "loginRequired": "Bạn cần <span class='font-medium'>đăng nhập</span> để viết đánh giá cho sản phẩm này."
+    "loginRequired": "Bạn cần <span class='font-medium'>đăng nhập</span> để viết đánh giá cho sản phẩm này.",
+    "filter": {
+      "searchPlaceholder": "Tìm kiếm đánh giá...",
+      "allRatings": "Tất cả",
+      "5stars": "5 sao",
+      "4starsPlus": "4 sao+",
+      "3starsPlus": "3 sao+",
+      "2starsPlus": "2 sao+",
+      "1starPlus": "1 sao+"
+    },
+    "pagination": {
+      "previous": "Trước",
+      "next": "Sau"
+    },
+    "loading": "Đang tải...",
+    "noReviews": "Chưa có đánh giá nào."
   }
 }
