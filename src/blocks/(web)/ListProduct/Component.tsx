@@ -41,6 +41,7 @@ export default async function ListProductsComp(props: Props) {
     data = result || [];
   }
   if (!data || data.length === 0) return null;
+  console.log({data})
   return (
     <div className={cn(layoutCtn(configs?.layout || "container"),' relative')}>
       <header
