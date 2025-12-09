@@ -1,0 +1,14 @@
+name = "moon-co"
+type = "javascript"
+# Set your Cloudflare account id here before publishing
+account_id = "912c784d072c699372ee3a5abedba421"
+compatibility_date = "2025-12-09"
+
+[env.production]
+name = "moon-co"
+# Optional: route and zone_id if publishing to a specific domain
+# route = "https://example.com/*"
+# zone_id = "__YOUR_ZONE_ID__"
+
+# If you plan to use secrets / environment variables, set them via:
+#   wrangler secret put SOME_SECRET
