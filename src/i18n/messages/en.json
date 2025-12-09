@@ -147,6 +147,7 @@
     "comment": "Your comment",
     "placeholder": "Share your experience...",
     "uploadImage": "Add images",
+    "addImageButton": "+ Add image ({current}/{max})",
     "maxImages": "Add images (max {max})",
     "submit": "Submit Review",
     "submitting": "Submitting...",
@@ -166,6 +167,21 @@
     },
     "reply": "Reply",
     "guest": "Guest",
-    "loginRequired": "You need to <span class='font-medium'>login</span> to write a review for this product."
+    "loginRequired": "You need to <span class='font-medium'>login</span> to write a review for this product.",
+    "filter": {
+      "searchPlaceholder": "Search reviews...",
+      "allRatings": "All",
+      "5stars": "5 stars",
+      "4starsPlus": "4 stars+",
+      "3starsPlus": "3 stars+",
+      "2starsPlus": "2 stars+",
+      "1starPlus": "1 star+"
+    },
+    "pagination": {
+      "previous": "Previous",
+      "next": "Next"
+    },
+    "loading": "Loading...",
+    "noReviews": "No reviews yet."
   }
 }
