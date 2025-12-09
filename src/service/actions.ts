@@ -171,14 +171,33 @@ export const findReviewByProduct = async ({
   q?: string;
 }) => {
   const [result, err] = await query<ResponseDocs<any>>((payload) => {
-    const where: any = {
-      product: {
-        id: {
-          equals: productId,
-        },
-      },
+    let where: any = {
+       or:[
+          {
+            product:{
+              id: {
+                equals: productId,
+              },
+            }
+          },{
+            product:{
+              equals: productId,
+            }
+          }
+        ],
       parent: {
-        exists: false, // Only get root reviews, not replies
+        or :[
+          {
+            parent: {
+              equals: null,
+            },
+          },
+          {
+            parent: {
+              equals: false,
+            },
+          }
+        ]
       },
     };
     if (rating) {
@@ -190,14 +209,43 @@ export const findReviewByProduct = async ({
 
     return payload.find({
       collection: "reviews",
-      where,
+      where:{
+         or:[
+          {
+            product:{
+              id: {
+                equals: productId,
+              },
+            }
+          },{
+            product:{
+              equals: productId,
+            }
+          }
+        ],
+         parent: {
+        or :[
+          {
+            parent: {
+              equals: null,
+            },
+          },
+          {
+            parent: {
+              equals: false,
+            },
+          }
+        ]
+      },
+   
+      },
       limit: limit || 10,
       page: page || 1,
       depth: 2, // Populate user and replies (with their users)
     });
   });
   if (err) throw err;
-
+  console.log({result})
   return result;
 };
 

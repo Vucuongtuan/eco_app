@@ -27,10 +27,11 @@ export default function Review({ productId }: { productId: string }) {
         rating: ratingFilter ?? undefined,
         q: searchText ?? undefined,
       }),
+
+      enabled: !!productId,
   });
 
   const { data, isLoading, refetch } = queryResult as any;
-
   const d: any = data ?? [];
   const reviews = d.docs ?? [];
   const totalPages =

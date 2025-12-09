@@ -15,14 +15,14 @@
     "test": "pnpm run test:int && pnpm run test:e2e",
     "test:e2e": "cross-env NODE_OPTIONS=\"--no-deprecation --no-experimental-strip-types\" pnpm exec playwright test",
     "test:int": "cross-env NODE_OPTIONS=--no-deprecation vitest run --config ./vitest.config.mts",
-    "migrate": "cross-env NODE_TLS_REJECT_UNAUTHORIZED=0 payload migrate",
-    "deploy:worker": "wrangler publish"
+    "migrate": "cross-env NODE_TLS_REJECT_UNAUTHORIZED=0 payload migrate"
   },
   "dependencies": {
     "@dnd-kit/utilities": "^3.2.2",
     "@esbuild-kit/core-utils": "3.3.2",
     "@esbuild-kit/esm-loader": "2.6.5",
     "@hookform/resolvers": "^5.2.2",
+    "@opennextjs/cloudflare": "^1.14.4",
     "@payloadcms/admin-bar": "3.67.0",
     "@payloadcms/db-mongodb": "3.67.0",
     "@payloadcms/email-nodemailer": "3.67.0",
