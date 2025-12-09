@@ -7,16 +7,6 @@ const withNextIntl = createNextIntlPlugin();
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Your Next.js config here
-  turbopack: {
-    resolveExtensions: [".mdx", ".tsx", ".ts", ".jsx", ".js", ".mjs", ".json"],
-    rules: {
-      "*.svg": {
-        as: "*.js",
-        loaders: ["@svgr/webpack"],
-      },
-    },
-  },
   //Image
   images: {
     remotePatterns: [
@@ -37,14 +27,13 @@ const nextConfig = {
   },
 
   // react compiler
-
+  reactCompiler:true,
   //  Experimental Beta
   experimental: {
     // Use React Compiler
     // reactCompiler: {
     //   compilationMode: "annotation",
     // },
-    reactCompiler: true,
 
     inlineCss: true,
 

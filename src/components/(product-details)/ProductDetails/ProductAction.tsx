@@ -1,10 +1,8 @@
 "use client";
 
 import { AddToCart } from "@/components/Cart/AddToCart";
-import { Button } from "@/components/ui/button";
 import { Product, Variant } from "@/payload-types";
 import { motion } from "framer-motion";
-import { Heart } from "lucide-react";
 import { Suspense } from "react";
 
 interface ProductActionProps {
@@ -29,14 +27,6 @@ export default function ProductAction({
           selectedVariant={selectedVariant || null}
         />
       </Suspense>
-      <Button
-        size="lg"
-        variant="outline"
-        className="py-6 px-4"
-        aria-label="Add to wishlist"
-      >
-        <Heart className="h-5 w-5" />
-      </Button>
     </motion.div>
   );
 }

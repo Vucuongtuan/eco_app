@@ -24,7 +24,7 @@ export const revalidate = async ({
 
   if (collection) {
     try {
-      revalidateTag(collection);
+      revalidateTag(collection,'max');
       console.log(`Revalidated tag: ${collection}`);
     } catch (e) {
       console.error(`Error revalidating tag ${collection}:`, e);
