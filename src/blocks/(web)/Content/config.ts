@@ -3,6 +3,7 @@ import type { Block, Field } from "payload";
 import { defaultLexical } from "@/fields/defaultLexical";
 import { layout } from "@/fields/layout";
 import { spacingField } from "@/fields/spacingField";
+import { afterReadContent } from "@/hooks/afterReadContent";
 
 const columnFields: Field[] = [
   {
@@ -56,6 +57,9 @@ const columnFields: Field[] = [
       enableTable: true,
       enableBlock: true,
     }),
+    hooks: {
+      afterRead: [afterReadContent],
+    },
     label: false,
     localized: true,
     admin: {

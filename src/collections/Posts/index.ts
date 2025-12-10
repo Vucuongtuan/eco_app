@@ -1,3 +1,4 @@
+import { afterReadContent } from "@/hooks/afterReadContent";
 import { CollectionConfig } from "payload";
 import { slugField } from "../../fields/slug";
 import { uploadCustomField } from "../../fields/upload";
@@ -32,6 +33,9 @@ export const Posts: CollectionConfig = {
       name: "content",
       type: "richText",
       label: "Content",
+      hooks: {
+        afterRead: [afterReadContent],
+      },
     },
     uploadCustomField({
       name: "image",
