@@ -1,3 +1,4 @@
+import { afterReadContent } from "@/hooks/afterReadContent";
 import { Block, Field } from "payload";
 import { defaultLexical } from "../defaultLexical";
 
@@ -12,6 +13,9 @@ const RichTextBlock: Block = {
       name: "content",
       type: "richText",
       editor: defaultLexical(),
+      hooks: {
+        afterRead: [afterReadContent],
+      },
     },
   ],
 };

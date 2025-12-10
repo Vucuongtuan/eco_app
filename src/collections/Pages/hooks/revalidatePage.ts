@@ -14,10 +14,11 @@ export const revalidatePage: CollectionAfterChangeHook<Page> = ({
     if (doc._status === 'published') {
       const path = doc.slug === 'home' ? '/' : `/${doc.slug}`
 
-      payload.logger.info(`Revalidating page at path: ${path}`)
-
+      
       revalidatePath(path)
       revalidatePath(`/en/${path}`)
+      payload.logger.info(`Revalidating page at path: ${path}`)
+      payload.logger.info(`Revalidating page at path: /en/${path}`)
       //revalidateTag('pages-sitemap')
     }
 

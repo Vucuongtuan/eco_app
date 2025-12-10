@@ -94,7 +94,7 @@ export const Pages: CollectionConfig = {
                 ListProducts,
                 SpotlightMedia,
                 InfoList,
-                Model
+                Model,
               ],
             },
           ],
