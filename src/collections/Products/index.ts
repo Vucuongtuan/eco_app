@@ -3,6 +3,7 @@ import { MediaBlock } from "@/blocks/(web)/MediaBlock/config";
 import { groupCategoriesField } from "@/fields/groupCategories";
 import { slugField } from "@/fields/slug";
 import { uploadCustomField } from "@/fields/upload";
+import { afterReadContent } from "@/hooks/afterReadContent";
 import { beforeChangeMetaImage } from "@/hooks/beforeChangeMetaImage";
 import { generatePreviewPath } from "@/utilities/generatePreviewPath";
 import { CollectionOverride } from "@payloadcms/plugin-ecommerce/types";
@@ -198,6 +199,9 @@ export const ProductsCollection: CollectionOverride = ({
                   name: "content",
                   type: "richText",
                   localized: true,
+                  hooks: {
+                    afterRead: [afterReadContent],
+                  },
                 },
               ],
             },
