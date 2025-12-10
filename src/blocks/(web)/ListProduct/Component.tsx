@@ -26,13 +26,14 @@ export default async function ListProductsComp(props: Props) {
     //@ts-expect-error
     caption,
   } = props;
+  console.log({props})
   let data;
   if (type === "products") {
     data = products;
   } else {
-    if (!categories || typeof categories !== "string") return null;
+    if (!categories || typeof categories === "string") return null;
     const result = await findProductListByType({
-      categories: categories as Category,
+      categories: categories as unknown as Category,
       options: { limit: 16, page: 1 },
       lang
     } as FindProductByType);
