@@ -51,6 +51,9 @@ export default buildConfig({
       "http://localhost:3000",
       // Mobile
       "http://localhost:8081",
+      // Mobile 
+      "http://192.168.1.41:8081",
+      "**"
     ],
     headers: ["*"],
   },
