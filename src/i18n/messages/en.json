@@ -183,5 +183,40 @@
     },
     "loading": "Loading...",
     "noReviews": "No reviews yet."
+  },
+  "profile": {
+    "title": "My Profile",
+    "personalInfo": {
+      "title": "Personal Information",
+      "name": "Name",
+      "email": "Email",
+      "role": "Role",
+      "memberSince": "Member since",
+      "edit": "Edit"
+    },
+    "recentOrders": {
+      "title": "Recent Orders",
+      "viewAll": "View all orders",
+      "noOrders": "You have no orders yet",
+      "orderNumber": "Order",
+      "date": "Date",
+      "status": "Status",
+      "total": "Total",
+      "items": "items",
+      "viewOrder": "View details"
+    },
+    "activeCart": {
+      "title": "Active Cart",
+      "viewCart": "View cart",
+      "noCart": "Cart is empty",
+      "items": "items",
+      "subtotal": "Subtotal",
+      "checkout": "Checkout"
+    },
+    "sessions": {
+      "title": "Login Sessions",
+      "active": "active sessions",
+      "expires": "Expires"
+    }
   }
 }

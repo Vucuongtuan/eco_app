@@ -26,7 +26,6 @@ export default async function ListProductsComp(props: Props) {
     //@ts-expect-error
     caption,
   } = props;
-  console.log({props})
   let data;
   if (type === "products") {
     data = products;

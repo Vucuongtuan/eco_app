@@ -184,5 +184,40 @@
     },
     "loading": "Đang tải...",
     "noReviews": "Chưa có đánh giá nào."
+  },
+  "profile": {
+    "title": "Hồ sơ của tôi",
+    "personalInfo": {
+      "title": "Thông tin cá nhân",
+      "name": "Tên",
+      "email": "Email",
+      "role": "Vai trò",
+      "memberSince": "Thành viên từ",
+      "edit": "Chỉnh sửa"
+    },
+    "recentOrders": {
+      "title": "Đơn hàng gần đây",
+      "viewAll": "Xem tất cả đơn hàng",
+      "noOrders": "Bạn chưa có đơn hàng nào",
+      "orderNumber": "Đơn hàng",
+      "date": "Ngày",
+      "status": "Trạng thái",
+      "total": "Tổng",
+      "items": "sản phẩm",
+      "viewOrder": "Xem chi tiết"
+    },
+    "activeCart": {
+      "title": "Giỏ hàng hiện tại",
+      "viewCart": "Xem giỏ hàng",
+      "noCart": "Giỏ hàng trống",
+      "items": "sản phẩm",
+      "subtotal": "Tạm tính",
+      "checkout": "Thanh toán"
+    },
+    "sessions": {
+      "title": "Phiên đăng nhập",
+      "active": "phiên hoạt động",
+      "expires": "Hết hạn"
+    }
   }
 }
