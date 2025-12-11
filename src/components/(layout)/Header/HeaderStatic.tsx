@@ -3,6 +3,7 @@
 import { Header } from "@/payload-types";
 import { ReactNode } from "react";
 import { useHeaderState } from "./hooks/useHeaderState";
+import { Logo } from "./Logo";
 import { MegaDropdown } from "./MegaDropdown";
 import { MobileMenuButton } from "./MobileMenuButton";
 import { MobileMenuOverlay } from "./MobileMenuOverlay";
@@ -35,6 +36,7 @@ export function HeaderStatic({ navData, children }: HeaderStaticProps) {
             : "h-17"
         }`}
       >
+        <Logo/>
         <div className="flex-1" onMouseLeave={handleMenuLeave}>
           <Navigation navData={navData} onMenuItemHover={handleMenuItemHover} />
           <MegaDropdown
