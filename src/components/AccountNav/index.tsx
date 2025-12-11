@@ -14,13 +14,14 @@ export const AccountNav: React.FC<Props> = ({ className }) => {
 
   return (
     <div className={clsx(className)}>
-      <ul className="flex flex-col gap-2">
+      <aside className="sticky top-20 left-0">
+      <ul className="flex flex-col gap-2 ">
         <li>
           <Button asChild variant="link">
             <Link
-              href="/profile"
+              href="/account"
               className={clsx('text-primary/50 hover:text-primary/100 hover:no-underline', {
-                'text-primary/100': pathname === '/profile' || pathname.includes('/profile'),
+                'text-primary': pathname === '/account' || pathname.includes('/account'),
               })}
             >
               Profile
@@ -31,22 +32,9 @@ export const AccountNav: React.FC<Props> = ({ className }) => {
         <li>
           <Button asChild variant="link">
             <Link
-              href="/account"
+              href="/account/addresses"
               className={clsx('text-primary/50 hover:text-primary/100 hover:no-underline', {
-                'text-primary/100': pathname === '/account',
-              })}
-            >
-              Account settings
-            </Link>
-          </Button>
-        </li>
-
-        <li>
-          <Button asChild variant="link">
-            <Link
-              href="/addresses"
-              className={clsx('text-primary/50 hover:text-primary/100 hover:no-underline', {
-                'text-primary/100': pathname === '/addresses',
+                'text-primary': pathname === '/account/addresses' || pathname.includes('/account/addresses'),
               })}
             >
               Addresses
@@ -59,10 +47,10 @@ export const AccountNav: React.FC<Props> = ({ className }) => {
             asChild
             variant="link"
             className={clsx('text-primary/50 hover:text-primary/100 hover:no-underline', {
-              'text-primary/100': pathname === '/orders' || pathname.includes('/orders'),
+              'text-primary': pathname === '/account/orders' || pathname.includes('/account/orders'),
             })}
           >
-            <Link href="/orders">Orders</Link>
+            <Link href="/account/orders">Orders</Link>
           </Button>
         </li>
       </ul>
@@ -78,6 +66,7 @@ export const AccountNav: React.FC<Props> = ({ className }) => {
       >
         <Link href="/logout">Log out</Link>
       </Button>
+      </aside>
     </div>
   )
 }

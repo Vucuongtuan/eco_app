@@ -217,6 +217,46 @@
       "title": "Login Sessions",
       "active": "active sessions",
       "expires": "Expires"
+    },
+    "changePassword": {
+      "title": "Change Password",
+      "button": "Change Password",
+      "currentPassword": "Current Password",
+      "newPassword": "New Password",
+      "confirmPassword": "Confirm New Password",
+      "submit": "Update Password",
+      "cancel": "Cancel",
+      "success": "Password changed successfully!",
+      "error": {
+        "currentPasswordRequired": "Please enter your current password",
+        "newPasswordRequired": "Please enter a new password",
+        "confirmPasswordRequired": "Please confirm your new password",
+        "passwordMismatch": "Passwords do not match",
+        "passwordTooShort": "Password must be at least 8 characters",
+        "wrongPassword": "Current password is incorrect",
+        "generic": "An error occurred. Please try again"
+      }
+    }
+  },
+  "resetPassword": {
+    "title": "Reset Password",
+    "description": "Enter a new password for your account",
+    "newPassword": "New Password",
+    "confirmPassword": "Confirm Password",
+    "newPasswordPlaceholder": "Enter new password",
+    "confirmPasswordPlaceholder": "Re-enter new password",
+    "submit": "Reset Password",
+    "submitting": "Processing...",
+    "showPassword": "Show password",
+    "hidePassword": "Hide password",
+    "invalidToken": "Invalid or expired token",
+    "rememberPassword": "Remember your password?",
+    "loginNow": "Login now",
+    "error": {
+      "passwordTooShort": "Password must be at least 6 characters",
+      "passwordMismatch": "Passwords do not match",
+      "resetFailed": "Failed to reset password. Please try again.",
+      "generic": "An error occurred. Please try again."
     }
   }
 }

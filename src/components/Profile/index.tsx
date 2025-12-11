@@ -3,16 +3,18 @@ import { OrderStatus } from "@/components/OrderStatus";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/providers/Auth";
 import { formatDateTime } from "@/utilities/formatDateTime";
-import { Calendar, Clock, Mail, ShoppingBag, ShoppingCart, User } from "lucide-react";
+import { Calendar, Clock, Key, Mail, ShoppingBag, ShoppingCart, User } from "lucide-react";
 import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { ChangePasswordDialog } from "./ChangePasswordDialog";
 import { ProfileSkeleton } from "./ProfileSkeleton";
 
 export default function ProfileScreen() {
   const { user } = useAuth();
   const t = useTranslations("profile");
   const [isLoading, setIsLoading] = useState(true);
+  const [changePasswordOpen, setChangePasswordOpen] = useState(false);
 
   useEffect(() => {
     // Give some time for auth to load
@@ -47,9 +49,6 @@ export default function ProfileScreen() {
               <h2 className="text-xl font-medium text-text-primary">
                 {t("personalInfo.title")}
               </h2>
-              <Button variant="ghost" size="sm" className="text-[#3569ed]">
-                {t("personalInfo.edit")}
-              </Button>
             </div>
 
             <div className="space-y-4">
@@ -104,6 +103,18 @@ export default function ProfileScreen() {
                   </p>
                 </div>
               </div>
+            </div>
+
+            {/* Change Password Button */}
+            <div className="pt-4 border-t border-[#d1d5db]">
+              <Button
+                variant="outline"
+                className="w-full border-[#d1d5db] hover:bg-gray-50"
+                onClick={() => setChangePasswordOpen(true)}
+              >
+                <Key className="w-4 h-4 mr-2" />
+                {t("changePassword.button")}
+              </Button>
             </div>
           </div>
 
@@ -234,6 +245,9 @@ export default function ProfileScreen() {
           )}
         </div>
       </div>
+
+      {/* Change Password Dialog */}
+      <ChangePasswordDialog open={changePasswordOpen} onOpenChange={setChangePasswordOpen} />
     </div>
   );
 }
