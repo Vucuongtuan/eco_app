@@ -59,7 +59,6 @@ export const CheckoutPage: React.FC = () => {
   const [billingAddressSameAsShipping, setBillingAddressSameAsShipping] =
     useState(true);
   const [isProcessingPayment, setProcessingPayment] = useState(false);
-
   const cartIsEmpty = !cart || !cart.items || !cart.items.length;
 
   const canGoToPayment = Boolean(

@@ -5,18 +5,18 @@ import type { Header } from '@/payload-types'
 import { CMSLink } from '@/components/Link'
 import { Button } from '@/components/ui/button'
 import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
+    Sheet,
+    SheetContent,
+    SheetDescription,
+    SheetHeader,
+    SheetTitle,
+    SheetTrigger,
 } from '@/components/ui/sheet'
 import { useAuth } from '@/providers/Auth'
 import { MenuIcon } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname, useSearchParams } from 'next/navigation'
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 
 interface Props {
   menu: Header['navItems']
@@ -82,7 +82,7 @@ export function MobileMenu({ menu }: Props) {
                 <Link href="/account/addresses">Addresses</Link>
               </li>
               <li>
-                <Link href="/account">Manage account</Link>
+                <Link href="/profile">Profile</Link>
               </li>
               <li className="mt-6">
                 <Button asChild variant="outline">

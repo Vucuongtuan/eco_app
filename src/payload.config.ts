@@ -63,6 +63,7 @@ export default buildConfig({
     schemaOutputFile:'./graphql/schema.graphql',
     
   },
+  
   //
   debug:true,
   admin: {
@@ -108,8 +109,8 @@ export default buildConfig({
   }),
   email: nodemailerAdapter(
     {
-       defaultFromAddress: 'info@payloadcms.com',
-    defaultFromName: 'Payload',
+    defaultFromAddress: 'info@moon-company.com',
+    defaultFromName: 'Moon co.',
     // Nodemailer transportOptions
     transportOptions: {
       host: process.env.EMAIL_HOST || "smtp.gmail.com",

@@ -1,6 +1,5 @@
 import { AddressListing } from "@/components/addresses/AddressListing";
 import { CreateAddressModal } from "@/components/addresses/CreateAddressModal";
-import { Button } from "@/components/ui/button";
 import { mergeOpenGraph } from "@/utilities/mergeOpenGraph";
 import configPromise from "@payload-config";
 import type { Metadata } from "next";
@@ -23,11 +22,7 @@ export default async function Addresses() {
     <div className="w-full">
       <div className="flex items-center justify-between mb-8">
         <h1 className="text-3xl font-medium text-text-primary">Addresses</h1>
-        <CreateAddressModal>
-          <Button className="bg-[#3569ed] hover:bg-[#2557d4]">
-            Add New Address
-          </Button>
-        </CreateAddressModal>
+        <CreateAddressModal/>
       </div>
 
       <div className="bg-white border border-[#d1d5db] rounded-lg p-6">
