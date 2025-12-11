@@ -290,13 +290,21 @@ export const plugins: Plugin[] = [
         },
       },
     },
+  
     transactions: {
       transactionCollectionOverride: ({ defaultCollection }) => {
         return {
           ...defaultCollection,
           hooks: {
+            beforeChange:[
+              async ({ data, req, operation }) => {
+                if(operation === 'create' && !data.customerEmail){
+                  data.customerEmail = data.customer.email;
+                }
+                return data;
+              },
+            ],
             afterChange: [
-              ...(defaultCollection.hooks?.afterChange || []),
               // @ts-expect-error
               async ({ data, req, operation }) => {
                 if (operation === "create") {
@@ -308,7 +316,7 @@ export const plugins: Plugin[] = [
                   });
                   // Send order confirmation email
                   await req.payload.sendEmail({
-                    to: data.customerEmail,
+                    to: data.customerEmail || data.customer.email,
                     form: "vucuongtuansin1@gmail.com",
                     subject: "Xác nhận đơn hàng từ Moon co.",
                     html: template,
