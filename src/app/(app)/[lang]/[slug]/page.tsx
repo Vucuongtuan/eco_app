@@ -1,12 +1,13 @@
 // import { MobileNav } from "@/components/layout/Header/MobileNav";
 import { RenderBlocks } from "@/blocks/(web)/RenderBlocks";
 import MetaTitle from "@/components/MetaTitle";
+import { query } from "@/lib/tryCatch";
 import { Page } from "@/payload-types";
 import { findPageDoc } from "@/service/pages";
-import { findLatestPostByLang } from "@/service/posts";
 import { Lang } from "@/types";
 import { cookies } from "next/headers";
 import { notFound } from "next/navigation";
+import { PaginatedDocs } from "payload";
 
 function isPage(doc: Page | Error): doc is Page {
   return !(doc instanceof Error);
@@ -43,22 +44,38 @@ export default async function PageTemplate({ params }: PageProps) {
 }
 
 export async function generateStaticParams() {
-  const [vi, en] = await Promise.all([
-    findLatestPostByLang("vi"),
-    findLatestPostByLang("en"),
+  const [result, err] = await query<PaginatedDocs<Page>>((payload) => {
+    return payload.find({
+      collection: "pages",
+      where: {
+        status: {
+          equals: "published",
+        },
+        slug: {
+          not_equals: "home",
+        },
+      },
+      pagination: {
+        limit: 0,
+      },
+    });
+  });
+
+  if (err || !result) {
+    console.log(err);
+    return [
+      { lang: "en" as const, slug: "/" }, // /en/home
+      { slug: "/" }, 
+    ];
+  }
+
+  const params = result.docs.flatMap((doc) => [
+    { lang: "en" as const, slug: doc.slug },
+    { slug: doc.slug },
   ]);
 
-  const langVi =
-    vi instanceof Error
-      ? []
-      : vi.map((item) => ({  slug: item.slug }));
-  const langEn =
-    en instanceof Error
-      ? []
-      : en.map((item) => ({ lang: "en" as const, slug: item.slug }));
+  params.push({ lang: "en" as const, slug: "/" });
+  params.push({ slug: "/" });
 
-  const params = [...langVi, ...langEn];
-
-  // Ensure at least one result for Cache Components
-  return params.length > 0 ? params : [{ lang: "en" as const, slug: "home" }];
+  return params;
 }

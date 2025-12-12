@@ -14,10 +14,10 @@ export async function generateStaticParams() {
 export default async function PostsPage({
   params,
 }: {
-  params: { lang: string };
+  params: Promise<{ lang: string }>;
 }) {
   "use memo";
-  const { lang } = params;
+  const { lang } = await params;
   const docs = await findLatestPostByLang(lang as Lang)
   const t = await getTranslations("posts");
 
@@ -40,13 +40,7 @@ export default async function PostsPage({
     </>
   );
 }
-// Generate metadata sử dụng cached data
-export async function generateMetadata({
-  params,
-}: {
-  params: { lang: string };
-}): Promise<Metadata> {
-  const { lang } = params;
+export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("posts");
 
   return {

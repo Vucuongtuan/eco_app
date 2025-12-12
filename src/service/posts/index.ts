@@ -31,15 +31,7 @@ export const findPostDoc = async (): Promise<Post[] | Error> => {
             select: {
               slug: true,
             },
-            where: {
-              and: [
-                {
-                  _status: {
-                    equals: "published",
-                  },
-                },
-              ],
-            },
+            where: {},
           });
         }),
       ]);
