@@ -161,14 +161,45 @@ export const plugins: Plugin[] = [
           publishableKey: process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!,
           webhookSecret: process.env.STRIPE_WEBHOOKS_SIGNING_SECRET!,
           webhooks: {
+            "checkout.session.completed": async ({ event, req, stripe }) => {
+              console.log("============================================")
+              console.log("🎉 WEBHOOK TRIGGERED: checkout.session.completed");
+              console.log("============================================")
+              
+              const checkoutSession = event.data.object as any;
+              const checkoutSessionID = checkoutSession.id;
+              
+              console.log("📋 Checkout Session Details:", {
+                id: checkoutSessionID,
+                amount: checkoutSession.amount,
+                currency: checkoutSession.currency,
+                status: checkoutSession.status,
+                metadata: checkoutSession.metadata,
+              });
+            },
             "payment_intent.succeeded": async ({ event, req, stripe }) => {
+              console.log("============================================")
+              console.log("🎉 WEBHOOK TRIGGERED: payment_intent.succeeded");
+              console.log("============================================")
+              
               const paymentIntent = event.data.object as any;
               const paymentIntentID = paymentIntent.id;
+              
+              console.log("📋 Payment Intent Details:", {
+                id: paymentIntentID,
+                amount: paymentIntent.amount,
+                currency: paymentIntent.currency,
+                status: paymentIntent.status,
+                metadata: paymentIntent.metadata,
+              });
+
               req.payload.logger.info(
                 `Payment succeeded for PI: ${paymentIntentID}`
               );
 
               try {
+                console.log("🔍 Searching for transaction with PaymentIntent:", paymentIntentID);
+                
                 const { docs: transactions } = await req.payload.find({
                   collection: "transactions",
                   where: {
@@ -177,36 +208,69 @@ export const plugins: Plugin[] = [
                     },
                   },
                 });
+                
+                console.log("📦 Transactions found:", transactions.length);
+                console.log("📦 Transaction data:", JSON.stringify(transactions, null, 2));
 
                 const transaction = transactions?.[0];
 
-                if (transaction && transaction.customerEmail) {
-                  await req.payload.sendEmail({
-                    to: transaction.customerEmail,
-                    from: "noreply@moon.co",
-                    subject: "Order Confirmation - Moon co.",
-                    html: `
-                    <h1>Thank you for your order!</h1>
-                    <p>Your payment was successful.</p>
-                    <p>Transaction ID: ${transaction.id}</p>
-                    <p>Amount: ${(transaction.amount || 0) / 100} ${
-                      transaction.currency
-                    }</p>
-                  `,
-                  });
-                  req.payload.logger.info(
-                    `Order confirmation email sent to ${transaction.customerEmail}`
-                  );
-                } else {
+                if (!transaction) {
+                  console.error("❌ No transaction found for PaymentIntent:", paymentIntentID);
                   req.payload.logger.warn(
                     `Transaction not found for PaymentIntent: ${paymentIntentID}`
                   );
+                  return;
+                }
+
+                console.log("✅ Transaction found:", {
+                  id: transaction.id,
+                  customerEmail: transaction.customerEmail,
+                  amount: transaction.amount,
+                  currency: transaction.currency,
+                });
+
+                if (transaction.customerEmail) {
+                  console.log("📧 Attempting to send email to:", transaction.customerEmail);
+                  
+                  try {
+                    await req.payload.sendEmail({
+                      to: transaction.customerEmail,
+                      from: "noreply@moon.co",
+                      subject: "Order Confirmation - Moon co.",
+                      html: `
+                      <h1>Thank you for your order!</h1>
+                      <p>Your payment was successful.</p>
+                      <p>Transaction ID: ${transaction.id}</p>
+                      <p>Amount: ${(transaction.amount || 0) / 100} ${
+                        transaction.currency
+                      }</p>
+                    `,
+                    });
+                    
+                    console.log("✅ Email sent successfully to:", transaction.customerEmail);
+                    req.payload.logger.info(
+                      `Order confirmation email sent to ${transaction.customerEmail}`
+                    );
+                  } catch (emailErr) {
+                    console.error("❌ Email sending failed:", emailErr);
+                    req.payload.logger.error(
+                      `Failed to send email: ${emailErr}`
+                    );
+                  }
+                } else {
+                  console.warn("⚠️ Transaction found but no customerEmail");
                 }
               } catch (err) {
+                console.error("❌ Error processing webhook:", err);
+                console.error("Error stack:", err instanceof Error ? err.stack : 'No stack trace');
                 req.payload.logger.error(
                   `Error processing payment success webhook: ${err}`
                 );
               }
+              
+              console.log("============================================")
+              console.log("✅ WEBHOOK PROCESSING COMPLETED");
+              console.log("============================================")
             },
             "payment_intent.payment_failed": ({ event, req, stripe }) => {
               console.log("❌ Payment failed:", event.id);

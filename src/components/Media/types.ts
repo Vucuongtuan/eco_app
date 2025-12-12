@@ -21,4 +21,6 @@ export interface Props {
   width?: number;
   fClassName?: string;
   imgSize?: "thumbnail" | "small" | "medium" | "large";
+  focalX?: number;
+  focalY?: number;
 }

@@ -78,15 +78,16 @@ export const RichText: React.FC<Props> = (props) => {
   return (
     <RichTextWithoutBlocks
       converters={jsxConverters}
-      className={cn(
-        {
-          "container ": enableGutter,
-          "max-w-none": !enableGutter,
-          "mx-auto prose md:prose-md lg:prose-lg dark:prose-invert ":
-            enableProse,
-        },
+      className={
         className
-      )}
+          ? className
+          : cn({
+              "container ": enableGutter,
+              "max-w-none": !enableGutter,
+              "mx-auto prose md:prose-md lg:prose-lg dark:prose-invert ":
+                enableProse,
+            })
+      }
       {...rest}
     />
   );

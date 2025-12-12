@@ -35,6 +35,8 @@ export const Image: React.FC<ImageProps> = (props) => {
     size: sizeFromProps,
     src: srcFromProps,
     width: widthFromProps,
+    focalX,
+    focalY,
     onMouseEnter,
     onMouseLeave,
   } = props;
@@ -87,7 +89,12 @@ export const Image: React.FC<ImageProps> = (props) => {
       )}
       <NextImage
         alt={alt || ""}
-        className={cn(imgClassName)}
+        className={cn(imgClassName,
+          
+        )}
+        style={{
+          objectPosition: `${focalX}% ${focalY}%`
+        }}
         fill={fill}
         width={!fill ? widthFromProps : undefined}
         height={!fill ? heightFromProps : undefined}
