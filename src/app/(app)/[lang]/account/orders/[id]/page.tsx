@@ -81,7 +81,9 @@ export default async function Order({ params, searchParams }: PageProps) {
         shippingAddress: true,
       },
     })
-
+    console.log("=============")
+    console.log({orderResult})
+    console.log("=============")
     const canAccessAsGuest =
       !user &&
       email &&
@@ -101,7 +103,9 @@ export default async function Order({ params, searchParams }: PageProps) {
     }
   } catch (error) {
     console.error(error)
-  }
+  } 
+  console.log({order});
+  
 
   if (!order) {
     notFound()

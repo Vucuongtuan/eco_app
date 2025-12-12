@@ -1,9 +1,11 @@
 "use server";
 
+import { cacheFunc } from "@/lib/cacheFunc";
 import { query } from "@/lib/tryCatch";
-import { Product, Rate } from "@/payload-types";
+import { Post, Product, Rate } from "@/payload-types";
 import { Lang, PaginationOption, ResponseDocs } from "@/types";
 import { cookies } from "next/headers";
+import { PaginatedDocs } from "payload";
 
 interface FindProductsByCategoryProps extends PaginationOption {
   lang: Lang;
@@ -365,6 +367,37 @@ export const getCurrentUser = async () => {
   });
   if (err) return null;
   return result;
+};
+
+
+
+export const findLatestPostByLang = async (
+  lang: Lang,
+  pageParam?:number
+): Promise<PaginatedDocs<Post>> => {
+  return cacheFunc(
+    async () => {
+      const [result, err] = await query<PaginatedDocs<Post>>((payload) => {
+        return payload.find({
+          collection: "posts",
+          where: {
+            status: "published",
+          },
+          limit: 16,
+          locale: lang,
+          soft: "-publishAt",
+          page:pageParam || 1,
+        });
+      });
+
+      if (err) throw err;
+      return result
+    },
+    [`post-page`, lang],
+    {
+      tags: [`post-page-${lang}`],
+    }
+  )();
 };
 
 

@@ -258,5 +258,15 @@
       "resetFailed": "Failed to reset password. Please try again.",
       "generic": "An error occurred. Please try again."
     }
+  },
+  "posts":{
+    "title": "Posts",
+    "description": "Discover the latest articles about sustainable fashion",
+    "notFound": "Not found post",
+    "loading": "Loading more posts...",
+    "noMorePosts": "You've reached the end of the posts",
+    "share": "Share",
+    "copyLink": "Copy Link",
+    "copied": "Copied!"
   }
 }
