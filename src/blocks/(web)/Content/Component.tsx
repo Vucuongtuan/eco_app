@@ -21,7 +21,7 @@ export const ContentBlock: React.FC<
   const { columns, layout } = props;
 
   return (
-    <div className={`${layoutCtn(layout || "container")} my-16`}>
+    <div className={`${layoutCtn(layout || "container")} my-16 max-md:px-6`}>
       <div className="grid grid-cols-4 lg:grid-cols-12 gap-y-8 gap-x-16">
         {columns &&
           columns.length > 0 &&

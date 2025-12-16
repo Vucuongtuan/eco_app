@@ -224,7 +224,7 @@ export const plugins: Plugin[] = [
 
                 console.log("✅ Transaction found:", {
                   id: transaction.id,
-                  customerEmail: transaction.customerEmail,
+                  customerEmail: transaction.customerEmail || transaction.customer.email,
                   amount: transaction.amount,
                   currency: transaction.currency,
                 });

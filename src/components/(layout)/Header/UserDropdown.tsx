@@ -55,13 +55,13 @@ export function UserDropdown() {
             <UserCircle size={16} className="mr-2" />
             Profile
           </Link>
-          <Link
-            href="/logout"
+          <button
+            onClick={logout}
             className="flex items-center px-4 py-2 text-sm hover:bg-gray-100"
           >
             <LogOut size={16} className="mr-2" />
             Logout
-          </Link>
+          </button>
         </div>
       )}
     </div>

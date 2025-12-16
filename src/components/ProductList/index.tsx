@@ -50,10 +50,10 @@ export default function ProductList(props: ProductListProps) {
   return (
     <>
       {/* Filter Button */}
-      <div className="max-w-screen-3xl mx-auto px-16 py-4 flex items-center justify-between border-b">
+      <div className="max-w-screen-3xl mx-auto  px-6 md:px-16 py-4 flex items-center justify-between border-b">
         <button
           onClick={() => setIsFilterOpen(true)}
-          className="flex items-center gap-2 px-4 py-2 cursor-pointer  transition-colors"
+          className="flex items-center gap-2 md:px-4 py-2 cursor-pointer  transition-colors"
         >
           <svg
             width="16"

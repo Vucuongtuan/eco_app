@@ -1,3 +1,7 @@
+import { Cart } from "@/components/Cart";
+import { OpenCartButton } from "@/components/Cart/OpenCart";
+import { Suspense } from "react";
+
 interface MobileMenuButtonProps {
   isOpen: boolean;
   onClick: () => void;
@@ -5,7 +9,10 @@ interface MobileMenuButtonProps {
 
 export function MobileMenuButton({ isOpen, onClick }: MobileMenuButtonProps) {
   return (
-    <div className="md:hidden flex items-center gap-2">
+    <div className="md:hidden flex items-center gap-4 ">
+            <Suspense fallback={<OpenCartButton />}>
+              <Cart />
+            </Suspense>
       <button onClick={onClick} className="z-50">
         {isOpen ? (
           <svg
