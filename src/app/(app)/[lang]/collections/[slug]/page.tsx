@@ -33,7 +33,7 @@ export default async function PageCollection({ params }: Props) {
   return (
     <>
      {/* Breadcrumbs */}
-     <section className="max-w-screen-3xl mx-auto px-16 py-5 ">
+     <section className="max-w-screen-3xl mx-auto px-6 md:px-16 py-5 ">
       <Breadcrumbs breadcrumbs={[{
         label: category.title,
         href: `/collections/${category.slug}`,

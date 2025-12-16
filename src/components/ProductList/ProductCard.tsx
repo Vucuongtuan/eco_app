@@ -73,12 +73,12 @@ export const ProductCard = ({ doc, lang }: { doc: Product; lang: Lang }) => {
         })}
       </header>
 
-      <div className="px-4 py-2 space-y-2 flex flex-col items-start">
+      <div className="md:px-4 px-2 py-2 space-y-2 flex flex-col items-start">
         <Link
           href={`${localeLink}/products/${doc.slug}`}
           className="block w-full"
         >
-          <h3 className="text-sm md:text-base font-semibold text-gray-900 hover:text-primary-600">
+          <h3 className=" text-xs md:text-base font-semibold text-gray-900 hover:text-primary-600">
             {doc.title}
           </h3>
         </Link>
@@ -98,6 +98,7 @@ export const ProductCard = ({ doc, lang }: { doc: Product; lang: Lang }) => {
                   }
                   priceInVND={(doc as any).priceInVND}
                   enablePriceVND={(doc as any).enablePriceVND}
+                  className="md:text-base text-sm"
                 />
               </Suspense>
             </span>
@@ -105,7 +106,7 @@ export const ProductCard = ({ doc, lang }: { doc: Product; lang: Lang }) => {
         )}
       </div>
 
-      <footer className="px-4 pb-2 space-y-2">
+      <footer className="px-2 md:px-4 pb-2 space-y-2">
         {colorVariants.length > 0 && (
           <div className="flex gap-1">
             {colorVariants.slice(0, 4).map((item) => (

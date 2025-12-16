@@ -76,7 +76,7 @@ export async function Footer({ lang }: { lang: Lang }) {
       </div>
 
       {/* Name Site */}
-      <div className="w-full container max-w-screen-3xl mx-auto h-[150px] md:h-[250px] lg:h-[350px] xl:h-[400px] flex items-center justify-center relative">
+      <div className="w-full container max-w-screen-3xl mx-auto h-[120px] md:h-[250px] lg:h-[350px] xl:h-[400px] flex items-center justify-center relative">
         <LogoIcon className="w-full h-auto" fill />
       </div>
     </footer>

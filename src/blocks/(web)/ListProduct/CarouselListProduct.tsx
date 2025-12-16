@@ -5,9 +5,10 @@ import { ProductCard } from "@/components/ProductList/ProductCard";
 import { RichText } from "@/components/RichText";
 import { Product } from "@/payload-types";
 import { Lang } from "@/types";
+import { useWindowSize } from "@uidotdev/usehooks";
 import { motion } from "framer-motion";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 
 interface ListProductProps {
   gap?: number;
@@ -20,9 +21,10 @@ interface ListProductProps {
 
 export default function CarouselListProduct(props: ListProductProps) {
   const { data: d, lang, enableMedia, media, caption } = props;
+  const {width} = useWindowSize() 
   const data = d.length < 5 ? [...d, ...d, ...d] : [...d, ...d];
-
-  const ITEMS_PER_VIEW = 3.5;
+  const isDesktop = useMemo(() => (width ?? 0) > 1023, [width]);
+  const ITEMS_PER_VIEW = isDesktop ? 3.5 : 2.2;
 
   const [currentSlide, setCurrentSlide] = useState<number>(0);
 
@@ -87,12 +89,12 @@ export default function CarouselListProduct(props: ListProductProps) {
           </div>
         </div>
       </div>
-      <div className=" absolute top-12 right-7 flex gap-4">
+      <div className=" absolute top-8 lg:top-12 right-5 md:right-7 flex gap-4">
         <button
           type="button"
           onClick={onPrevClick}
           disabled={currentSlide === 0}
-          className="w-10 h-10 rounded-full bg-[#202124] flex items-center justify-center hover:bg-[#303134] disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+          className=" md:w-10 md:h-10 w-8 h-8 rounded-full bg-[#202124] flex items-center justify-center hover:bg-[#303134] disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
           aria-label="Previous"
         >
           <ChevronLeft className="w-5 h-5 text-white" />
@@ -101,7 +103,7 @@ export default function CarouselListProduct(props: ListProductProps) {
           type="button"
           onClick={onNextClick}
           disabled={currentSlide === maxSlide}
-          className="w-10 h-10 rounded-full bg-[#202124] flex items-center justify-center hover:bg-[#303134] disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+          className=" md:w-10 md:h-10 w-8 h-8 rounded-full bg-[#202124] flex items-center justify-center hover:bg-[#303134] disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
           aria-label="Next"
         >
           <ChevronRight className="w-5 h-5 text-white" />

@@ -14,7 +14,7 @@ export default function MetaTitle(props: MetaTitleProps) {
   return (
     <Comp
       className={cn(
-        `w-full  mx-auto px-16 py-5`,
+        `w-full  mx-auto px-6 md:px-16 md:py-5 max-md:pb-4`,
         `max-w-screen-3xl border-b  border-neutral-300`,
         align === "center" && "text-center",
         align === "right" && "text-right",

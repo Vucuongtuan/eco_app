@@ -4,6 +4,7 @@ import { Message } from '@/components/Message'
 import { Button } from '@/components/ui/button'
 import { Address } from '@/payload-types'
 import { useCart, usePayments } from '@payloadcms/plugin-ecommerce/client/react'
+import { useAuth } from '@payloadcms/ui'
 import { PaymentElement, useElements, useStripe } from '@stripe/react-stripe-js'
 import { useRouter } from 'next/navigation'
 import React, { FormEvent, useCallback } from 'react'
@@ -27,7 +28,9 @@ export const CheckoutForm: React.FC<Props> = ({
   const router = useRouter()
   const { clearCart } = useCart()
   const { confirmOrder } = usePayments()
+  const {user} = useAuth()
 
+  const email = customerEmail  || user?.email
   const handleSubmit = useCallback(
     async (e: FormEvent) => {
       e.preventDefault()
@@ -36,14 +39,14 @@ export const CheckoutForm: React.FC<Props> = ({
 
       if (stripe && elements) {
         try {
-          const returnUrl = `${process.env.NEXT_PUBLIC_SERVER_URL}/checkout/confirm-order${customerEmail ? `?email=${customerEmail}` : ''}`
+          const returnUrl = `${process.env.NEXT_PUBLIC_SERVER_URL}/checkout/confirm-order${email ? `?email=${email}` : ''}`
 
           const { error: stripeError, paymentIntent } = await stripe.confirmPayment({
             confirmParams: {
               return_url: returnUrl,
               payment_method_data: {
                 billing_details: {
-                  email: customerEmail,
+                  email: email,
                   phone: billingAddress?.phone,
                   address: {
                     line1: billingAddress?.addressLine1,
@@ -65,7 +68,7 @@ export const CheckoutForm: React.FC<Props> = ({
               const confirmResult = await confirmOrder('stripe', {
                 additionalData: {
                   paymentIntentID: paymentIntent.id,
-                  ...(customerEmail ? { customerEmail } : {}),
+                  ...(email ? { email } : {}),
                 },
               })
 
@@ -75,7 +78,7 @@ export const CheckoutForm: React.FC<Props> = ({
                 'orderID' in confirmResult &&
                 confirmResult.orderID
               ) {
-                const redirectUrl = `/account/orders/${confirmResult.orderID}${customerEmail ? `?email=${customerEmail}` : ''}`
+                const redirectUrl = `/account/orders/${confirmResult.orderID}${email ? `?email=${email}` : ''}`
 
                 // Clear the cart after successful payment
                 clearCart()
@@ -106,7 +109,7 @@ export const CheckoutForm: React.FC<Props> = ({
       setProcessingPayment,
       stripe,
       elements,
-      customerEmail,
+      email,
       billingAddress?.phone,
       billingAddress?.addressLine1,
       billingAddress?.addressLine2,

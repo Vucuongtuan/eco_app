@@ -58,7 +58,7 @@ export const RenderBlocks: React.FC<{
                     }
                   }
                   key={idx}
-                  aria-label={blockName || ""}
+                  aria-label={blockName || blockType}
                 >
                   {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
                   {/* @ts-ignore - weird type mismatch here */}
