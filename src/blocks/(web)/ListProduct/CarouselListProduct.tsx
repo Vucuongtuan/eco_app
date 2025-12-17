@@ -10,12 +10,14 @@ import { motion } from "framer-motion";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useCallback, useMemo, useState } from "react";
 
+import { Media as MediaType } from "@/payload-types";
+
 interface ListProductProps {
   gap?: number;
   data: Product[];
   enableMedia?: boolean;
-  media?: string;
-  caption?: string;
+  media?: string | MediaType;
+  caption?: any;
   lang?: string;
 }
 

@@ -19,11 +19,8 @@ export default async function ListProductsComp(props: Props) {
     categories,
     configs,
     lang,
-    //@ts-expect-error
     enableMedia,
-    //@ts-expect-error
     media,
-    //@ts-expect-error
     caption,
   } = props;
   let data;
@@ -54,16 +51,16 @@ export default async function ListProductsComp(props: Props) {
         <p>{description}</p>
       </header>
       {configs && configs.ui === "grid" && (
-        <GridComp gap={configs.gap || 20} data={data as Product[]} lang={lang} />
+        <GridComp gap={(configs as any).gap || 20} data={data as Product[]} lang={lang} />
       )}
       {configs && configs.ui === "carousel" && (
         <CarouselListProduct
-          gap={configs.gap || 20}
+          gap={(configs as any).gap || 20}
           data={data as Product[]}
           lang={lang}
-          enableMedia={enableMedia}
-          media={media}
-          caption={caption}
+          enableMedia={enableMedia || false}
+          media={media || undefined}
+          caption={caption || undefined}
           />
       )}
     </div>
