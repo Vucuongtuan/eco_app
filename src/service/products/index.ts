@@ -88,12 +88,8 @@ type FindProductsParams = {
   limit?: number;
   page?: number;
   cacheTags?: string[];
-  slugCategory?: {
-    main: string;
-    sub: string;
-  };
+  slugCategory?: string[]
   tags?: Tag[];
-  includeSubCategory?: boolean;
 };
 export const findListProducts = async ({
   lang,
@@ -102,7 +98,6 @@ export const findListProducts = async ({
   cacheTags = ["products"],
   slugCategory,
   tags,
-  includeSubCategory = false,
 }: FindProductsParams) =>
   cacheFunc(
     async () => {
@@ -112,15 +107,10 @@ export const findListProducts = async ({
 
       if (slugCategory) {
         const orConditions: any[] = [
-          { "taxonomies.category.slug": { equals: slugCategory.main } },
+          { "taxonomies.category": { in: slugCategory } },
         ];
 
-        if (includeSubCategory) {
-          orConditions.push({
-            "taxonomies.subcategory.slug": { equals: slugCategory.sub },
-          });
-        }
-
+    
         where.or = orConditions;
       }
 

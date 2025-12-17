@@ -79,6 +79,7 @@ export const Content: Block = {
     {
       name: "columns",
       type: "array",
+      interfaceName: "ContentColumns",
       admin: {
         initCollapsed: true,
       },

@@ -12,7 +12,7 @@ interface ProductInfoProps {
   lang: Lang;
   data: any;
   selectedVariant?: Variant | null;
-  category: Category;
+  category: Category[];
 }
 
 export function ProductInfo({
@@ -53,10 +53,10 @@ export function ProductInfo({
         </Link>
         <ChevronRight className="h-4 w-4" aria-hidden="true" />
         <Link
-          href={"/" + lang + "/" + category.slug}
+          href={"/" + lang + "/" + category[0].slug}
           className="transition-colors hover:text-foreground"
         >
-          {category.title}
+          {category[0].title}
         </Link>
         <ChevronRight className="h-4 w-4" aria-hidden="true" />
         <span className="text-foreground">{data.title}</span>

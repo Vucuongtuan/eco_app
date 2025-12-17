@@ -8,11 +8,11 @@ import { beforeChangeMetaImage } from "@/hooks/beforeChangeMetaImage";
 import { generatePreviewPath } from "@/utilities/generatePreviewPath";
 import { CollectionOverride } from "@payloadcms/plugin-ecommerce/types";
 import {
-  MetaDescriptionField,
-  MetaImageField,
-  MetaTitleField,
-  OverviewField,
-  PreviewField,
+    MetaDescriptionField,
+    MetaImageField,
+    MetaTitleField,
+    OverviewField,
+    PreviewField,
 } from "@payloadcms/plugin-seo/fields";
 import { DefaultDocumentIDType, Where } from "payload";
 
@@ -77,6 +77,7 @@ export const ProductsCollection: CollectionOverride = ({
             {
               name: "gallery",
               type: "array",
+              interfaceName: "ProductGallery",
               minRows: 1,
 
               fields: [
@@ -158,6 +159,7 @@ export const ProductsCollection: CollectionOverride = ({
             {
               name: "shortContent",
               type: "array",
+              interfaceName: "ProductShortContent",
               fields: [
                 {
                   name: "name",
@@ -301,6 +303,7 @@ export const ProductsCollection: CollectionOverride = ({
     {
       name: "taxonomies",
       type: "group",
+      interfaceName: "ProductTaxonomies",
       label: { vi: "Phân loại", en: "Taxonomies" },
       admin: { position: "sidebar" },
       fields: [

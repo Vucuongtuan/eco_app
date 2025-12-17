@@ -25,6 +25,7 @@ export const InfoList:Block = {
                           {
             name:"array",
             type:"array",
+            interfaceName: "InfoListArray",
             fields:[
                 {
                     name:"title",

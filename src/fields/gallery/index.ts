@@ -1,4 +1,4 @@
-import { ArrayField, Field } from "payload";
+import { ArrayField } from "payload";
 import { navItem } from "../navItem";
 
 type GalleryField = (isLink?: boolean, isContent?: boolean) => ArrayField;
@@ -13,6 +13,7 @@ export const galleryField: GalleryField = (
     fields.push({
       name: "link",
       type: "group",
+      interfaceName: "GalleryLinkGroup",
       label: {
         vi: "Liên kết",
         en: "Link",
@@ -41,6 +42,7 @@ export const galleryField: GalleryField = (
       {
         name: "cta",
         type: "group",
+        interfaceName: "GalleryCtaGroup",
         label: {
           vi: "Liên kết",
           en: "Link",
@@ -53,6 +55,7 @@ export const galleryField: GalleryField = (
   return {
     name: "gallery",
     type: "array",
+    interfaceName: "GalleryArray",
     fields: [
       {
         name: "image",

@@ -26,17 +26,13 @@ export async function generateStaticParams() {
 
 
 async function getRelatedProducts(product: Product, lang: Lang) {
-  const slugCategory = (product.taxonomies?.category as Category)?.slug;
-  const subCategory = (product.taxonomies?.subCategory as Category)?.slug;
+  const slugCategory = (product.taxonomies?.category as Category[]).map((item) => item.slug) as string[];
   const tags = product.taxonomies?.tags || [];
 
   if (!slugCategory && tags.length === 0) return [];
 
   const related = await findListProducts({
-    slugCategory: { main: slugCategory, sub: subCategory } as {
-      main: string;
-      sub: string;
-    },
+    slugCategory: slugCategory,
     tags: tags as Tag[],
     lang,
     limit: 8,

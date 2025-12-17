@@ -21,6 +21,7 @@ export const Rate: GlobalConfig = {
     {
       name: "rates",
       type: "array",
+      interfaceName: "RatesArray",
       fields: [
         {
           name: "currency",

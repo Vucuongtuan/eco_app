@@ -16,6 +16,7 @@ export const Header: GlobalConfig = {
     {
       name: "navItems",
       type: "array",
+      interfaceName: "HeaderNavItems",
       fields: [
         link({
           appearances: false,
@@ -24,6 +25,7 @@ export const Header: GlobalConfig = {
         {
           name: "child",
           type: "array",
+          interfaceName: "HeaderNavItemChild",
           fields: [
             link({
               appearances: false,
@@ -32,6 +34,7 @@ export const Header: GlobalConfig = {
             {
               name: "subChild",
               type: "array",
+              interfaceName: "HeaderNavItemSubChild",
               fields: [
                 link({
                   appearances: false,

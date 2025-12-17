@@ -119,6 +119,7 @@ export const variants = ({
     {
       name: "sizes",
       type: "array",
+      interfaceName: "VariantSizesArray",
       fields: [
         {
           type: "text",
