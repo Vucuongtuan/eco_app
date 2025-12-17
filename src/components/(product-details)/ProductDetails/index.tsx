@@ -59,7 +59,7 @@ export default function ProductDetails(props: ProductDetailsProps) {
           data={currentData}
           lang={lang}
           selectedVariant={selectedVariant}
-          category={doc.taxonomies.category as Category}
+          category={doc.taxonomies.category as Category[]}
         />
 
         <ColorSelector

@@ -11,6 +11,7 @@ export const Footer: GlobalConfig = {
     {
       name: "navItems",
       type: "array",
+      interfaceName: "FooterNavItems",
       fields: [
         link({
           appearances: false,

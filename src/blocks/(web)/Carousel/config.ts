@@ -25,6 +25,7 @@ export const Carousel: Block = {
             {
               type: "array",
               name: "gallery",
+              interfaceName: "CarouselGallery",
               fields: [
                 {
                   name: "media",

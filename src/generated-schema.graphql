@@ -175,8 +175,8 @@ type Product {
   id: String!
   title: String
   subTitle: String
-  gallery: [Product_Gallery!]
-  shortContent: [Product_ShortContent!]
+  gallery: [ProductGallery!]
+  shortContent: [ProductShortContent!]
   layout: [Product_Layout!]
   inventory: Float
   enableVariants: Boolean
@@ -190,7 +190,7 @@ type Product {
   relatedByTags(locale: LocaleInputType, fallbackLocale: FallbackLocaleInputType): Tag
   relatedByCategory(locale: LocaleInputType, fallbackLocale: FallbackLocaleInputType): Category
   meta: Product_Meta
-  taxonomies: Product_Taxonomies
+  taxonomies: ProductTaxonomies
   slug: String
   slugLock: Boolean
   updatedAt: DateTime
@@ -199,7 +199,7 @@ type Product {
   _status: Product__status
 }
 
-type Product_Gallery {
+type ProductGallery {
   image(locale: LocaleInputType, fallbackLocale: FallbackLocaleInputType): [Media!]
   variantOption(locale: LocaleInputType, fallbackLocale: FallbackLocaleInputType): VariantOption
   id: String
@@ -210,6 +210,7 @@ type Media {
   alt: String
   caption: String
   blurData: String
+  prefix: String
   folder(locale: LocaleInputType, fallbackLocale: FallbackLocaleInputType): PayloadFolder
   updatedAt: DateTime
   createdAt: DateTime
@@ -458,13 +459,13 @@ input VariantOption_where_or {
   OR: [VariantOption_where_or]
 }
 
-type Product_ShortContent {
-  name: Product_ShortContent_name
+type ProductShortContent {
+  name: ProductShortContent_name
   content(depth: Int): JSON
   id: String
 }
 
-enum Product_ShortContent_name {
+enum ProductShortContent_name {
   description
   material
   size
@@ -476,7 +477,7 @@ union Product_Layout = ContentBlock | MediaBlock
 type ContentBlock {
   layout: ContentBlock_layout
   spacing: ContentBlock_spacing
-  columns: [ContentBlock_Columns!]
+  columns: [ContentColumns!]
   id: String
   blockName: String
   blockType: String
@@ -496,22 +497,22 @@ enum ContentBlock_spacing {
   large
 }
 
-type ContentBlock_Columns {
-  size: ContentBlock_Columns_size
-  type: ContentBlock_Columns_type
+type ContentColumns {
+  size: ContentColumns_size
+  type: ContentColumns_type
   media(locale: LocaleInputType, fallbackLocale: FallbackLocaleInputType): Media
   richText(depth: Int): JSON
   id: String
 }
 
-enum ContentBlock_Columns_size {
+enum ContentColumns_size {
   oneThird
   half
   twoThirds
   full
 }
 
-enum ContentBlock_Columns_type {
+enum ContentColumns_type {
   content
   media
 }
@@ -544,35 +545,35 @@ enum MediaBlock_columns {
 
 type MediaBlock_Cta {
   content(depth: Int): JSON
-  link: MediaBlock_Cta_Link
+  link: LinkGroup
 }
 
-type MediaBlock_Cta_Link {
-  type: MediaBlock_Cta_Link_type
+type LinkGroup {
+  type: LinkGroup_type
   newTab: Boolean
-  reference(draft: Boolean, locale: LocaleInputType, fallbackLocale: FallbackLocaleInputType): MediaBlock_Cta_Link_Reference_Relationship
+  reference(draft: Boolean, locale: LocaleInputType, fallbackLocale: FallbackLocaleInputType): LinkGroup_Reference_Relationship
   url: String
   label: String
-  appearance: MediaBlock_Cta_Link_appearance
+  appearance: LinkGroup_appearance
 }
 
-enum MediaBlock_Cta_Link_type {
+enum LinkGroup_type {
   reference
   custom
 }
 
-type MediaBlock_Cta_Link_Reference_Relationship {
-  relationTo: MediaBlock_Cta_Link_Reference_RelationTo
-  value: MediaBlock_Cta_Link_Reference
+type LinkGroup_Reference_Relationship {
+  relationTo: LinkGroup_Reference_RelationTo
+  value: LinkGroup_Reference
 }
 
-enum MediaBlock_Cta_Link_Reference_RelationTo {
+enum LinkGroup_Reference_RelationTo {
   pages
   categories
   products
 }
 
-union MediaBlock_Cta_Link_Reference = Page | Category | Product
+union LinkGroup_Reference = Page | Category | Product
 
 type Page {
   id: String!
@@ -588,89 +589,40 @@ type Page {
   _status: Page__status
 }
 
-union Page_Sections = ContentBlock | MediaBlock | ColumnMedia | RowBlock | Carousel | ListProductsBlock | SpotlightMediaBlock | InfoListBlock | ModelBlock
+union Page_Sections = ContentBlock | MediaBlock | ColumnMediaBlock | RowBlock | Carousel | ListProductsBlock | SpotlightMediaBlock | InfoListBlock | ModelBlock
 
-type ColumnMedia {
-  items: [ColumnMedia_Items!]
-  layout: ColumnMedia_layout
-  spacing: ColumnMedia_spacing
-  aspect: ColumnMedia_aspect
+type ColumnMediaBlock {
+  items: [ColumnMediaItems!]
+  layout: ColumnMediaBlock_layout
+  spacing: ColumnMediaBlock_spacing
+  aspect: ColumnMediaBlock_aspect
   columns: Float
   id: String
   blockName: String
   blockType: String
 }
 
-type ColumnMedia_Items {
+type ColumnMediaItems {
   media(locale: LocaleInputType, fallbackLocale: FallbackLocaleInputType): Media
-  link: ColumnMedia_Items_Link
+  link: LinkGroup
   id: String
 }
 
-type ColumnMedia_Items_Link {
-  type: ColumnMedia_Items_Link_type
-  newTab: Boolean
-  reference(draft: Boolean, locale: LocaleInputType, fallbackLocale: FallbackLocaleInputType): ColumnMedia_Items_Link_Reference_Relationship
-  url: String
-  label: String
-  appearance: ColumnMedia_Items_Link_appearance
-}
-
-enum ColumnMedia_Items_Link_type {
-  reference
-  custom
-}
-
-type ColumnMedia_Items_Link_Reference_Relationship {
-  relationTo: ColumnMedia_Items_Link_Reference_RelationTo
-  value: ColumnMedia_Items_Link_Reference
-}
-
-enum ColumnMedia_Items_Link_Reference_RelationTo {
-  pages
-  categories
-  products
-}
-
-union ColumnMedia_Items_Link_Reference = Page | Category | Product
-
-type Category {
-  id: String!
-  title: String
-  description: String
-  slug: String
-  slugLock: Boolean
-  meta: Category_Meta
-  updatedAt: DateTime
-  createdAt: DateTime
-}
-
-type Category_Meta {
-  title: String
-  description: String
-  image(locale: LocaleInputType, fallbackLocale: FallbackLocaleInputType): Media
-}
-
-enum ColumnMedia_Items_Link_appearance {
-  default
-  outline
-}
-
-enum ColumnMedia_layout {
+enum ColumnMediaBlock_layout {
   container
   full
   wide
   narrow
 }
 
-enum ColumnMedia_spacing {
+enum ColumnMediaBlock_spacing {
   none
   small
   medium
   large
 }
 
-enum ColumnMedia_aspect {
+enum ColumnMediaBlock_aspect {
   auto
   ultrawide
   photo
@@ -711,7 +663,7 @@ union RowBlock_Row = ContentBlock
 
 type Carousel {
   duration: Float
-  gallery: [Carousel_Gallery!]
+  gallery: [CarouselGallery!]
   layout: Carousel_layout
   spacing: Carousel_spacing
   aspect: Carousel_aspect
@@ -720,43 +672,12 @@ type Carousel {
   blockType: String
 }
 
-type Carousel_Gallery {
+type CarouselGallery {
   media(locale: LocaleInputType, fallbackLocale: FallbackLocaleInputType): Media
   heading: String
   content(depth: Int): JSON
-  link: Carousel_Gallery_Link
+  link: LinkGroup
   id: String
-}
-
-type Carousel_Gallery_Link {
-  type: Carousel_Gallery_Link_type
-  newTab: Boolean
-  reference(draft: Boolean, locale: LocaleInputType, fallbackLocale: FallbackLocaleInputType): Carousel_Gallery_Link_Reference_Relationship
-  url: String
-  appearance: Carousel_Gallery_Link_appearance
-}
-
-enum Carousel_Gallery_Link_type {
-  reference
-  custom
-}
-
-type Carousel_Gallery_Link_Reference_Relationship {
-  relationTo: Carousel_Gallery_Link_Reference_RelationTo
-  value: Carousel_Gallery_Link_Reference
-}
-
-enum Carousel_Gallery_Link_Reference_RelationTo {
-  pages
-  categories
-  products
-}
-
-union Carousel_Gallery_Link_Reference = Page | Category | Product
-
-enum Carousel_Gallery_Link_appearance {
-  default
-  outline
 }
 
 enum Carousel_layout {
@@ -806,10 +727,28 @@ enum ListProductsBlock_type {
   products
 }
 
+type Category {
+  id: String!
+  title: String
+  description: String
+  slug: String
+  slugLock: Boolean
+  meta: Category_Meta
+  updatedAt: DateTime
+  createdAt: DateTime
+}
+
+type Category_Meta {
+  title: String
+  description: String
+  image(locale: LocaleInputType, fallbackLocale: FallbackLocaleInputType): Media
+}
+
 type ListProductsBlock_Configs {
   layout: ListProductsBlock_Configs_layout
   spacing: ListProductsBlock_Configs_spacing
   ui: ListProductsBlock_Configs_ui
+  gap: Float
 }
 
 enum ListProductsBlock_Configs_layout {
@@ -834,48 +773,16 @@ enum ListProductsBlock_Configs_ui {
 type SpotlightMediaBlock {
   title: String
   media(locale: LocaleInputType, fallbackLocale: FallbackLocaleInputType): Media
-  features: [SpotlightMediaBlock_Features!]
+  features: [SpotlightMediaFeatures!]
   configs: SpotlightMediaBlock_Configs
   id: String
   blockName: String
   blockType: String
 }
 
-type SpotlightMediaBlock_Features {
-  link: SpotlightMediaBlock_Features_Link
+type SpotlightMediaFeatures {
+  link: LinkGroup
   id: String
-}
-
-type SpotlightMediaBlock_Features_Link {
-  type: SpotlightMediaBlock_Features_Link_type
-  newTab: Boolean
-  reference(draft: Boolean, locale: LocaleInputType, fallbackLocale: FallbackLocaleInputType): SpotlightMediaBlock_Features_Link_Reference_Relationship
-  url: String
-  label: String
-  appearance: SpotlightMediaBlock_Features_Link_appearance
-}
-
-enum SpotlightMediaBlock_Features_Link_type {
-  reference
-  custom
-}
-
-type SpotlightMediaBlock_Features_Link_Reference_Relationship {
-  relationTo: SpotlightMediaBlock_Features_Link_Reference_RelationTo
-  value: SpotlightMediaBlock_Features_Link_Reference
-}
-
-enum SpotlightMediaBlock_Features_Link_Reference_RelationTo {
-  pages
-  categories
-  products
-}
-
-union SpotlightMediaBlock_Features_Link_Reference = Page | Category | Product
-
-enum SpotlightMediaBlock_Features_Link_appearance {
-  default
-  outline
 }
 
 type SpotlightMediaBlock_Configs {
@@ -898,14 +805,14 @@ enum SpotlightMediaBlock_Configs_spacing {
 }
 
 type InfoListBlock {
-  array: [InfoListBlock_Array!]
+  array: [InfoListArray!]
   configs: InfoListBlock_Configs
   id: String
   blockName: String
   blockType: String
 }
 
-type InfoListBlock_Array {
+type InfoListArray {
   title: String
   description: String
   image(locale: LocaleInputType, fallbackLocale: FallbackLocaleInputType): Media
@@ -950,7 +857,7 @@ enum Page__status {
   published
 }
 
-enum MediaBlock_Cta_Link_appearance {
+enum LinkGroup_appearance {
   default
   outline
 }
@@ -1210,13 +1117,13 @@ type Product_Meta {
   image(locale: LocaleInputType, fallbackLocale: FallbackLocaleInputType): Media
 }
 
-type Product_Taxonomies {
-  gender: Product_Taxonomies_gender
+type ProductTaxonomies {
+  gender: ProductTaxonomies_gender
   category(locale: LocaleInputType, fallbackLocale: FallbackLocaleInputType): [Category!]
   tags(locale: LocaleInputType, fallbackLocale: FallbackLocaleInputType): [Tag!]
 }
 
-enum Product_Taxonomies_gender {
+enum ProductTaxonomies_gender {
   men
   women
 }
@@ -2753,6 +2660,7 @@ input Media_where {
   alt: Media_alt_operator
   caption: Media_caption_operator
   blurData: Media_blurData_operator
+  prefix: Media_prefix_operator
   folder: Media_folder_operator
   updatedAt: Media_updatedAt_operator
   createdAt: Media_createdAt_operator
@@ -2821,6 +2729,17 @@ input Media_blurData_operator {
   not_equals: String
   like: String
   contains: String
+  exists: Boolean
+}
+
+input Media_prefix_operator {
+  equals: String
+  not_equals: String
+  like: String
+  contains: String
+  in: [String]
+  not_in: [String]
+  all: [String]
   exists: Boolean
 }
 
@@ -3216,6 +3135,7 @@ input Media_where_and {
   alt: Media_alt_operator
   caption: Media_caption_operator
   blurData: Media_blurData_operator
+  prefix: Media_prefix_operator
   folder: Media_folder_operator
   updatedAt: Media_updatedAt_operator
   createdAt: Media_createdAt_operator
@@ -3261,6 +3181,7 @@ input Media_where_or {
   alt: Media_alt_operator
   caption: Media_caption_operator
   blurData: Media_blurData_operator
+  prefix: Media_prefix_operator
   folder: Media_folder_operator
   updatedAt: Media_updatedAt_operator
   createdAt: Media_createdAt_operator
@@ -3318,6 +3239,7 @@ type MediaDocAccessFields {
   alt: MediaDocAccessFields_alt
   caption: MediaDocAccessFields_caption
   blurData: MediaDocAccessFields_blurData
+  prefix: MediaDocAccessFields_prefix
   folder: MediaDocAccessFields_folder
   updatedAt: MediaDocAccessFields_updatedAt
   createdAt: MediaDocAccessFields_createdAt
@@ -3399,6 +3321,29 @@ type MediaDocAccessFields_blurData_Update {
 }
 
 type MediaDocAccessFields_blurData_Delete {
+  permission: Boolean!
+}
+
+type MediaDocAccessFields_prefix {
+  create: MediaDocAccessFields_prefix_Create
+  read: MediaDocAccessFields_prefix_Read
+  update: MediaDocAccessFields_prefix_Update
+  delete: MediaDocAccessFields_prefix_Delete
+}
+
+type MediaDocAccessFields_prefix_Create {
+  permission: Boolean!
+}
+
+type MediaDocAccessFields_prefix_Read {
+  permission: Boolean!
+}
+
+type MediaDocAccessFields_prefix_Update {
+  permission: Boolean!
+}
+
+type MediaDocAccessFields_prefix_Delete {
   permission: Boolean!
 }
 
@@ -6826,7 +6771,7 @@ type PageVersion_Version {
   _status: PageVersion_Version__status
 }
 
-union PageVersion_Version_Sections = ContentBlock | MediaBlock | ColumnMedia | RowBlock | Carousel | ListProductsBlock | SpotlightMediaBlock | InfoListBlock | ModelBlock
+union PageVersion_Version_Sections = ContentBlock | MediaBlock | ColumnMediaBlock | RowBlock | Carousel | ListProductsBlock | SpotlightMediaBlock | InfoListBlock | ModelBlock
 
 type PageVersion_Version_Meta {
   title: String
@@ -12046,8 +11991,8 @@ type ProductVersion {
 type ProductVersion_Version {
   title: String
   subTitle: String
-  gallery: [ProductVersion_Version_Gallery!]
-  shortContent: [ProductVersion_Version_ShortContent!]
+  gallery: [ProductGallery!]
+  shortContent: [ProductShortContent!]
   layout: [ProductVersion_Version_Layout!]
   inventory: Float
   enableVariants: Boolean
@@ -12061,32 +12006,13 @@ type ProductVersion_Version {
   relatedByTags(locale: LocaleInputType, fallbackLocale: FallbackLocaleInputType): Tag
   relatedByCategory(locale: LocaleInputType, fallbackLocale: FallbackLocaleInputType): Category
   meta: ProductVersion_Version_Meta
-  taxonomies: ProductVersion_Version_Taxonomies
+  taxonomies: ProductTaxonomies
   slug: String
   slugLock: Boolean
   updatedAt: DateTime
   createdAt: DateTime
   deletedAt: DateTime
   _status: ProductVersion_Version__status
-}
-
-type ProductVersion_Version_Gallery {
-  image(locale: LocaleInputType, fallbackLocale: FallbackLocaleInputType): [Media!]
-  variantOption(locale: LocaleInputType, fallbackLocale: FallbackLocaleInputType): VariantOption
-  id: String
-}
-
-type ProductVersion_Version_ShortContent {
-  name: ProductVersion_Version_ShortContent_name
-  content(depth: Int): JSON
-  id: String
-}
-
-enum ProductVersion_Version_ShortContent_name {
-  description
-  material
-  size
-  other
 }
 
 union ProductVersion_Version_Layout = ContentBlock | MediaBlock
@@ -12107,17 +12033,6 @@ type ProductVersion_Version_Meta {
   title: String
   description: String
   image(locale: LocaleInputType, fallbackLocale: FallbackLocaleInputType): Media
-}
-
-type ProductVersion_Version_Taxonomies {
-  gender: ProductVersion_Version_Taxonomies_gender
-  category(locale: LocaleInputType, fallbackLocale: FallbackLocaleInputType): [Category!]
-  tags(locale: LocaleInputType, fallbackLocale: FallbackLocaleInputType): [Tag!]
-}
-
-enum ProductVersion_Version_Taxonomies_gender {
-  men
-  women
 }
 
 enum ProductVersion_Version__status {
@@ -16840,105 +16755,27 @@ type PayloadPreferencesDeleteDocAccess {
 
 type Header {
   logo(locale: LocaleInputType, fallbackLocale: FallbackLocaleInputType): Media
-  navItems: [Header_NavItems!]
+  navItems: [HeaderNavItems!]
   updatedAt: DateTime
   createdAt: DateTime
 }
 
-type Header_NavItems {
-  link: Header_NavItems_Link
-  child: [Header_NavItems_Child!]
+type HeaderNavItems {
+  link: LinkGroup
+  child: [HeaderNavItemChild!]
   id: String
 }
 
-type Header_NavItems_Link {
-  type: Header_NavItems_Link_type
-  newTab: Boolean
-  reference(draft: Boolean, locale: LocaleInputType, fallbackLocale: FallbackLocaleInputType): Header_NavItems_Link_Reference_Relationship
-  url: String
-  label: String
-}
-
-enum Header_NavItems_Link_type {
-  reference
-  custom
-}
-
-type Header_NavItems_Link_Reference_Relationship {
-  relationTo: Header_NavItems_Link_Reference_RelationTo
-  value: Header_NavItems_Link_Reference
-}
-
-enum Header_NavItems_Link_Reference_RelationTo {
-  pages
-  categories
-  products
-}
-
-union Header_NavItems_Link_Reference = Page | Category | Product
-
-type Header_NavItems_Child {
-  link: Header_NavItems_Child_Link
-  subChild: [Header_NavItems_Child_SubChild!]
+type HeaderNavItemChild {
+  link: LinkGroup
+  subChild: [HeaderNavItemSubChild!]
   id: String
 }
 
-type Header_NavItems_Child_Link {
-  type: Header_NavItems_Child_Link_type
-  newTab: Boolean
-  reference(draft: Boolean, locale: LocaleInputType, fallbackLocale: FallbackLocaleInputType): Header_NavItems_Child_Link_Reference_Relationship
-  url: String
-  label: String
-}
-
-enum Header_NavItems_Child_Link_type {
-  reference
-  custom
-}
-
-type Header_NavItems_Child_Link_Reference_Relationship {
-  relationTo: Header_NavItems_Child_Link_Reference_RelationTo
-  value: Header_NavItems_Child_Link_Reference
-}
-
-enum Header_NavItems_Child_Link_Reference_RelationTo {
-  pages
-  categories
-  products
-}
-
-union Header_NavItems_Child_Link_Reference = Page | Category | Product
-
-type Header_NavItems_Child_SubChild {
-  link: Header_NavItems_Child_SubChild_Link
+type HeaderNavItemSubChild {
+  link: LinkGroup
   id: String
 }
-
-type Header_NavItems_Child_SubChild_Link {
-  type: Header_NavItems_Child_SubChild_Link_type
-  newTab: Boolean
-  reference(draft: Boolean, locale: LocaleInputType, fallbackLocale: FallbackLocaleInputType): Header_NavItems_Child_SubChild_Link_Reference_Relationship
-  url: String
-  label: String
-}
-
-enum Header_NavItems_Child_SubChild_Link_type {
-  reference
-  custom
-}
-
-type Header_NavItems_Child_SubChild_Link_Reference_Relationship {
-  relationTo: Header_NavItems_Child_SubChild_Link_Reference_RelationTo
-  value: Header_NavItems_Child_SubChild_Link_Reference
-}
-
-enum Header_NavItems_Child_SubChild_Link_Reference_RelationTo {
-  pages
-  categories
-  products
-}
-
-union Header_NavItems_Child_SubChild_Link_Reference = Page | Category | Product
 
 type headerDocAccess {
   fields: HeaderDocAccessFields
@@ -17632,41 +17469,15 @@ type HeaderUpdateDocAccess {
 }
 
 type Footer {
-  navItems: [Footer_NavItems!]
+  navItems: [FooterNavItems!]
   updatedAt: DateTime
   createdAt: DateTime
 }
 
-type Footer_NavItems {
-  link: Footer_NavItems_Link
+type FooterNavItems {
+  link: LinkGroup
   id: String
 }
-
-type Footer_NavItems_Link {
-  type: Footer_NavItems_Link_type
-  newTab: Boolean
-  reference(draft: Boolean, locale: LocaleInputType, fallbackLocale: FallbackLocaleInputType): Footer_NavItems_Link_Reference_Relationship
-  url: String
-  label: String
-}
-
-enum Footer_NavItems_Link_type {
-  reference
-  custom
-}
-
-type Footer_NavItems_Link_Reference_Relationship {
-  relationTo: Footer_NavItems_Link_Reference_RelationTo
-  value: Footer_NavItems_Link_Reference
-}
-
-enum Footer_NavItems_Link_Reference_RelationTo {
-  pages
-  categories
-  products
-}
-
-union Footer_NavItems_Link_Reference = Page | Category | Product
 
 type footerDocAccess {
   fields: FooterDocAccessFields
@@ -17936,12 +17747,12 @@ type FooterUpdateDocAccess {
 }
 
 type Rate {
-  rates: [Rate_Rates!]
+  rates: [RatesArray!]
   updatedAt: DateTime
   createdAt: DateTime
 }
 
-type Rate_Rates {
+type RatesArray {
   currency: String
   rate: Float
   id: String
@@ -18487,6 +18298,7 @@ type MediaFields {
   alt: MediaFields_alt
   caption: MediaFields_caption
   blurData: MediaFields_blurData
+  prefix: MediaFields_prefix
   folder: MediaFields_folder
   updatedAt: MediaFields_updatedAt
   createdAt: MediaFields_createdAt
@@ -18568,6 +18380,29 @@ type MediaFields_blurData_Update {
 }
 
 type MediaFields_blurData_Delete {
+  permission: Boolean!
+}
+
+type MediaFields_prefix {
+  create: MediaFields_prefix_Create
+  read: MediaFields_prefix_Read
+  update: MediaFields_prefix_Update
+  delete: MediaFields_prefix_Delete
+}
+
+type MediaFields_prefix_Create {
+  permission: Boolean!
+}
+
+type MediaFields_prefix_Read {
+  permission: Boolean!
+}
+
+type MediaFields_prefix_Update {
+  permission: Boolean!
+}
+
+type MediaFields_prefix_Delete {
   permission: Boolean!
 }
 
@@ -28040,6 +27875,7 @@ input mutationMediaInput {
   alt: String
   caption: String
   blurData: String
+  prefix: String
   folder: String
   updatedAt: String
   createdAt: String
@@ -28102,6 +27938,7 @@ input mutationMediaUpdateInput {
   alt: String
   caption: String
   blurData: String
+  prefix: String
   folder: String
   updatedAt: String
   createdAt: String

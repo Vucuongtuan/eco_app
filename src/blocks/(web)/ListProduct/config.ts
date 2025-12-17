@@ -109,6 +109,16 @@ export const ListProducts: Block = {
                 },
               ],
             },
+            {
+              name: "gap",
+              type: "number",
+              defaultValue: 20,
+              min: 0,
+              max: 100,
+              admin: {
+                description: "Khoảng cách giữa các sản phẩm (px)",
+              },
+            },
           ],
         },
       ],

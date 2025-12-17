@@ -5,6 +5,7 @@ import { Block } from "payload";
 
 export const ColumnMedia: Block = {
   slug: "columnMedia",
+  interfaceName: "ColumnMediaBlock",
   fields: [
     {
       type: "tabs",
@@ -18,6 +19,7 @@ export const ColumnMedia: Block = {
             {
               name: "items",
               type: "array",
+              interfaceName: "ColumnMediaItems",
               fields: [
                 {
                   name: "media",

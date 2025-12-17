@@ -38,6 +38,7 @@ export const link: LinkType = ({
   const linkResult: Field = {
     name: "link",
     type: "group",
+    interfaceName: "LinkGroup",
     admin: {
       hideGutter: true,
       ...admin,

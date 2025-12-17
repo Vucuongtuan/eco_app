@@ -58,6 +58,7 @@ export const SpotlightMedia:Block = {
         {
             type:"array",
             name:"features",
+            interfaceName: "SpotlightMediaFeatures",
             fields:[
                 link({
                     localeLabel:true

@@ -7,6 +7,7 @@ export const specificationsField = (): Field => ({
     en: "Specifications",
   },
   type: "array",
+  interfaceName: "SpecificationsArray",
   labels: {
     singular: {
       vi: "Thông số",

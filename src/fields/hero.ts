@@ -1,10 +1,10 @@
 import type { Field } from 'payload'
 
 import {
-  FixedToolbarFeature,
-  HeadingFeature,
-  InlineToolbarFeature,
-  lexicalEditor,
+    FixedToolbarFeature,
+    HeadingFeature,
+    InlineToolbarFeature,
+    lexicalEditor,
 } from '@payloadcms/richtext-lexical'
 
 import { linkGroup } from './linkGroup'
@@ -12,6 +12,7 @@ import { linkGroup } from './linkGroup'
 export const hero: Field = {
   name: 'hero',
   type: 'group',
+  interfaceName: 'HeroGroup',
   fields: [
     {
       name: 'type',
