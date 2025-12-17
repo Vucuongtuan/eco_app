@@ -43,6 +43,8 @@ type Query {
   Screens(draft: Boolean, where: Screen_where, fallbackLocale: FallbackLocaleInputType, locale: LocaleInputType, limit: Int, page: Int, pagination: Boolean, select: Boolean, sort: String, trash: Boolean): Screens
   countScreens(draft: Boolean, trash: Boolean, where: Screen_where, locale: LocaleInputType): countScreens
   docAccessScreen(id: String!): screenDocAccess
+  versionScreen(id: String, fallbackLocale: FallbackLocaleInputType, locale: LocaleInputType, trash: Boolean): ScreenVersion
+  versionsScreens(where: versionsScreen_where, fallbackLocale: FallbackLocaleInputType, locale: LocaleInputType, limit: Int, page: Int, pagination: Boolean, select: Boolean, sort: String, trash: Boolean): versionsScreens
   Notification(id: String!, draft: Boolean, fallbackLocale: FallbackLocaleInputType, locale: LocaleInputType, select: Boolean, trash: Boolean): Notification
   Notifications(draft: Boolean, where: Notification_where, fallbackLocale: FallbackLocaleInputType, locale: LocaleInputType, limit: Int, page: Int, pagination: Boolean, select: Boolean, sort: String, trash: Boolean): Notifications
   countNotifications(draft: Boolean, trash: Boolean, where: Notification_where, locale: LocaleInputType): countNotifications
@@ -7865,11 +7867,61 @@ input versionsPost_where_or {
 type Screen {
   id: String!
   title: String
-  description: String
+  generateSlug: Boolean
   slug: String
-  slugLock: Boolean
+  sections: [Screen_Sections!]
   updatedAt: DateTime
   createdAt: DateTime
+  _status: Screen__status
+}
+
+union Screen_Sections = MobileNotificationProps | MobileProductArchivesProps | MobileContentProps
+
+type MobileNotificationProps {
+  title: String
+  title_en: String
+  description: String
+  description_en: String
+  media(locale: LocaleInputType, fallbackLocale: FallbackLocaleInputType): Media
+  id: String
+  blockName: String
+  blockType: String
+}
+
+type MobileProductArchivesProps {
+  title: String
+  title_en: String
+  description: String
+  description_en: String
+  type: MobileProductArchivesProps_type
+  category(locale: LocaleInputType, fallbackLocale: FallbackLocaleInputType): Category
+  product(draft: Boolean, locale: LocaleInputType, fallbackLocale: FallbackLocaleInputType): Product
+  id: String
+  blockName: String
+  blockType: String
+}
+
+enum MobileProductArchivesProps_type {
+  category
+  product
+  new
+}
+
+type MobileContentProps {
+  title: String
+  title_en: String
+  description: String
+  description_en: String
+  content(depth: Int): JSON
+  content_en(depth: Int): JSON
+  id: String
+  blockName: String
+  blockType: String
+}
+
+enum Screen__status {
+  draft
+  published
 }
 
 type Screens {
@@ -7888,11 +7940,11 @@ type Screens {
 
 input Screen_where {
   title: Screen_title_operator
-  description: Screen_description_operator
+  generateSlug: Screen_generateSlug_operator
   slug: Screen_slug_operator
-  slugLock: Screen_slugLock_operator
   updatedAt: Screen_updatedAt_operator
   createdAt: Screen_createdAt_operator
+  _status: Screen__status_operator
   id: Screen_id_operator
   AND: [Screen_where_and]
   OR: [Screen_where_or]
@@ -7906,16 +7958,12 @@ input Screen_title_operator {
   in: [String]
   not_in: [String]
   all: [String]
+  exists: Boolean
 }
 
-input Screen_description_operator {
-  equals: String
-  not_equals: String
-  like: String
-  contains: String
-  in: [String]
-  not_in: [String]
-  all: [String]
+input Screen_generateSlug_operator {
+  equals: Boolean
+  not_equals: Boolean
   exists: Boolean
 }
 
@@ -7927,13 +7975,6 @@ input Screen_slug_operator {
   in: [String]
   not_in: [String]
   all: [String]
-  exists: Boolean
-}
-
-input Screen_slugLock_operator {
-  equals: Boolean
-  not_equals: Boolean
-  exists: Boolean
 }
 
 input Screen_updatedAt_operator {
@@ -7958,6 +7999,20 @@ input Screen_createdAt_operator {
   exists: Boolean
 }
 
+input Screen__status_operator {
+  equals: Screen__status_Input
+  not_equals: Screen__status_Input
+  in: [Screen__status_Input]
+  not_in: [Screen__status_Input]
+  all: [Screen__status_Input]
+  exists: Boolean
+}
+
+enum Screen__status_Input {
+  draft
+  published
+}
+
 input Screen_id_operator {
   equals: String
   not_equals: String
@@ -7971,11 +8026,11 @@ input Screen_id_operator {
 
 input Screen_where_and {
   title: Screen_title_operator
-  description: Screen_description_operator
+  generateSlug: Screen_generateSlug_operator
   slug: Screen_slug_operator
-  slugLock: Screen_slugLock_operator
   updatedAt: Screen_updatedAt_operator
   createdAt: Screen_createdAt_operator
+  _status: Screen__status_operator
   id: Screen_id_operator
   AND: [Screen_where_and]
   OR: [Screen_where_or]
@@ -7983,11 +8038,11 @@ input Screen_where_and {
 
 input Screen_where_or {
   title: Screen_title_operator
-  description: Screen_description_operator
+  generateSlug: Screen_generateSlug_operator
   slug: Screen_slug_operator
-  slugLock: Screen_slugLock_operator
   updatedAt: Screen_updatedAt_operator
   createdAt: Screen_createdAt_operator
+  _status: Screen__status_operator
   id: Screen_id_operator
   AND: [Screen_where_and]
   OR: [Screen_where_or]
@@ -8003,16 +8058,17 @@ type screenDocAccess {
   read: ScreenReadDocAccess
   update: ScreenUpdateDocAccess
   delete: ScreenDeleteDocAccess
+  readVersions: ScreenReadVersionsDocAccess
 }
 
 type ScreenDocAccessFields {
   title: ScreenDocAccessFields_title
-  description: ScreenDocAccessFields_description
+  generateSlug: ScreenDocAccessFields_generateSlug
   slug: ScreenDocAccessFields_slug
-  slugLock: ScreenDocAccessFields_slugLock
   sections: ScreenDocAccessFields_sections
   updatedAt: ScreenDocAccessFields_updatedAt
   createdAt: ScreenDocAccessFields_createdAt
+  _status: ScreenDocAccessFields__status
 }
 
 type ScreenDocAccessFields_title {
@@ -8038,26 +8094,26 @@ type ScreenDocAccessFields_title_Delete {
   permission: Boolean!
 }
 
-type ScreenDocAccessFields_description {
-  create: ScreenDocAccessFields_description_Create
-  read: ScreenDocAccessFields_description_Read
-  update: ScreenDocAccessFields_description_Update
-  delete: ScreenDocAccessFields_description_Delete
+type ScreenDocAccessFields_generateSlug {
+  create: ScreenDocAccessFields_generateSlug_Create
+  read: ScreenDocAccessFields_generateSlug_Read
+  update: ScreenDocAccessFields_generateSlug_Update
+  delete: ScreenDocAccessFields_generateSlug_Delete
 }
 
-type ScreenDocAccessFields_description_Create {
+type ScreenDocAccessFields_generateSlug_Create {
   permission: Boolean!
 }
 
-type ScreenDocAccessFields_description_Read {
+type ScreenDocAccessFields_generateSlug_Read {
   permission: Boolean!
 }
 
-type ScreenDocAccessFields_description_Update {
+type ScreenDocAccessFields_generateSlug_Update {
   permission: Boolean!
 }
 
-type ScreenDocAccessFields_description_Delete {
+type ScreenDocAccessFields_generateSlug_Delete {
   permission: Boolean!
 }
 
@@ -8081,29 +8137,6 @@ type ScreenDocAccessFields_slug_Update {
 }
 
 type ScreenDocAccessFields_slug_Delete {
-  permission: Boolean!
-}
-
-type ScreenDocAccessFields_slugLock {
-  create: ScreenDocAccessFields_slugLock_Create
-  read: ScreenDocAccessFields_slugLock_Read
-  update: ScreenDocAccessFields_slugLock_Update
-  delete: ScreenDocAccessFields_slugLock_Delete
-}
-
-type ScreenDocAccessFields_slugLock_Create {
-  permission: Boolean!
-}
-
-type ScreenDocAccessFields_slugLock_Read {
-  permission: Boolean!
-}
-
-type ScreenDocAccessFields_slugLock_Update {
-  permission: Boolean!
-}
-
-type ScreenDocAccessFields_slugLock_Delete {
   permission: Boolean!
 }
 
@@ -8176,6 +8209,29 @@ type ScreenDocAccessFields_createdAt_Delete {
   permission: Boolean!
 }
 
+type ScreenDocAccessFields__status {
+  create: ScreenDocAccessFields__status_Create
+  read: ScreenDocAccessFields__status_Read
+  update: ScreenDocAccessFields__status_Update
+  delete: ScreenDocAccessFields__status_Delete
+}
+
+type ScreenDocAccessFields__status_Create {
+  permission: Boolean!
+}
+
+type ScreenDocAccessFields__status_Read {
+  permission: Boolean!
+}
+
+type ScreenDocAccessFields__status_Update {
+  permission: Boolean!
+}
+
+type ScreenDocAccessFields__status_Delete {
+  permission: Boolean!
+}
+
 type ScreenCreateDocAccess {
   permission: Boolean!
   where: JSONObject
@@ -8194,6 +8250,243 @@ type ScreenUpdateDocAccess {
 type ScreenDeleteDocAccess {
   permission: Boolean!
   where: JSONObject
+}
+
+type ScreenReadVersionsDocAccess {
+  permission: Boolean!
+  where: JSONObject
+}
+
+type ScreenVersion {
+  parent(draft: Boolean, locale: LocaleInputType, fallbackLocale: FallbackLocaleInputType): Screen
+  version: ScreenVersion_Version
+  createdAt: DateTime
+  updatedAt: DateTime
+  snapshot: Boolean
+  publishedLocale: ScreenVersion_publishedLocale
+  latest: Boolean
+  id: String
+}
+
+type ScreenVersion_Version {
+  title: String
+  generateSlug: Boolean
+  slug: String
+  sections: [ScreenVersion_Version_Sections!]
+  updatedAt: DateTime
+  createdAt: DateTime
+  _status: ScreenVersion_Version__status
+}
+
+union ScreenVersion_Version_Sections = MobileNotificationProps | MobileProductArchivesProps | MobileContentProps
+
+enum ScreenVersion_Version__status {
+  draft
+  published
+}
+
+enum ScreenVersion_publishedLocale {
+  vi
+  en
+}
+
+type versionsScreens {
+  docs: [ScreenVersion!]!
+  hasNextPage: Boolean!
+  hasPrevPage: Boolean!
+  limit: Int!
+  nextPage: Int
+  offset: Int
+  page: Int!
+  pagingCounter: Int!
+  prevPage: Int
+  totalDocs: Int!
+  totalPages: Int!
+}
+
+input versionsScreen_where {
+  parent: versionsScreen_parent_operator
+  version__title: versionsScreen_version__title_operator
+  version__generateSlug: versionsScreen_version__generateSlug_operator
+  version__slug: versionsScreen_version__slug_operator
+  version__updatedAt: versionsScreen_version__updatedAt_operator
+  version__createdAt: versionsScreen_version__createdAt_operator
+  version___status: versionsScreen_version___status_operator
+  createdAt: versionsScreen_createdAt_operator
+  updatedAt: versionsScreen_updatedAt_operator
+  snapshot: versionsScreen_snapshot_operator
+  publishedLocale: versionsScreen_publishedLocale_operator
+  latest: versionsScreen_latest_operator
+  id: versionsScreen_id_operator
+  AND: [versionsScreen_where_and]
+  OR: [versionsScreen_where_or]
+}
+
+input versionsScreen_parent_operator {
+  equals: JSON
+  not_equals: JSON
+  in: [JSON]
+  not_in: [JSON]
+  all: [JSON]
+  exists: Boolean
+}
+
+input versionsScreen_version__title_operator {
+  equals: String
+  not_equals: String
+  like: String
+  contains: String
+  in: [String]
+  not_in: [String]
+  all: [String]
+  exists: Boolean
+}
+
+input versionsScreen_version__generateSlug_operator {
+  equals: Boolean
+  not_equals: Boolean
+  exists: Boolean
+}
+
+input versionsScreen_version__slug_operator {
+  equals: String
+  not_equals: String
+  like: String
+  contains: String
+  in: [String]
+  not_in: [String]
+  all: [String]
+}
+
+input versionsScreen_version__updatedAt_operator {
+  equals: DateTime
+  not_equals: DateTime
+  greater_than_equal: DateTime
+  greater_than: DateTime
+  less_than_equal: DateTime
+  less_than: DateTime
+  like: DateTime
+  exists: Boolean
+}
+
+input versionsScreen_version__createdAt_operator {
+  equals: DateTime
+  not_equals: DateTime
+  greater_than_equal: DateTime
+  greater_than: DateTime
+  less_than_equal: DateTime
+  less_than: DateTime
+  like: DateTime
+  exists: Boolean
+}
+
+input versionsScreen_version___status_operator {
+  equals: versionsScreen_version___status_Input
+  not_equals: versionsScreen_version___status_Input
+  in: [versionsScreen_version___status_Input]
+  not_in: [versionsScreen_version___status_Input]
+  all: [versionsScreen_version___status_Input]
+  exists: Boolean
+}
+
+enum versionsScreen_version___status_Input {
+  draft
+  published
+}
+
+input versionsScreen_createdAt_operator {
+  equals: DateTime
+  not_equals: DateTime
+  greater_than_equal: DateTime
+  greater_than: DateTime
+  less_than_equal: DateTime
+  less_than: DateTime
+  like: DateTime
+  exists: Boolean
+}
+
+input versionsScreen_updatedAt_operator {
+  equals: DateTime
+  not_equals: DateTime
+  greater_than_equal: DateTime
+  greater_than: DateTime
+  less_than_equal: DateTime
+  less_than: DateTime
+  like: DateTime
+  exists: Boolean
+}
+
+input versionsScreen_snapshot_operator {
+  equals: Boolean
+  not_equals: Boolean
+  exists: Boolean
+}
+
+input versionsScreen_publishedLocale_operator {
+  equals: versionsScreen_publishedLocale_Input
+  not_equals: versionsScreen_publishedLocale_Input
+  in: [versionsScreen_publishedLocale_Input]
+  not_in: [versionsScreen_publishedLocale_Input]
+  all: [versionsScreen_publishedLocale_Input]
+  exists: Boolean
+}
+
+enum versionsScreen_publishedLocale_Input {
+  vi
+  en
+}
+
+input versionsScreen_latest_operator {
+  equals: Boolean
+  not_equals: Boolean
+  exists: Boolean
+}
+
+input versionsScreen_id_operator {
+  equals: String
+  not_equals: String
+  like: String
+  contains: String
+  in: [String]
+  not_in: [String]
+  all: [String]
+  exists: Boolean
+}
+
+input versionsScreen_where_and {
+  parent: versionsScreen_parent_operator
+  version__title: versionsScreen_version__title_operator
+  version__generateSlug: versionsScreen_version__generateSlug_operator
+  version__slug: versionsScreen_version__slug_operator
+  version__updatedAt: versionsScreen_version__updatedAt_operator
+  version__createdAt: versionsScreen_version__createdAt_operator
+  version___status: versionsScreen_version___status_operator
+  createdAt: versionsScreen_createdAt_operator
+  updatedAt: versionsScreen_updatedAt_operator
+  snapshot: versionsScreen_snapshot_operator
+  publishedLocale: versionsScreen_publishedLocale_operator
+  latest: versionsScreen_latest_operator
+  id: versionsScreen_id_operator
+  AND: [versionsScreen_where_and]
+  OR: [versionsScreen_where_or]
+}
+
+input versionsScreen_where_or {
+  parent: versionsScreen_parent_operator
+  version__title: versionsScreen_version__title_operator
+  version__generateSlug: versionsScreen_version__generateSlug_operator
+  version__slug: versionsScreen_version__slug_operator
+  version__updatedAt: versionsScreen_version__updatedAt_operator
+  version__createdAt: versionsScreen_version__createdAt_operator
+  version___status: versionsScreen_version___status_operator
+  createdAt: versionsScreen_createdAt_operator
+  updatedAt: versionsScreen_updatedAt_operator
+  snapshot: versionsScreen_snapshot_operator
+  publishedLocale: versionsScreen_publishedLocale_operator
+  latest: versionsScreen_latest_operator
+  id: versionsScreen_id_operator
+  AND: [versionsScreen_where_and]
+  OR: [versionsScreen_where_or]
 }
 
 type Notification {
@@ -21031,16 +21324,17 @@ type screenAccess {
   read: ScreenReadAccess
   update: ScreenUpdateAccess
   delete: ScreenDeleteAccess
+  readVersions: ScreenReadVersionsAccess
 }
 
 type ScreenFields {
   title: ScreenFields_title
-  description: ScreenFields_description
+  generateSlug: ScreenFields_generateSlug
   slug: ScreenFields_slug
-  slugLock: ScreenFields_slugLock
   sections: ScreenFields_sections
   updatedAt: ScreenFields_updatedAt
   createdAt: ScreenFields_createdAt
+  _status: ScreenFields__status
 }
 
 type ScreenFields_title {
@@ -21066,26 +21360,26 @@ type ScreenFields_title_Delete {
   permission: Boolean!
 }
 
-type ScreenFields_description {
-  create: ScreenFields_description_Create
-  read: ScreenFields_description_Read
-  update: ScreenFields_description_Update
-  delete: ScreenFields_description_Delete
+type ScreenFields_generateSlug {
+  create: ScreenFields_generateSlug_Create
+  read: ScreenFields_generateSlug_Read
+  update: ScreenFields_generateSlug_Update
+  delete: ScreenFields_generateSlug_Delete
 }
 
-type ScreenFields_description_Create {
+type ScreenFields_generateSlug_Create {
   permission: Boolean!
 }
 
-type ScreenFields_description_Read {
+type ScreenFields_generateSlug_Read {
   permission: Boolean!
 }
 
-type ScreenFields_description_Update {
+type ScreenFields_generateSlug_Update {
   permission: Boolean!
 }
 
-type ScreenFields_description_Delete {
+type ScreenFields_generateSlug_Delete {
   permission: Boolean!
 }
 
@@ -21109,29 +21403,6 @@ type ScreenFields_slug_Update {
 }
 
 type ScreenFields_slug_Delete {
-  permission: Boolean!
-}
-
-type ScreenFields_slugLock {
-  create: ScreenFields_slugLock_Create
-  read: ScreenFields_slugLock_Read
-  update: ScreenFields_slugLock_Update
-  delete: ScreenFields_slugLock_Delete
-}
-
-type ScreenFields_slugLock_Create {
-  permission: Boolean!
-}
-
-type ScreenFields_slugLock_Read {
-  permission: Boolean!
-}
-
-type ScreenFields_slugLock_Update {
-  permission: Boolean!
-}
-
-type ScreenFields_slugLock_Delete {
   permission: Boolean!
 }
 
@@ -21204,6 +21475,29 @@ type ScreenFields_createdAt_Delete {
   permission: Boolean!
 }
 
+type ScreenFields__status {
+  create: ScreenFields__status_Create
+  read: ScreenFields__status_Read
+  update: ScreenFields__status_Update
+  delete: ScreenFields__status_Delete
+}
+
+type ScreenFields__status_Create {
+  permission: Boolean!
+}
+
+type ScreenFields__status_Read {
+  permission: Boolean!
+}
+
+type ScreenFields__status_Update {
+  permission: Boolean!
+}
+
+type ScreenFields__status_Delete {
+  permission: Boolean!
+}
+
 type ScreenCreateAccess {
   permission: Boolean!
   where: JSONObject
@@ -21220,6 +21514,11 @@ type ScreenUpdateAccess {
 }
 
 type ScreenDeleteAccess {
+  permission: Boolean!
+  where: JSONObject
+}
+
+type ScreenReadVersionsAccess {
   permission: Boolean!
   where: JSONObject
 }
@@ -27723,6 +28022,7 @@ type Mutation {
   updateScreen(id: String!, autosave: Boolean, data: mutationScreenUpdateInput!, draft: Boolean, locale: LocaleInputType, trash: Boolean): Screen
   deleteScreen(id: String!, trash: Boolean): Screen
   duplicateScreen(id: String!, data: mutationScreenInput!): Screen
+  restoreVersionScreen(id: String, draft: Boolean): Screen
   createNotification(data: mutationNotificationInput!, draft: Boolean, locale: LocaleInputType): Notification
   updateNotification(id: String!, autosave: Boolean, data: mutationNotificationUpdateInput!, draft: Boolean, locale: LocaleInputType, trash: Boolean): Notification
   deleteNotification(id: String!, trash: Boolean): Notification
@@ -28227,22 +28527,32 @@ input mutationPostUpdate_MetaInput {
 
 input mutationScreenInput {
   title: String
-  description: String
-  slug: String
-  slugLock: Boolean
+  generateSlug: Boolean
+  slug: String!
   sections: JSON
   updatedAt: String
   createdAt: String
+  _status: Screen__status_MutationInput
+}
+
+enum Screen__status_MutationInput {
+  draft
+  published
 }
 
 input mutationScreenUpdateInput {
   title: String
-  description: String
+  generateSlug: Boolean
   slug: String
-  slugLock: Boolean
   sections: JSON
   updatedAt: String
   createdAt: String
+  _status: ScreenUpdate__status_MutationInput
+}
+
+enum ScreenUpdate__status_MutationInput {
+  draft
+  published
 }
 
 input mutationNotificationInput {
