@@ -1,13 +1,9 @@
-// storage-adapter-import-placeholder
-
+import { mongooseAdapter } from '@payloadcms/db-mongodb';
+import { nodemailerAdapter } from '@payloadcms/email-nodemailer';
 import path from 'path';
 import { buildConfig } from 'payload';
 import sharp from 'sharp';
 import { fileURLToPath } from 'url';
-// i18n Translations
-// ---
-import { mongooseAdapter } from '@payloadcms/db-mongodb';
-import { nodemailerAdapter } from '@payloadcms/email-nodemailer';
 import { Categories } from './collections/Categories';
 import { EmailSubscribe } from './collections/EmailSubscribe';
 import { Media } from './collections/Media';
@@ -24,9 +20,8 @@ import { Footer } from './globals/Footer';
 import { Header } from './globals/Header';
 import { Rate } from './globals/Rate';
 import { plugins } from './plugin';
-// ---
 
-// Config Environment
+
 const configEnv = {
   payloadSecret: process.env.PAYLOAD_SECRET || "",
   postgresUrl: process.env.POSTGRES_URL || "",
@@ -60,7 +55,8 @@ export default buildConfig({
   // 
   graphQL:{
     disable:false,
-    schemaOutputFile:'./graphql/schema.graphql',
+    // schemaOutputFile:'./graphql/schema.graphql',
+    schemaOutputFile: path.resolve(dirname, 'generated-schema.graphql'),
     
   },
   

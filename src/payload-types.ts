@@ -112,7 +112,7 @@ export interface Config {
       variants: 'variants';
     };
     'payload-folders': {
-      documentsAndFolders: 'payload-folders' | 'media' | 'categories';
+      documentsAndFolders: 'payload-folders' | 'media';
     };
   };
   collectionsSelect: {
@@ -146,6 +146,7 @@ export interface Config {
   db: {
     defaultIDType: string;
   };
+  fallbackLocale: ('false' | 'none' | 'null') | false | null | ('vi' | 'en') | ('vi' | 'en')[];
   globals: {
     header: Header;
     footer: Footer;
@@ -278,7 +279,7 @@ export interface Order {
   transactions?: (string | Transaction)[] | null;
   status?: OrderStatus;
   amount?: number | null;
-  currency?: 'USD' | null;
+  currency?: ('USD' | 'VND') | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -329,6 +330,8 @@ export interface Product {
   };
   priceInUSDEnabled?: boolean | null;
   priceInUSD?: number | null;
+  priceInVNDEnabled?: boolean | null;
+  priceInVND?: number | null;
   relatedType?: ('all' | 'tags' | 'category') | null;
   relatedByTags?: (string | null) | Tag;
   relatedByCategory?: (string | null) | Category;
@@ -341,8 +344,8 @@ export interface Product {
     image?: (string | null) | Media;
   };
   taxonomies: {
-    category: string | Category;
-    subCategory?: (string | null) | Category;
+    gender: 'men' | 'women';
+    category?: (string | Category)[] | null;
     tags?: (string | Tag)[] | null;
   };
   slug: string;
@@ -361,7 +364,6 @@ export interface Media {
   alt?: string | null;
   caption?: string | null;
   blurData?: string | null;
-  prefix?: string | null;
   folder?: (string | null) | FolderInterface;
   updatedAt: string;
   createdAt: string;
@@ -427,46 +429,13 @@ export interface FolderInterface {
           relationTo?: 'media';
           value: string | Media;
         }
-      | {
-          relationTo?: 'categories';
-          value: string | Category;
-        }
     )[];
     hasNextPage?: boolean;
     totalDocs?: number;
   };
-  folderType?: ('media' | 'categories')[] | null;
+  folderType?: 'media'[] | null;
   updatedAt: string;
   createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "categories".
- */
-export interface Category {
-  id: string;
-  title: string;
-  description?: string | null;
-  slug?: string | null;
-  slugLock?: boolean | null;
-  meta?: {
-    title?: string | null;
-    description?: string | null;
-    image?: (string | null) | Media;
-  };
-  parent?: (string | null) | Category;
-  breadcrumbs?:
-    | {
-        doc?: (string | null) | Category;
-        url?: string | null;
-        label?: string | null;
-        id?: string | null;
-      }[]
-    | null;
-  folder?: (string | null) | FolderInterface;
-  updatedAt: string;
-  createdAt: string;
-  deletedAt?: string | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -649,6 +618,9 @@ export interface Page {
         | RowBlock
         | Carousel
         | ListProductsBlock
+        | SpotlightMediaBlock
+        | InfoListBlock
+        | ModelBlock
       )[]
     | null;
   slug: string;
@@ -662,6 +634,24 @@ export interface Page {
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "categories".
+ */
+export interface Category {
+  id: string;
+  title: string;
+  description?: string | null;
+  slug?: string | null;
+  slugLock?: boolean | null;
+  meta?: {
+    title?: string | null;
+    description?: string | null;
+    image?: (string | null) | Media;
+  };
+  updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -742,15 +732,30 @@ export interface Carousel {
 export interface ListProductsBlock {
   title: string;
   description?: string | null;
-  type?: ('categories' | 'products' | 'tags') | null;
-  categories?: (string | Category)[] | null;
+  type: 'categories' | 'products';
+  categories?: (string | null) | Category;
   products?: (string | Product)[] | null;
-  hashTag?: (string | Tag)[] | null;
+  enableMedia?: boolean | null;
+  media?: (string | null) | Media;
+  caption?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
   configs?: {
     layout?: ('container' | 'full' | 'wide' | 'narrow') | null;
     spacing?: ('none' | 'small' | 'medium' | 'large') | null;
     ui?: ('grid' | 'carousel') | null;
-    gap?: number | null;
   };
   id?: string | null;
   blockName?: string | null;
@@ -758,13 +763,92 @@ export interface ListProductsBlock {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "tags".
+ * via the `definition` "SpotlightMediaBlock".
  */
-export interface Tag {
-  id: string;
+export interface SpotlightMediaBlock {
   title?: string | null;
-  updatedAt: string;
-  createdAt: string;
+  media: string | Media;
+  features?:
+    | {
+        link: {
+          type?: ('reference' | 'custom') | null;
+          newTab?: boolean | null;
+          reference?:
+            | ({
+                relationTo: 'pages';
+                value: string | Page;
+              } | null)
+            | ({
+                relationTo: 'categories';
+                value: string | Category;
+              } | null)
+            | ({
+                relationTo: 'products';
+                value: string | Product;
+              } | null);
+          url?: string | null;
+          label: string;
+          /**
+           * Choose how the link should be rendered.
+           */
+          appearance?: ('default' | 'outline') | null;
+        };
+        id?: string | null;
+      }[]
+    | null;
+  configs?: {
+    layout?: ('container' | 'full' | 'wide' | 'narrow') | null;
+    spacing?: ('none' | 'small' | 'medium' | 'large') | null;
+  };
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'SpotlightMedia';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "InfoListBlock".
+ */
+export interface InfoListBlock {
+  array?:
+    | {
+        title: string;
+        description?: string | null;
+        image?: (string | null) | Media;
+        id?: string | null;
+      }[]
+    | null;
+  configs?: {
+    layout?: ('container' | 'full' | 'wide' | 'narrow') | null;
+    spacing?: ('none' | 'small' | 'medium' | 'large') | null;
+  };
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'InfoList';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ModelBlock".
+ */
+export interface ModelBlock {
+  title: string;
+  content?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'Model';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -781,10 +865,23 @@ export interface Variant {
   inventory?: number | null;
   priceInUSDEnabled?: boolean | null;
   priceInUSD?: number | null;
+  priceInVNDEnabled?: boolean | null;
+  priceInVND?: number | null;
   updatedAt: string;
   createdAt: string;
   deletedAt?: string | null;
   _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "tags".
+ */
+export interface Tag {
+  id: string;
+  title?: string | null;
+  title_en?: string | null;
+  updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -824,7 +921,7 @@ export interface Transaction {
   order?: (string | null) | Order;
   cart?: (string | null) | Cart;
   amount?: number | null;
-  currency?: 'USD' | null;
+  currency?: ('USD' | 'VND') | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -842,11 +939,12 @@ export interface Cart {
         id?: string | null;
       }[]
     | null;
+  secret?: string | null;
   customer?: (string | null) | User;
   purchasedAt?: string | null;
   status?: ('active' | 'purchased' | 'abandoned') | null;
   subtotal?: number | null;
-  currency?: 'USD' | null;
+  currency?: ('USD' | 'VND') | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -919,9 +1017,11 @@ export interface Review {
   id: string;
   user: string | User;
   product: string | Product;
-  rating: number;
+  rating?: number | null;
+  media?: (string | Media)[] | null;
   comment?: string | null;
-  approved?: boolean | null;
+  parent?: (string | null) | Review;
+  replies?: (string | Review)[] | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -931,9 +1031,15 @@ export interface Review {
  */
 export interface Newsletter {
   id: string;
+  title: string;
+  allEmail?: boolean | null;
   listEmail?: (string | EmailSubscribe)[] | null;
+  template?: ('blog' | 'product') | null;
+  blogs?: (string | Post)[] | null;
+  products?: (string | Product)[] | null;
   updatedAt: string;
   createdAt: string;
+  _status?: ('draft' | 'published') | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -942,6 +1048,7 @@ export interface Newsletter {
 export interface EmailSubscribe {
   id: string;
   email: string;
+  locale?: ('vi' | 'en') | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -1325,7 +1432,6 @@ export interface MediaSelect<T extends boolean = true> {
   alt?: T;
   caption?: T;
   blurData?: T;
-  prefix?: T;
   folder?: T;
   updatedAt?: T;
   createdAt?: T;
@@ -1399,19 +1505,8 @@ export interface CategoriesSelect<T extends boolean = true> {
         description?: T;
         image?: T;
       };
-  parent?: T;
-  breadcrumbs?:
-    | T
-    | {
-        doc?: T;
-        url?: T;
-        label?: T;
-        id?: T;
-      };
-  folder?: T;
   updatedAt?: T;
   createdAt?: T;
-  deletedAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1421,8 +1516,10 @@ export interface ReviewsSelect<T extends boolean = true> {
   user?: T;
   product?: T;
   rating?: T;
+  media?: T;
   comment?: T;
-  approved?: T;
+  parent?: T;
+  replies?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -1431,9 +1528,15 @@ export interface ReviewsSelect<T extends boolean = true> {
  * via the `definition` "newsletter_select".
  */
 export interface NewsletterSelect<T extends boolean = true> {
+  title?: T;
+  allEmail?: T;
   listEmail?: T;
+  template?: T;
+  blogs?: T;
+  products?: T;
   updatedAt?: T;
   createdAt?: T;
+  _status?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1441,6 +1544,7 @@ export interface NewsletterSelect<T extends boolean = true> {
  */
 export interface EmailSubscribeSelect<T extends boolean = true> {
   email?: T;
+  locale?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -1485,6 +1589,9 @@ export interface PagesSelect<T extends boolean = true> {
         rowBlock?: T | RowBlockSelect<T>;
         carousel?: T | CarouselSelect<T>;
         ListProducts?: T | ListProductsBlockSelect<T>;
+        SpotlightMedia?: T | SpotlightMediaBlockSelect<T>;
+        InfoList?: T | InfoListBlockSelect<T>;
+        Model?: T | ModelBlockSelect<T>;
       };
   slug?: T;
   slugLock?: T;
@@ -1604,15 +1711,79 @@ export interface ListProductsBlockSelect<T extends boolean = true> {
   type?: T;
   categories?: T;
   products?: T;
-  hashTag?: T;
+  enableMedia?: T;
+  media?: T;
+  caption?: T;
   configs?:
     | T
     | {
         layout?: T;
         spacing?: T;
         ui?: T;
-        gap?: T;
       };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "SpotlightMediaBlock_select".
+ */
+export interface SpotlightMediaBlockSelect<T extends boolean = true> {
+  title?: T;
+  media?: T;
+  features?:
+    | T
+    | {
+        link?:
+          | T
+          | {
+              type?: T;
+              newTab?: T;
+              reference?: T;
+              url?: T;
+              label?: T;
+              appearance?: T;
+            };
+        id?: T;
+      };
+  configs?:
+    | T
+    | {
+        layout?: T;
+        spacing?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "InfoListBlock_select".
+ */
+export interface InfoListBlockSelect<T extends boolean = true> {
+  array?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        image?: T;
+        id?: T;
+      };
+  configs?:
+    | T
+    | {
+        layout?: T;
+        spacing?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ModelBlock_select".
+ */
+export interface ModelBlockSelect<T extends boolean = true> {
+  title?: T;
+  content?: T;
   id?: T;
   blockName?: T;
 }
@@ -1671,6 +1842,7 @@ export interface NotificationsSelect<T extends boolean = true> {
  */
 export interface TagsSelect<T extends boolean = true> {
   title?: T;
+  title_en?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -1716,6 +1888,8 @@ export interface VariantsSelect<T extends boolean = true> {
   inventory?: T;
   priceInUSDEnabled?: T;
   priceInUSD?: T;
+  priceInVNDEnabled?: T;
+  priceInVND?: T;
   updatedAt?: T;
   createdAt?: T;
   deletedAt?: T;
@@ -1779,6 +1953,8 @@ export interface ProductsSelect<T extends boolean = true> {
   variants?: T;
   priceInUSDEnabled?: T;
   priceInUSD?: T;
+  priceInVNDEnabled?: T;
+  priceInVND?: T;
   relatedType?: T;
   relatedByTags?: T;
   relatedByCategory?: T;
@@ -1792,8 +1968,8 @@ export interface ProductsSelect<T extends boolean = true> {
   taxonomies?:
     | T
     | {
+        gender?: T;
         category?: T;
-        subCategory?: T;
         tags?: T;
       };
   slug?: T;
@@ -1816,6 +1992,7 @@ export interface CartsSelect<T extends boolean = true> {
         quantity?: T;
         id?: T;
       };
+  secret?: T;
   customer?: T;
   purchasedAt?: T;
   status?: T;
