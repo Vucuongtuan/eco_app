@@ -1,6 +1,7 @@
-import { baseField } from "@/fields/baseField";
-import { slugField } from "@/fields/slug";
-import { CollectionConfig } from "payload";
+import { Content } from "@/blocks/(mobile)/Content/config";
+import { Notification } from "@/blocks/(mobile)/Notifications/config";
+import { ProductArchives } from "@/blocks/(mobile)/ProductsArchives/config";
+import { CollectionConfig, slugField } from "payload";
 
 export const Screen: CollectionConfig = {
   slug: "screen",
@@ -8,12 +9,18 @@ export const Screen: CollectionConfig = {
     group: "Mobile",
   },
   fields: [
-    ...baseField,
-    ...slugField("title"),
+    {
+      name: "title",
+      type: "text",
+    },
+    slugField({ fieldToUse: "title" }),
     {
       name: "sections",
       type: "blocks",
-      blocks: [],
+      blocks: [Notification,ProductArchives,Content],
     },
   ],
+  versions:{
+    drafts:true,
+  }
 };

@@ -8,9 +8,185 @@
 
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ProductGallery".
+ */
+export type ProductGallery =
+  | {
+      image?: (string | Media)[] | null;
+      variantOption?: (string | null) | VariantOption;
+      id?: string | null;
+    }[]
+  | null;
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ProductShortContent".
+ */
+export type ProductShortContent =
+  | {
+      name: 'description' | 'material' | 'size' | 'other';
+      content?: {
+        root: {
+          type: string;
+          children: {
+            type: any;
+            version: number;
+            [k: string]: unknown;
+          }[];
+          direction: ('ltr' | 'rtl') | null;
+          format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+          indent: number;
+          version: number;
+        };
+        [k: string]: unknown;
+      } | null;
+      id?: string | null;
+    }[]
+  | null;
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ContentColumns".
+ */
+export type ContentColumns =
+  | {
+      size?: ('oneThird' | 'half' | 'twoThirds' | 'full') | null;
+      type?: ('content' | 'media') | null;
+      media?: (string | null) | Media;
+      richText?: {
+        root: {
+          type: string;
+          children: {
+            type: any;
+            version: number;
+            [k: string]: unknown;
+          }[];
+          direction: ('ltr' | 'rtl') | null;
+          format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+          indent: number;
+          version: number;
+        };
+        [k: string]: unknown;
+      } | null;
+      id?: string | null;
+    }[]
+  | null;
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ColumnMediaItems".
+ */
+export type ColumnMediaItems =
+  | {
+      media?: (string | null) | Media;
+      link: LinkGroup;
+      id?: string | null;
+    }[]
+  | null;
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "CarouselGallery".
+ */
+export type CarouselGallery =
+  | {
+      media: string | Media;
+      heading?: string | null;
+      content?: {
+        root: {
+          type: string;
+          children: {
+            type: any;
+            version: number;
+            [k: string]: unknown;
+          }[];
+          direction: ('ltr' | 'rtl') | null;
+          format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+          indent: number;
+          version: number;
+        };
+        [k: string]: unknown;
+      } | null;
+      link?: LinkGroup;
+      id?: string | null;
+    }[]
+  | null;
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "SpotlightMediaFeatures".
+ */
+export type SpotlightMediaFeatures =
+  | {
+      link: LinkGroup;
+      id?: string | null;
+    }[]
+  | null;
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "InfoListArray".
+ */
+export type InfoListArray =
+  | {
+      title: string;
+      description?: string | null;
+      image?: (string | null) | Media;
+      id?: string | null;
+    }[]
+  | null;
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "OrderStatus".
  */
 export type OrderStatus = ('processing' | 'completed' | 'cancelled' | 'refunded') | null;
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "HeaderNavItems".
+ */
+export type HeaderNavItems =
+  | {
+      link: LinkGroup;
+      child?: HeaderNavItemChild;
+      id?: string | null;
+    }[]
+  | null;
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "HeaderNavItemChild".
+ */
+export type HeaderNavItemChild =
+  | {
+      link: LinkGroup;
+      subChild?: HeaderNavItemSubChild;
+      id?: string | null;
+    }[]
+  | null;
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "HeaderNavItemSubChild".
+ */
+export type HeaderNavItemSubChild =
+  | {
+      link: LinkGroup;
+      id?: string | null;
+    }[]
+  | null;
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "FooterNavItems".
+ */
+export type FooterNavItems =
+  | {
+      link: LinkGroup;
+      id?: string | null;
+    }[]
+  | null;
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "RatesArray".
+ */
+export type RatesArray =
+  | {
+      currency?: string | null;
+      rate?: number | null;
+      id?: string | null;
+    }[]
+  | null;
 /**
  * Supported timezones in IANA format.
  *
@@ -291,34 +467,8 @@ export interface Product {
   id: string;
   title: string;
   subTitle?: string | null;
-  gallery?:
-    | {
-        image?: (string | Media)[] | null;
-        variantOption?: (string | null) | VariantOption;
-        id?: string | null;
-      }[]
-    | null;
-  shortContent?:
-    | {
-        name: 'description' | 'material' | 'size' | 'other';
-        content?: {
-          root: {
-            type: string;
-            children: {
-              type: any;
-              version: number;
-              [k: string]: unknown;
-            }[];
-            direction: ('ltr' | 'rtl') | null;
-            format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-            indent: number;
-            version: number;
-          };
-          [k: string]: unknown;
-        } | null;
-        id?: string | null;
-      }[]
-    | null;
+  gallery?: ProductGallery;
+  shortContent?: ProductShortContent;
   layout?: (ContentBlock | MediaBlock)[] | null;
   inventory?: number | null;
   enableVariants?: boolean | null;
@@ -343,11 +493,7 @@ export interface Product {
      */
     image?: (string | null) | Media;
   };
-  taxonomies: {
-    gender: 'men' | 'women';
-    category?: (string | Category)[] | null;
-    tags?: (string | Tag)[] | null;
-  };
+  taxonomies: ProductTaxonomies;
   slug: string;
   slugLock?: boolean | null;
   updatedAt: string;
@@ -364,6 +510,7 @@ export interface Media {
   alt?: string | null;
   caption?: string | null;
   blurData?: string | null;
+  prefix?: string | null;
   folder?: (string | null) | FolderInterface;
   updatedAt: string;
   createdAt: string;
@@ -478,29 +625,7 @@ export interface VariantType {
 export interface ContentBlock {
   layout?: ('container' | 'full' | 'wide' | 'narrow') | null;
   spacing?: ('none' | 'small' | 'medium' | 'large') | null;
-  columns?:
-    | {
-        size?: ('oneThird' | 'half' | 'twoThirds' | 'full') | null;
-        type?: ('content' | 'media') | null;
-        media?: (string | null) | Media;
-        richText?: {
-          root: {
-            type: string;
-            children: {
-              type: any;
-              version: number;
-              [k: string]: unknown;
-            }[];
-            direction: ('ltr' | 'rtl') | null;
-            format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-            indent: number;
-            version: number;
-          };
-          [k: string]: unknown;
-        } | null;
-        id?: string | null;
-      }[]
-    | null;
+  columns?: ContentColumns;
   id?: string | null;
   blockName?: string | null;
   blockType: 'content';
@@ -530,29 +655,7 @@ export interface MediaBlock {
       };
       [k: string]: unknown;
     } | null;
-    link: {
-      type?: ('reference' | 'custom') | null;
-      newTab?: boolean | null;
-      reference?:
-        | ({
-            relationTo: 'pages';
-            value: string | Page;
-          } | null)
-        | ({
-            relationTo: 'categories';
-            value: string | Category;
-          } | null)
-        | ({
-            relationTo: 'products';
-            value: string | Product;
-          } | null);
-      url?: string | null;
-      label: string;
-      /**
-       * Choose how the link should be rendered.
-       */
-      appearance?: ('default' | 'outline') | null;
-    };
+    link: LinkGroup;
   };
   layout?: ('container' | 'full' | 'wide' | 'narrow') | null;
   spacing?: ('none' | 'small' | 'medium' | 'large') | null;
@@ -562,6 +665,33 @@ export interface MediaBlock {
   id?: string | null;
   blockName?: string | null;
   blockType: 'mediaBlock';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "LinkGroup".
+ */
+export interface LinkGroup {
+  type?: ('reference' | 'custom') | null;
+  newTab?: boolean | null;
+  reference?:
+    | ({
+        relationTo: 'pages';
+        value: string | Page;
+      } | null)
+    | ({
+        relationTo: 'categories';
+        value: string | Category;
+      } | null)
+    | ({
+        relationTo: 'products';
+        value: string | Product;
+      } | null);
+  url?: string | null;
+  label: string;
+  /**
+   * Choose how the link should be rendered.
+   */
+  appearance?: ('default' | 'outline') | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -575,46 +705,7 @@ export interface Page {
     | (
         | ContentBlock
         | MediaBlock
-        | {
-            items?:
-              | {
-                  media?: (string | null) | Media;
-                  link: {
-                    type?: ('reference' | 'custom') | null;
-                    newTab?: boolean | null;
-                    reference?:
-                      | ({
-                          relationTo: 'pages';
-                          value: string | Page;
-                        } | null)
-                      | ({
-                          relationTo: 'categories';
-                          value: string | Category;
-                        } | null)
-                      | ({
-                          relationTo: 'products';
-                          value: string | Product;
-                        } | null);
-                    url?: string | null;
-                    label: string;
-                    /**
-                     * Choose how the link should be rendered.
-                     */
-                    appearance?: ('default' | 'outline') | null;
-                  };
-                  id?: string | null;
-                }[]
-              | null;
-            layout?: ('container' | 'full' | 'wide' | 'narrow') | null;
-            spacing?: ('none' | 'small' | 'medium' | 'large') | null;
-            aspect?:
-              | ('auto' | 'ultrawide' | 'photo' | 'poster' | 'story' | 'insta' | 'retro' | 'video' | 'square' | 'wide')
-              | null;
-            columns?: number | null;
-            id?: string | null;
-            blockName?: string | null;
-            blockType: 'columnMedia';
-          }
+        | ColumnMediaBlock
         | RowBlock
         | Carousel
         | ListProductsBlock
@@ -637,21 +728,19 @@ export interface Page {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "categories".
+ * via the `definition` "ColumnMediaBlock".
  */
-export interface Category {
-  id: string;
-  title: string;
-  description?: string | null;
-  slug?: string | null;
-  slugLock?: boolean | null;
-  meta?: {
-    title?: string | null;
-    description?: string | null;
-    image?: (string | null) | Media;
-  };
-  updatedAt: string;
-  createdAt: string;
+export interface ColumnMediaBlock {
+  items?: ColumnMediaItems;
+  layout?: ('container' | 'full' | 'wide' | 'narrow') | null;
+  spacing?: ('none' | 'small' | 'medium' | 'large') | null;
+  aspect?:
+    | ('auto' | 'ultrawide' | 'photo' | 'poster' | 'story' | 'insta' | 'retro' | 'video' | 'square' | 'wide')
+    | null;
+  columns?: number | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'columnMedia';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -672,50 +761,7 @@ export interface RowBlock {
  */
 export interface Carousel {
   duration: number;
-  gallery?:
-    | {
-        media: string | Media;
-        heading?: string | null;
-        content?: {
-          root: {
-            type: string;
-            children: {
-              type: any;
-              version: number;
-              [k: string]: unknown;
-            }[];
-            direction: ('ltr' | 'rtl') | null;
-            format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-            indent: number;
-            version: number;
-          };
-          [k: string]: unknown;
-        } | null;
-        link?: {
-          type?: ('reference' | 'custom') | null;
-          newTab?: boolean | null;
-          reference?:
-            | ({
-                relationTo: 'pages';
-                value: string | Page;
-              } | null)
-            | ({
-                relationTo: 'categories';
-                value: string | Category;
-              } | null)
-            | ({
-                relationTo: 'products';
-                value: string | Product;
-              } | null);
-          url?: string | null;
-          /**
-           * Choose how the link should be rendered.
-           */
-          appearance?: ('default' | 'outline') | null;
-        };
-        id?: string | null;
-      }[]
-    | null;
+  gallery?: CarouselGallery;
   layout?: ('container' | 'full' | 'wide' | 'narrow') | null;
   spacing?: ('none' | 'small' | 'medium' | 'large') | null;
   aspect?:
@@ -756,10 +802,32 @@ export interface ListProductsBlock {
     layout?: ('container' | 'full' | 'wide' | 'narrow') | null;
     spacing?: ('none' | 'small' | 'medium' | 'large') | null;
     ui?: ('grid' | 'carousel') | null;
+    /**
+     * Khoảng cách giữa các sản phẩm (px)
+     */
+    gap?: number | null;
   };
   id?: string | null;
   blockName?: string | null;
   blockType: 'ListProducts';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "categories".
+ */
+export interface Category {
+  id: string;
+  title: string;
+  description?: string | null;
+  slug?: string | null;
+  slugLock?: boolean | null;
+  meta?: {
+    title?: string | null;
+    description?: string | null;
+    image?: (string | null) | Media;
+  };
+  updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -768,34 +836,7 @@ export interface ListProductsBlock {
 export interface SpotlightMediaBlock {
   title?: string | null;
   media: string | Media;
-  features?:
-    | {
-        link: {
-          type?: ('reference' | 'custom') | null;
-          newTab?: boolean | null;
-          reference?:
-            | ({
-                relationTo: 'pages';
-                value: string | Page;
-              } | null)
-            | ({
-                relationTo: 'categories';
-                value: string | Category;
-              } | null)
-            | ({
-                relationTo: 'products';
-                value: string | Product;
-              } | null);
-          url?: string | null;
-          label: string;
-          /**
-           * Choose how the link should be rendered.
-           */
-          appearance?: ('default' | 'outline') | null;
-        };
-        id?: string | null;
-      }[]
-    | null;
+  features?: SpotlightMediaFeatures;
   configs?: {
     layout?: ('container' | 'full' | 'wide' | 'narrow') | null;
     spacing?: ('none' | 'small' | 'medium' | 'large') | null;
@@ -809,14 +850,7 @@ export interface SpotlightMediaBlock {
  * via the `definition` "InfoListBlock".
  */
 export interface InfoListBlock {
-  array?:
-    | {
-        title: string;
-        description?: string | null;
-        image?: (string | null) | Media;
-        id?: string | null;
-      }[]
-    | null;
+  array?: InfoListArray;
   configs?: {
     layout?: ('container' | 'full' | 'wide' | 'narrow') | null;
     spacing?: ('none' | 'small' | 'medium' | 'large') | null;
@@ -882,6 +916,15 @@ export interface Tag {
   title_en?: string | null;
   updatedAt: string;
   createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ProductTaxonomies".
+ */
+export interface ProductTaxonomies {
+  gender: 'men' | 'women';
+  category?: (string | Category)[] | null;
+  tags?: (string | Tag)[] | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1098,13 +1141,89 @@ export interface Post {
  */
 export interface Screen {
   id: string;
-  title: string;
-  description?: string | null;
-  slug?: string | null;
-  slugLock?: boolean | null;
-  sections?: unknown[] | null;
+  title?: string | null;
+  /**
+   * When enabled, the slug will auto-generate from the title field on save and autosave.
+   */
+  generateSlug?: boolean | null;
+  slug: string;
+  sections?: (MobileNotificationProps | MobileProductArchivesProps | MobileContentProps)[] | null;
   updatedAt: string;
   createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "MobileNotificationProps".
+ */
+export interface MobileNotificationProps {
+  title?: string | null;
+  title_en?: string | null;
+  description?: string | null;
+  description_en?: string | null;
+  media?: (string | null) | Media;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'mobile-notification';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "MobileProductArchivesProps".
+ */
+export interface MobileProductArchivesProps {
+  title?: string | null;
+  title_en?: string | null;
+  description?: string | null;
+  description_en?: string | null;
+  type?: ('category' | 'product' | 'new') | null;
+  category?: (string | null) | Category;
+  product?: (string | null) | Product;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'mobile-product-archives';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "MobileContentProps".
+ */
+export interface MobileContentProps {
+  title?: string | null;
+  title_en?: string | null;
+  description?: string | null;
+  description_en?: string | null;
+  content?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  content_en?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'mobile-content';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1432,6 +1551,7 @@ export interface MediaSelect<T extends boolean = true> {
   alt?: T;
   caption?: T;
   blurData?: T;
+  prefix?: T;
   folder?: T;
   updatedAt?: T;
   createdAt?: T;
@@ -1560,32 +1680,7 @@ export interface PagesSelect<T extends boolean = true> {
     | {
         content?: T | ContentBlockSelect<T>;
         mediaBlock?: T | MediaBlockSelect<T>;
-        columnMedia?:
-          | T
-          | {
-              items?:
-                | T
-                | {
-                    media?: T;
-                    link?:
-                      | T
-                      | {
-                          type?: T;
-                          newTab?: T;
-                          reference?: T;
-                          url?: T;
-                          label?: T;
-                          appearance?: T;
-                        };
-                    id?: T;
-                  };
-              layout?: T;
-              spacing?: T;
-              aspect?: T;
-              columns?: T;
-              id?: T;
-              blockName?: T;
-            };
+        columnMedia?: T | ColumnMediaBlockSelect<T>;
         rowBlock?: T | RowBlockSelect<T>;
         carousel?: T | CarouselSelect<T>;
         ListProducts?: T | ListProductsBlockSelect<T>;
@@ -1614,17 +1709,20 @@ export interface PagesSelect<T extends boolean = true> {
 export interface ContentBlockSelect<T extends boolean = true> {
   layout?: T;
   spacing?: T;
-  columns?:
-    | T
-    | {
-        size?: T;
-        type?: T;
-        media?: T;
-        richText?: T;
-        id?: T;
-      };
+  columns?: T | ContentColumnsSelect<T>;
   id?: T;
   blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ContentColumns_select".
+ */
+export interface ContentColumnsSelect<T extends boolean = true> {
+  size?: T;
+  type?: T;
+  media?: T;
+  richText?: T;
+  id?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1639,22 +1737,47 @@ export interface MediaBlockSelect<T extends boolean = true> {
     | T
     | {
         content?: T;
-        link?:
-          | T
-          | {
-              type?: T;
-              newTab?: T;
-              reference?: T;
-              url?: T;
-              label?: T;
-              appearance?: T;
-            };
+        link?: T | LinkGroupSelect<T>;
       };
   layout?: T;
   spacing?: T;
   aspect?: T;
   id?: T;
   blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "LinkGroup_select".
+ */
+export interface LinkGroupSelect<T extends boolean = true> {
+  type?: T;
+  newTab?: T;
+  reference?: T;
+  url?: T;
+  label?: T;
+  appearance?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ColumnMediaBlock_select".
+ */
+export interface ColumnMediaBlockSelect<T extends boolean = true> {
+  items?: T | ColumnMediaItemsSelect<T>;
+  layout?: T;
+  spacing?: T;
+  aspect?: T;
+  columns?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ColumnMediaItems_select".
+ */
+export interface ColumnMediaItemsSelect<T extends boolean = true> {
+  media?: T;
+  link?: T | LinkGroupSelect<T>;
+  id?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1678,28 +1801,23 @@ export interface RowBlockSelect<T extends boolean = true> {
  */
 export interface CarouselSelect<T extends boolean = true> {
   duration?: T;
-  gallery?:
-    | T
-    | {
-        media?: T;
-        heading?: T;
-        content?: T;
-        link?:
-          | T
-          | {
-              type?: T;
-              newTab?: T;
-              reference?: T;
-              url?: T;
-              appearance?: T;
-            };
-        id?: T;
-      };
+  gallery?: T | CarouselGallerySelect<T>;
   layout?: T;
   spacing?: T;
   aspect?: T;
   id?: T;
   blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "CarouselGallery_select".
+ */
+export interface CarouselGallerySelect<T extends boolean = true> {
+  media?: T;
+  heading?: T;
+  content?: T;
+  link?: T | LinkGroupSelect<T>;
+  id?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1720,6 +1838,7 @@ export interface ListProductsBlockSelect<T extends boolean = true> {
         layout?: T;
         spacing?: T;
         ui?: T;
+        gap?: T;
       };
   id?: T;
   blockName?: T;
@@ -1731,21 +1850,7 @@ export interface ListProductsBlockSelect<T extends boolean = true> {
 export interface SpotlightMediaBlockSelect<T extends boolean = true> {
   title?: T;
   media?: T;
-  features?:
-    | T
-    | {
-        link?:
-          | T
-          | {
-              type?: T;
-              newTab?: T;
-              reference?: T;
-              url?: T;
-              label?: T;
-              appearance?: T;
-            };
-        id?: T;
-      };
+  features?: T | SpotlightMediaFeaturesSelect<T>;
   configs?:
     | T
     | {
@@ -1757,17 +1862,18 @@ export interface SpotlightMediaBlockSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "SpotlightMediaFeatures_select".
+ */
+export interface SpotlightMediaFeaturesSelect<T extends boolean = true> {
+  link?: T | LinkGroupSelect<T>;
+  id?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "InfoListBlock_select".
  */
 export interface InfoListBlockSelect<T extends boolean = true> {
-  array?:
-    | T
-    | {
-        title?: T;
-        description?: T;
-        image?: T;
-        id?: T;
-      };
+  array?: T | InfoListArraySelect<T>;
   configs?:
     | T
     | {
@@ -1776,6 +1882,16 @@ export interface InfoListBlockSelect<T extends boolean = true> {
       };
   id?: T;
   blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "InfoListArray_select".
+ */
+export interface InfoListArraySelect<T extends boolean = true> {
+  title?: T;
+  description?: T;
+  image?: T;
+  id?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1815,12 +1931,60 @@ export interface PostsSelect<T extends boolean = true> {
  */
 export interface ScreenSelect<T extends boolean = true> {
   title?: T;
-  description?: T;
+  generateSlug?: T;
   slug?: T;
-  slugLock?: T;
-  sections?: T | {};
+  sections?:
+    | T
+    | {
+        'mobile-notification'?: T | MobileNotificationPropsSelect<T>;
+        'mobile-product-archives'?: T | MobileProductArchivesPropsSelect<T>;
+        'mobile-content'?: T | MobileContentPropsSelect<T>;
+      };
   updatedAt?: T;
   createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "MobileNotificationProps_select".
+ */
+export interface MobileNotificationPropsSelect<T extends boolean = true> {
+  title?: T;
+  title_en?: T;
+  description?: T;
+  description_en?: T;
+  media?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "MobileProductArchivesProps_select".
+ */
+export interface MobileProductArchivesPropsSelect<T extends boolean = true> {
+  title?: T;
+  title_en?: T;
+  description?: T;
+  description_en?: T;
+  type?: T;
+  category?: T;
+  product?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "MobileContentProps_select".
+ */
+export interface MobileContentPropsSelect<T extends boolean = true> {
+  title?: T;
+  title_en?: T;
+  description?: T;
+  description_en?: T;
+  content?: T;
+  content_en?: T;
+  id?: T;
+  blockName?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1927,20 +2091,8 @@ export interface VariantOptionsSelect<T extends boolean = true> {
 export interface ProductsSelect<T extends boolean = true> {
   title?: T;
   subTitle?: T;
-  gallery?:
-    | T
-    | {
-        image?: T;
-        variantOption?: T;
-        id?: T;
-      };
-  shortContent?:
-    | T
-    | {
-        name?: T;
-        content?: T;
-        id?: T;
-      };
+  gallery?: T | ProductGallerySelect<T>;
+  shortContent?: T | ProductShortContentSelect<T>;
   layout?:
     | T
     | {
@@ -1965,19 +2117,40 @@ export interface ProductsSelect<T extends boolean = true> {
         description?: T;
         image?: T;
       };
-  taxonomies?:
-    | T
-    | {
-        gender?: T;
-        category?: T;
-        tags?: T;
-      };
+  taxonomies?: T | ProductTaxonomiesSelect<T>;
   slug?: T;
   slugLock?: T;
   updatedAt?: T;
   createdAt?: T;
   deletedAt?: T;
   _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ProductGallery_select".
+ */
+export interface ProductGallerySelect<T extends boolean = true> {
+  image?: T;
+  variantOption?: T;
+  id?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ProductShortContent_select".
+ */
+export interface ProductShortContentSelect<T extends boolean = true> {
+  name?: T;
+  content?: T;
+  id?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ProductTaxonomies_select".
+ */
+export interface ProductTaxonomiesSelect<T extends boolean = true> {
+  gender?: T;
+  category?: T;
+  tags?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -2173,78 +2346,7 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
 export interface Header {
   id: string;
   logo?: (string | null) | Media;
-  navItems?:
-    | {
-        link: {
-          type?: ('reference' | 'custom') | null;
-          newTab?: boolean | null;
-          reference?:
-            | ({
-                relationTo: 'pages';
-                value: string | Page;
-              } | null)
-            | ({
-                relationTo: 'categories';
-                value: string | Category;
-              } | null)
-            | ({
-                relationTo: 'products';
-                value: string | Product;
-              } | null);
-          url?: string | null;
-          label: string;
-        };
-        child?:
-          | {
-              link: {
-                type?: ('reference' | 'custom') | null;
-                newTab?: boolean | null;
-                reference?:
-                  | ({
-                      relationTo: 'pages';
-                      value: string | Page;
-                    } | null)
-                  | ({
-                      relationTo: 'categories';
-                      value: string | Category;
-                    } | null)
-                  | ({
-                      relationTo: 'products';
-                      value: string | Product;
-                    } | null);
-                url?: string | null;
-                label: string;
-              };
-              subChild?:
-                | {
-                    link: {
-                      type?: ('reference' | 'custom') | null;
-                      newTab?: boolean | null;
-                      reference?:
-                        | ({
-                            relationTo: 'pages';
-                            value: string | Page;
-                          } | null)
-                        | ({
-                            relationTo: 'categories';
-                            value: string | Category;
-                          } | null)
-                        | ({
-                            relationTo: 'products';
-                            value: string | Product;
-                          } | null);
-                      url?: string | null;
-                      label: string;
-                    };
-                    id?: string | null;
-                  }[]
-                | null;
-              id?: string | null;
-            }[]
-          | null;
-        id?: string | null;
-      }[]
-    | null;
+  navItems?: HeaderNavItems;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -2254,30 +2356,7 @@ export interface Header {
  */
 export interface Footer {
   id: string;
-  navItems?:
-    | {
-        link: {
-          type?: ('reference' | 'custom') | null;
-          newTab?: boolean | null;
-          reference?:
-            | ({
-                relationTo: 'pages';
-                value: string | Page;
-              } | null)
-            | ({
-                relationTo: 'categories';
-                value: string | Category;
-              } | null)
-            | ({
-                relationTo: 'products';
-                value: string | Product;
-              } | null);
-          url?: string | null;
-          label: string;
-        };
-        id?: string | null;
-      }[]
-    | null;
+  navItems?: FooterNavItems;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -2289,13 +2368,7 @@ export interface Footer {
  */
 export interface Rate {
   id: string;
-  rates?:
-    | {
-        currency?: string | null;
-        rate?: number | null;
-        id?: string | null;
-      }[]
-    | null;
+  rates?: RatesArray;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -2305,90 +2378,73 @@ export interface Rate {
  */
 export interface HeaderSelect<T extends boolean = true> {
   logo?: T;
-  navItems?:
-    | T
-    | {
-        link?:
-          | T
-          | {
-              type?: T;
-              newTab?: T;
-              reference?: T;
-              url?: T;
-              label?: T;
-            };
-        child?:
-          | T
-          | {
-              link?:
-                | T
-                | {
-                    type?: T;
-                    newTab?: T;
-                    reference?: T;
-                    url?: T;
-                    label?: T;
-                  };
-              subChild?:
-                | T
-                | {
-                    link?:
-                      | T
-                      | {
-                          type?: T;
-                          newTab?: T;
-                          reference?: T;
-                          url?: T;
-                          label?: T;
-                        };
-                    id?: T;
-                  };
-              id?: T;
-            };
-        id?: T;
-      };
+  navItems?: T | HeaderNavItemsSelect<T>;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "HeaderNavItems_select".
+ */
+export interface HeaderNavItemsSelect<T extends boolean = true> {
+  link?: T | LinkGroupSelect<T>;
+  child?: T | HeaderNavItemChildSelect<T>;
+  id?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "HeaderNavItemChild_select".
+ */
+export interface HeaderNavItemChildSelect<T extends boolean = true> {
+  link?: T | LinkGroupSelect<T>;
+  subChild?: T | HeaderNavItemSubChildSelect<T>;
+  id?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "HeaderNavItemSubChild_select".
+ */
+export interface HeaderNavItemSubChildSelect<T extends boolean = true> {
+  link?: T | LinkGroupSelect<T>;
+  id?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "footer_select".
  */
 export interface FooterSelect<T extends boolean = true> {
-  navItems?:
-    | T
-    | {
-        link?:
-          | T
-          | {
-              type?: T;
-              newTab?: T;
-              reference?: T;
-              url?: T;
-              label?: T;
-            };
-        id?: T;
-      };
+  navItems?: T | FooterNavItemsSelect<T>;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "FooterNavItems_select".
+ */
+export interface FooterNavItemsSelect<T extends boolean = true> {
+  link?: T | LinkGroupSelect<T>;
+  id?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "rate_select".
  */
 export interface RateSelect<T extends boolean = true> {
-  rates?:
-    | T
-    | {
-        currency?: T;
-        rate?: T;
-        id?: T;
-      };
+  rates?: T | RatesArraySelect<T>;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "RatesArray_select".
+ */
+export interface RatesArraySelect<T extends boolean = true> {
+  currency?: T;
+  rate?: T;
+  id?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
