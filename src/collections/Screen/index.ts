@@ -8,6 +8,9 @@ export const Screen: CollectionConfig = {
   admin: {
     group: "Mobile",
   },
+  access: {
+    read: () => true,
+  },
   fields: [
     {
       name: "title",
@@ -17,10 +20,10 @@ export const Screen: CollectionConfig = {
     {
       name: "sections",
       type: "blocks",
-      blocks: [Notification,ProductArchives,Content],
+      blocks: [Notification, ProductArchives, Content],
     },
   ],
-  versions:{
-    drafts:true,
-  }
+  versions: {
+    drafts: true,
+  },
 };
