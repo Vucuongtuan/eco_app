@@ -1252,25 +1252,20 @@ export interface Search {
   priority?: number | null;
   doc:
     | {
-        relationTo: 'categories';
-        value: string | Category;
-      }
-    | {
         relationTo: 'products';
         value: string | Product;
-      }
-    | {
-        relationTo: 'variants';
-        value: string | Variant;
       }
     | {
         relationTo: 'posts';
         value: string | Post;
       }
     | {
-        relationTo: 'pages';
-        value: string | Page;
+        relationTo: 'categories';
+        value: string | Category;
       };
+  _title?: string | null;
+  url?: string | null;
+  thumbnail?: string | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -2018,6 +2013,9 @@ export interface SearchSelect<T extends boolean = true> {
   title?: T;
   priority?: T;
   doc?: T;
+  _title?: T;
+  url?: T;
+  thumbnail?: T;
   updatedAt?: T;
   createdAt?: T;
 }
