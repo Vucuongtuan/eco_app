@@ -1,5 +1,6 @@
 "use client";
 
+import { SearchButton } from "@/components/Search";
 import { Header } from "@/payload-types";
 import { useAuth } from "@/providers/Auth";
 import { resolveLink, resolveTitle } from "@/utilities/getLinkAndTitle";
@@ -137,6 +138,16 @@ export function MobileMenuOverlay({
                 animate="visible"
                 className="space-y-1"
               >
+                {/* Search Button for Mobile */}
+                <motion.div
+                  variants={itemVariants}
+                  className="pb-4 mb-4 border-b border-border-light"
+                >
+                  <div className="flex justify-center">
+                    <SearchButton />
+                  </div>
+                </motion.div>
+
                 {navData?.map((link) => {
                   if (!link) return null;
                   return (
