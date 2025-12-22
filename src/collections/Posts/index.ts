@@ -1,6 +1,5 @@
 import { afterReadContent } from "@/hooks/afterReadContent";
-import { CollectionConfig } from "payload";
-import { slugField } from "../../fields/slug";
+import { CollectionConfig, slugField } from "payload";
 import { uploadCustomField } from "../../fields/upload";
 
 export const Posts: CollectionConfig = {
@@ -28,7 +27,9 @@ export const Posts: CollectionConfig = {
       name: "description",
       type: "textarea",
     },
-    ...slugField(),
+    slugField({
+      fieldToUse: "title",
+    }),
     {
       name: "content",
       type: "richText",
