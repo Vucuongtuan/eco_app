@@ -1,6 +1,7 @@
 {
   "common": {
-    "home": "Trang chủ"
+    "home": "Trang chủ",
+    "hi": "Chào"
   },
   "productFilter": {
     "title": "Bộ lọc & Sắp xếp",
@@ -260,10 +261,10 @@
       "generic": "Có lỗi xảy ra. Vui lòng thử lại."
     }
   },
-  "posts":{
+  "posts": {
     "title": "Bài viết",
     "description": "Khám phá các bài viết mới nhất về thời trang bền vững",
-    "notFound":"Không tìm thấy bài viết",
+    "notFound": "Không tìm thấy bài viết",
     "loading": "Đang tải thêm bài viết...",
     "noMorePosts": "Bạn đã xem hết tất cả bài viết",
     "share": "Chia sẻ",
