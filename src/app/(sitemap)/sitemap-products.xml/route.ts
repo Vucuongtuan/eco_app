@@ -1,8 +1,8 @@
 import { query } from "@/lib/tryCatch";
 import { NextResponse } from "next/server";
 
-const baseUrl = process.env.NEXT_PUBLIC_VERCEL_URL
-  ? `https://${process.env.NEXT_PUBLIC_VERCEL_URL}`
+const baseUrl = process.env.PAYLOAD_PUBLIC_SERVER_URL
+  ? `https://${process.env.PAYLOAD_PUBLIC_SERVER_URL}`
   : "http://localhost:3000";
 
 export async function GET() {

@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server";
 
 const baseUrl =
-  process.env.NEXT_PUBLIC_SITE_URL ??
-  (process.env.NEXT_PUBLIC_VERCEL_URL
-    ? `https://${process.env.NEXT_PUBLIC_VERCEL_URL}`
+  process.env.PAYLOAD_PUBLIC_SERVER_URL ??
+  (process.env.PAYLOAD_PUBLIC_SERVER_URL
+    ? `https://${process.env.PAYLOAD_PUBLIC_SERVER_URL}`
     : "http://localhost:3000");
 
 export function GET() {
