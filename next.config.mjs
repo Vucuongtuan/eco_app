@@ -32,10 +32,10 @@ const nextConfig = {
   experimental: {
     // Use React Compiler
     // reactCompiler: {
-      //   compilationMode: "annotation",
-      // },
-    reactCompiler:true,
-    
+    //   compilationMode: "annotation",
+    // },
+    reactCompiler: true,
+
     inlineCss: true,
 
     // turbopackFileSystemCacheForDev: true,
@@ -46,6 +46,18 @@ const nextConfig = {
     // no supports production nextjs latest version
     // cacheComponents: true, // next@canary
   },
+
+  // tuborpack
+  turbopack: {
+    resolveExtensions: [".mdx", ".tsx", ".ts", ".jsx", ".js", ".mjs", ".json"],
+    rules: {
+      "*.svg": {
+        as: "*.js",
+        loaders: ["@svgr/webpack"],
+      },
+    },
+  },
+  //webpack config
   // webpack: (config, { isServer }) => {
   //   if (!isServer) {
   //     // Don't bundle server-only packages on the client

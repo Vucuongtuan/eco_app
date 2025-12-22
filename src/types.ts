@@ -1,4 +1,4 @@
-import { Category, Media, Page, Post } from "./payload-types";
+import { Category, Media, Page, Post, Search } from "./payload-types";
 
 export type Lang = "vi" | "en";
 
@@ -114,3 +114,9 @@ export interface LayoutDefaultBlock {
   layout?: "container" | "full" | "wide" | "narrow";
   column?: "one-column" | "two-column" | "three-column";
 }
+
+export type SearchResultDoc = Pick<
+  Search,
+  "id" | "title" | "doc" | "thumbnail" | "url"
+>;
+export type SearchTagResultDoc = Pick<Post, "id" | "title" | "slug" | "image">;

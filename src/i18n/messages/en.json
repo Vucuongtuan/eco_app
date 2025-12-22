@@ -1,7 +1,9 @@
 {
   "common": {
-    "home": "Home"
+    "home": "Home",
+    "hi": "Hi"
   },
+
   "productFilter": {
     "title": "Filter & Sort",
     "filterButton": "Filter & Sort",
@@ -259,7 +261,7 @@
       "generic": "An error occurred. Please try again."
     }
   },
-  "posts":{
+  "posts": {
     "title": "Posts",
     "description": "Discover the latest articles about sustainable fashion",
     "notFound": "Not found post",

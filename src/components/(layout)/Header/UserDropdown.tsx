@@ -2,6 +2,7 @@
 
 import { useAuth } from "@/providers/Auth";
 import { LogOut, User, UserCircle } from "lucide-react";
+import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 
@@ -9,7 +10,7 @@ export function UserDropdown() {
   const { user, logout } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
-  
+  const t = useTranslations("common");
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -31,7 +32,7 @@ export function UserDropdown() {
         className="flex items-center space-x-1 hover:opacity-70"
         aria-label="Login"
       >
-        <User size={20} />
+        Login
       </Link>
     );
   }
@@ -42,11 +43,13 @@ export function UserDropdown() {
         className="flex items-center space-x-1 hover:opacity-70"
       >
         <User size={20} />
-        <span className="hidden lg:inline">{user.email}</span>
       </button>
 
       {isOpen && (
         <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg  z-50">
+          <div className="flex items-center px-4 py-2 text-sm hover:bg-gray-100">
+            {t("hi")} - {user.name}
+          </div>
           <Link
             href="/profile"
             className="flex items-center px-4 py-2 text-sm hover:bg-gray-100"
