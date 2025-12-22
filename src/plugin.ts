@@ -3,9 +3,7 @@ import { adminOnlyFieldAccess } from "@/access/adminOnlyFieldAccess";
 import { adminOrPublishedStatus } from "@/access/adminOrPublishedStatus";
 import { customerOnlyFieldAccess } from "@/access/customerOnlyFieldAccess";
 import { isAdmin } from "@/access/isAdmin";
-import {
-  isDocumentOwner
-} from "@/access/isDocumentOwner";
+import { isDocumentOwner } from "@/access/isDocumentOwner";
 import { getServerSideURL } from "@/utilities/getURL";
 import { ecommercePlugin } from "@payloadcms/plugin-ecommerce";
 import { stripeAdapter } from "@payloadcms/plugin-ecommerce/payments/stripe";
@@ -20,6 +18,7 @@ import { vercelBlobStorage } from "@payloadcms/storage-vercel-blob";
 import { FieldsOverride } from "node_modules/@payloadcms/plugin-ecommerce/dist/types";
 import { Plugin } from "payload";
 import { ProductsCollection } from "./collections/Products";
+import { Media } from "./payload-types";
 import { templateHtml } from "./utilities/templateHtml";
 export const defaultMeta = {
   brandName: "Moon co.",
@@ -88,51 +87,110 @@ export const plugins: Plugin[] = [
   }),
 
   searchPlugin({
-    collections: applySearchForCollection,
-    defaultPriorities: {
-      categories: 10,
-      products: 20,
-    },
-    searchOverrides: {
-      // @ts-expect-error
-      fields: ({ defaultFields }) =>
-        defaultFields.map((field) => {
-          if ((field as { name: string }).name === "doc") {
-            return {
-              ...field,
-              relationTo: applySearchForCollection,
-              admin: {
-                ...((field as any).admin || {}),
-                sortOptions: {
-                  categories: "title",
-                  products: "title",
-                  brands: "title",
-                  tags: "title",
-                  subCategories: "title",
-                },
-              },
-            };
-          }
-          return field;
-        }),
-    },
-    beforeSync: ({ doc, searchDoc }: any) => {
+    beforeSync: async ({ originalDoc, searchDoc, req: { payload } }) => {
+      let thumbnail = null;
+
+      if (originalDoc.featureImage) {
+        let media: Media;
+
+        if (searchDoc.doc.relationTo === "products") {
+          media = originalDoc.gallery?.[0].image[0];
+        } else if (searchDoc.doc.relationTo === "posts") {
+          media = originalDoc.featureImage;
+        } else if (searchDoc.doc.relationTo === "categories") {
+          media = originalDoc.meta.image;
+        }
+
+        if (typeof media === "string") {
+          thumbnail = await payload
+            .findByID({
+              collection: "media",
+              id: media,
+            })
+            .then((res) => res.thumbnailURL)
+            .catch(() => null);
+        } else {
+          thumbnail = media.thumbnailURL ?? null;
+        }
+      }
       return {
         ...searchDoc,
-        title: doc?.title,
+
+        _title: originalDoc.title
+          ? slugify(originalDoc.title, {
+              locale: "vi",
+              lower: true,
+              replacement: " ",
+            })
+          : slugify(originalDoc.name, {
+              locale: "vi",
+              lower: true,
+              replacement: " ",
+            }),
+
+        title: originalDoc.title ?? originalDoc.name,
+        url: generateDocUrl({
+          slug: originalDoc.slug,
+          collection: searchDoc.doc.relationTo,
+        }),
+        thumbnail: thumbnail,
       };
     },
-    localize: true,
+    collections: ["products", "posts", "categories"],
+    defaultPriorities: {
+      products: 10,
+      posts: 7,
+      categories: 5,
+    },
+    searchOverrides: {
+      admin: {
+        group: "Settings",
+      },
+      defaultPopulate: {
+        id: true,
+        title: true,
+        _title: true,
+        doc: true,
+        thumbnail: true,
+        url: true,
+      },
+      fields: ({ defaultFields }) => [
+        ...defaultFields,
+        {
+          name: "_title",
+          type: "text",
+          admin: {
+            readOnly: true,
+          },
+          label: "Plain Title",
+        },
+        {
+          name: "url",
+          type: "text",
+          admin: {
+            readOnly: true,
+          },
+        },
+        {
+          name: "thumbnail",
+          type: "text",
+          admin: {
+            position: "sidebar",
+            readOnly: true,
+          },
+        },
+      ],
+    },
   }),
 
   // Ecommerce
   ecommercePlugin({
     access: {
       adminOnlyFieldAccess,
-    adminOrPublishedStatus,
-    customerOnlyFieldAccess,
-    isAdmin,
-    isDocumentOwner,
+      adminOrPublishedStatus,
+      customerOnlyFieldAccess,
+      isAdmin,
+      isDocumentOwner,
     },
     customers: {
       slug: "users",
@@ -162,13 +220,13 @@ export const plugins: Plugin[] = [
           webhookSecret: process.env.STRIPE_WEBHOOKS_SIGNING_SECRET!,
           webhooks: {
             "checkout.session.completed": async ({ event, req, stripe }) => {
-              console.log("============================================")
+              console.log("============================================");
               console.log("🎉 WEBHOOK TRIGGERED: checkout.session.completed");
-              console.log("============================================")
-              
+              console.log("============================================");
+
               const checkoutSession = event.data.object as any;
               const checkoutSessionID = checkoutSession.id;
-              
+
               console.log("📋 Checkout Session Details:", {
                 id: checkoutSessionID,
                 amount: checkoutSession.amount,
@@ -178,13 +236,13 @@ export const plugins: Plugin[] = [
               });
             },
             "payment_intent.succeeded": async ({ event, req, stripe }) => {
-              console.log("============================================")
+              console.log("============================================");
               console.log("🎉 WEBHOOK TRIGGERED: payment_intent.succeeded");
-              console.log("============================================")
-              
+              console.log("============================================");
+
               const paymentIntent = event.data.object as any;
               const paymentIntentID = paymentIntent.id;
-              
+
               console.log("📋 Payment Intent Details:", {
                 id: paymentIntentID,
                 amount: paymentIntent.amount,
@@ -198,8 +256,11 @@ export const plugins: Plugin[] = [
               );
 
               try {
-                console.log("🔍 Searching for transaction with PaymentIntent:", paymentIntentID);
-                
+                console.log(
+                  "🔍 Searching for transaction with PaymentIntent:",
+                  paymentIntentID
+                );
+
                 const { docs: transactions } = await req.payload.find({
                   collection: "transactions",
                   where: {
@@ -208,14 +269,20 @@ export const plugins: Plugin[] = [
                     },
                   },
                 });
-                
+
                 console.log("📦 Transactions found:", transactions.length);
-                console.log("📦 Transaction data:", JSON.stringify(transactions, null, 2));
+                console.log(
+                  "📦 Transaction data:",
+                  JSON.stringify(transactions, null, 2)
+                );
 
                 const transaction = transactions?.[0];
 
                 if (!transaction) {
-                  console.error("❌ No transaction found for PaymentIntent:", paymentIntentID);
+                  console.error(
+                    "❌ No transaction found for PaymentIntent:",
+                    paymentIntentID
+                  );
                   req.payload.logger.warn(
                     `Transaction not found for PaymentIntent: ${paymentIntentID}`
                   );
@@ -224,14 +291,18 @@ export const plugins: Plugin[] = [
 
                 console.log("✅ Transaction found:", {
                   id: transaction.id,
-                  customerEmail: transaction.customerEmail || transaction.customer.email,
+                  customerEmail:
+                    transaction.customerEmail || transaction.customer.email,
                   amount: transaction.amount,
                   currency: transaction.currency,
                 });
 
                 if (transaction.customerEmail) {
-                  console.log("📧 Attempting to send email to:", transaction.customerEmail);
-                  
+                  console.log(
+                    "📧 Attempting to send email to:",
+                    transaction.customerEmail
+                  );
+
                   try {
                     await req.payload.sendEmail({
                       to: transaction.customerEmail,
@@ -246,8 +317,11 @@ export const plugins: Plugin[] = [
                       }</p>
                     `,
                     });
-                    
-                    console.log("✅ Email sent successfully to:", transaction.customerEmail);
+
+                    console.log(
+                      "✅ Email sent successfully to:",
+                      transaction.customerEmail
+                    );
                     req.payload.logger.info(
                       `Order confirmation email sent to ${transaction.customerEmail}`
                     );
@@ -262,15 +336,18 @@ export const plugins: Plugin[] = [
                 }
               } catch (err) {
                 console.error("❌ Error processing webhook:", err);
-                console.error("Error stack:", err instanceof Error ? err.stack : 'No stack trace');
+                console.error(
+                  "Error stack:",
+                  err instanceof Error ? err.stack : "No stack trace"
+                );
                 req.payload.logger.error(
                   `Error processing payment success webhook: ${err}`
                 );
               }
-              
-              console.log("============================================")
+
+              console.log("============================================");
               console.log("✅ WEBHOOK PROCESSING COMPLETED");
-              console.log("============================================")
+              console.log("============================================");
             },
             "payment_intent.payment_failed": ({ event, req, stripe }) => {
               console.log("❌ Payment failed:", event.id);
@@ -354,15 +431,15 @@ export const plugins: Plugin[] = [
         },
       },
     },
-  
+
     transactions: {
       transactionCollectionOverride: ({ defaultCollection }) => {
         return {
           ...defaultCollection,
           hooks: {
-            beforeChange:[
+            beforeChange: [
               async ({ data, req, operation }) => {
-                if(operation === 'create' && !data.customerEmail){
+                if (operation === "create" && !data.customerEmail) {
                   data.customerEmail = data.customer.email;
                 }
                 return data;

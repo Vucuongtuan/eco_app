@@ -1,11 +1,13 @@
 "use server";
 
 import { cacheFunc } from "@/lib/cacheFunc";
-import { query } from "@/lib/tryCatch";
+import { getPayloadInstance, query } from "@/lib/tryCatch";
 import { Post, Product, Rate } from "@/payload-types";
 import { Lang, PaginationOption, ResponseDocs } from "@/types";
+import { parseSearchQuery } from "@/utilities/search";
 import { cookies } from "next/headers";
 import { PaginatedDocs } from "payload";
+import slugify from "slugify";
 
 interface FindProductsByCategoryProps extends PaginationOption {
   lang: Lang;
@@ -174,21 +176,22 @@ export const findReviewByProduct = async ({
 }) => {
   const [result, err] = await query<ResponseDocs<any>>((payload) => {
     let where: any = {
-       or:[
-          {
-            product:{
-              id: {
-                equals: productId,
-              },
-            }
-          },{
-            product:{
+      or: [
+        {
+          product: {
+            id: {
               equals: productId,
-            }
-          }
-        ],
+            },
+          },
+        },
+        {
+          product: {
+            equals: productId,
+          },
+        },
+      ],
       parent: {
-        or :[
+        or: [
           {
             parent: {
               equals: null,
@@ -198,8 +201,8 @@ export const findReviewByProduct = async ({
             parent: {
               equals: false,
             },
-          }
-        ]
+          },
+        ],
       },
     };
     if (rating) {
@@ -211,35 +214,35 @@ export const findReviewByProduct = async ({
 
     return payload.find({
       collection: "reviews",
-      where:{
-         or:[
+      where: {
+        or: [
           {
-            product:{
+            product: {
               id: {
                 equals: productId,
               },
-            }
-          },{
-            product:{
-              equals: productId,
-            }
-          }
-        ],
-         parent: {
-        or :[
-          {
-            parent: {
-              equals: null,
             },
           },
           {
-            parent: {
-              equals: false,
+            product: {
+              equals: productId,
             },
-          }
-        ]
-      },
-   
+          },
+        ],
+        parent: {
+          or: [
+            {
+              parent: {
+                equals: null,
+              },
+            },
+            {
+              parent: {
+                equals: false,
+              },
+            },
+          ],
+        },
       },
       limit: limit || 10,
       page: page || 1,
@@ -247,7 +250,7 @@ export const findReviewByProduct = async ({
     });
   });
   if (err) throw err;
-  console.log({result})
+  console.log({ result });
   return result;
 };
 
@@ -291,28 +294,29 @@ export const replyReview = async ({
         // No rating for replies
       },
     });
-    
+
     // Get current parent review to get existing replies
     const parentReview = await payload.findByID({
       collection: "reviews",
       id: parentId,
     });
-    
+
     // Update parent review to add this reply to replies array
     const updateParentReview = await payload.update({
       collection: "reviews",
       id: parentId,
       data: {
         replies: [
-          ...(Array.isArray(parentReview.replies) 
-            ? parentReview.replies.map((r: any) => typeof r === 'string' ? r : r.id)
+          ...(Array.isArray(parentReview.replies)
+            ? parentReview.replies.map((r: any) =>
+                typeof r === "string" ? r : r.id
+              )
             : []),
           createReview.id,
         ],
       },
     });
-    
-    
+
     return updateParentReview;
   });
 
@@ -334,7 +338,6 @@ export const createReview = async ({
   mediaIds?: string[];
 }) => {
   const [result, err] = await query<any>(async (payload) => {
- 
     // Validate rating
     if (rating < 1 || rating > 5) {
       throw new Error("Rating must be between 1 and 5");
@@ -369,11 +372,9 @@ export const getCurrentUser = async () => {
   return result;
 };
 
-
-
 export const findLatestPostByLang = async (
   lang: Lang,
-  pageParam?:number
+  pageParam?: number
 ): Promise<PaginatedDocs<Post>> => {
   return cacheFunc(
     async () => {
@@ -386,12 +387,12 @@ export const findLatestPostByLang = async (
           limit: 16,
           locale: lang,
           soft: "-publishAt",
-          page:pageParam || 1,
+          page: pageParam || 1,
         });
       });
 
       if (err) throw err;
-      return result
+      return result;
     },
     [`post-page`, lang],
     {
@@ -400,4 +401,81 @@ export const findLatestPostByLang = async (
   )();
 };
 
+export async function searchByKeywordOrTag(
+  q: string,
+  page: number = 1
+): Promise<PaginatedDocs> {
+  const emptyDocs: PaginatedDocs = {
+    docs: [],
+    hasNextPage: false,
+    hasPrevPage: false,
+    limit: 12,
+    pagingCounter: 0,
+    totalDocs: 0,
+    totalPages: 0,
+  };
 
+  try {
+    if (q === "" || q.length < 4) return emptyDocs;
+
+    const { keyword, tagId } = parseSearchQuery(q);
+    const normalizedKeyword = slugify(keyword, {
+      replacement: " ",
+      lower: true,
+      locale: "vi",
+    });
+    const payload = await getPayloadInstance();
+    return tagId
+      ? await payload.find({
+          collection: "posts",
+          where: {
+            and: [
+              {
+                tags: {
+                  in: [tagId],
+                },
+              },
+              {
+                _status: {
+                  equals: "published",
+                },
+              },
+            ],
+          },
+          select: {
+            id: true,
+            title: true,
+            slug: true,
+            featureImage: true,
+          },
+        })
+      : await payload.find({
+          collection: "search",
+          where: {
+            or: [
+              {
+                title: {
+                  like: keyword,
+                },
+              },
+              {
+                _title: {
+                  like: normalizedKeyword,
+                },
+              },
+            ],
+          },
+          select: {
+            title: true,
+            doc: true,
+            url: true,
+            thumbnail: true,
+          },
+          page,
+        });
+  } catch (error) {
+    console.error((error as Error).message);
+
+    return emptyDocs;
+  }
+}
