@@ -4,7 +4,7 @@ import { adminOrPublishedStatus } from "@/access/adminOrPublishedStatus";
 import { customerOnlyFieldAccess } from "@/access/customerOnlyFieldAccess";
 import { isAdmin } from "@/access/isAdmin";
 import { isDocumentOwner } from "@/access/isDocumentOwner";
-import { getServerSideURL } from "@/utilities/getURL";
+import { generateDocUrl, getServerSideURL } from "@/utilities/getURL";
 import { ecommercePlugin } from "@payloadcms/plugin-ecommerce";
 import { stripeAdapter } from "@payloadcms/plugin-ecommerce/payments/stripe";
 import { searchPlugin } from "@payloadcms/plugin-search";
@@ -17,6 +17,7 @@ import {
 import { vercelBlobStorage } from "@payloadcms/storage-vercel-blob";
 import { FieldsOverride } from "node_modules/@payloadcms/plugin-ecommerce/dist/types";
 import { Plugin } from "payload";
+import slugify from "slugify";
 import { ProductsCollection } from "./collections/Products";
 import { Media } from "./payload-types";
 import { templateHtml } from "./utilities/templateHtml";

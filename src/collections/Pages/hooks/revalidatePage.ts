@@ -18,8 +18,8 @@ export const revalidatePage: CollectionAfterChangeHook<Page> = ({
 
       revalidatePath(path);
       revalidatePath(`/en${path}`);
-      payload.logger.info(`Revalidating page at path: ${path}`);
-      payload.logger.info(`Revalidating page at path: /en${path}`);
+      payload.logger.info(`✅ Revalidating page at path: ${path}`);
+      payload.logger.info(`✅ Revalidating page at path: /en${path}`);
       //revalidateTag('pages-sitemap')
     }
 
@@ -27,7 +27,7 @@ export const revalidatePage: CollectionAfterChangeHook<Page> = ({
       const oldPath =
         previousDoc.slug === "home" ? "/" : `/${previousDoc.slug}`;
 
-      payload.logger.info(`Revalidating old page at path: ${oldPath}`);
+      payload.logger.info(`✅ Revalidating old page at path: ${oldPath}`);
 
       revalidatePath(oldPath);
       revalidatePath(`/en${oldPath}`);

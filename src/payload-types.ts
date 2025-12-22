@@ -1103,11 +1103,8 @@ export interface Post {
   id: string;
   title?: string | null;
   description?: string | null;
-  /**
-   * When enabled, the slug will auto-generate from the title field on save and autosave.
-   */
-  generateSlug?: boolean | null;
-  slug: string;
+  slug?: string | null;
+  slugLock?: boolean | null;
   content?: {
     root: {
       type: string;
@@ -1908,8 +1905,8 @@ export interface ModelBlockSelect<T extends boolean = true> {
 export interface PostsSelect<T extends boolean = true> {
   title?: T;
   description?: T;
-  generateSlug?: T;
   slug?: T;
+  slugLock?: T;
   content?: T;
   image?: T;
   linkedProducts?: T;

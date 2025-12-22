@@ -1,5 +1,6 @@
-import { afterReadContent } from "@/hooks/afterReadContent";
-import { CollectionConfig, slugField } from "payload";
+import { slugField } from "@/fields/slug";
+import { revalidatePath } from "next/cache";
+import { CollectionConfig } from "payload";
 import { uploadCustomField } from "../../fields/upload";
 
 export const Posts: CollectionConfig = {
@@ -17,26 +18,42 @@ export const Posts: CollectionConfig = {
   admin: {
     useAsTitle: "title",
   },
+  hooks: {
+    afterChange: [
+      async ({ doc, req }) => {
+        console.log("Post saved:", doc.title);
+        // /en
+        revalidatePath(`/en/posts/${doc.slug}`);
+        // /vi
+        revalidatePath(`/posts/${doc.slug}`);
+        // posts pages
+        revalidatePath(`/en/posts`);
+        revalidatePath(`/posts`);
+
+        // sitemap
+
+        req.payload.logger.info("✅ Revalidated post and posts listing pages");
+      },
+    ],
+  },
   fields: [
     {
       name: "title",
       type: "text",
       label: "Title",
+      localized: true,
     },
     {
       name: "description",
       type: "textarea",
+      localized: true,
     },
-    slugField({
-      fieldToUse: "title",
-    }),
+    ...slugField(),
     {
       name: "content",
       type: "richText",
       label: "Content",
-      hooks: {
-        afterRead: [afterReadContent],
-      },
+      localized: true,
     },
     uploadCustomField({
       name: "image",
