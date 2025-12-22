@@ -4,6 +4,8 @@ import { Header } from "@/components/(layout)/Header";
 import { routing } from "@/i18n/routing";
 import { cn } from "@/lib/utils";
 import { Providers } from "@/providers";
+import { BingUET } from "@/seo/bing/BingAnalytics";
+import { Analytics } from "@/seo/google/Analytics";
 import { Lang } from "@/types";
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
@@ -17,26 +19,6 @@ const baseUrl = process.env.NEXT_PUBLIC_VERCEL_URL
 const twitterCreator = TWITTER_CREATOR ? ensureStartsWith(TWITTER_CREATOR, '@') : undefined
 const twitterSite = TWITTER_SITE ? ensureStartsWith(TWITTER_SITE, 'https://') : undefined
  */
-
-/* export const metadata = {
-  metadataBase: new URL(baseUrl),
-  robots: {
-    follow: true,
-    index: true,
-  },
-  title: {
-    default: SITE_NAME,
-    template: `%s | ${SITE_NAME}`,
-  },
-  ...(twitterCreator &&
-    twitterSite && {
-      twitter: {
-        card: 'summary_large_image',
-        creator: twitterCreator,
-        site: twitterSite,
-      },
-    }),
-} */
 
 export default async function RootLayout(props: {
   children: React.ReactNode;
@@ -58,6 +40,10 @@ export default async function RootLayout(props: {
         <link href="/favicon.ico" rel="icon" sizes="32x32" />
         <link href="/favicon.svg" rel="icon" type="image/svg+xml" />
       </head>
+      {/* Google */}
+      <Analytics />
+      {/* Bing */}
+      <BingUET />
       <body className={cn("bg-primary-background")}>
         <Suspense>
           <NextIntlClientProvider messages={msg}>

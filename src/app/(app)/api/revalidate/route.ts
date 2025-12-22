@@ -21,8 +21,11 @@ export async function POST(req: NextRequest) {
     for (const p of paths) revalidatePath(p, getRevalidateType(p));
     for (const t of tags) revalidateTag(t);
 
-    // Always revalidate sitemap
+    // Always revalidate sitemap index and per-collection sitemaps
     revalidatePath("/sitemap.xml", "layout");
+    revalidatePath("/sitemap-pages.xml", "layout");
+    revalidatePath("/sitemap-products.xml", "layout");
+    revalidatePath("/sitemap-categories.xml", "layout");
 
     return NextResponse.json({
       message: "Revalidation successful",
@@ -36,7 +39,7 @@ export async function POST(req: NextRequest) {
           message: (error as Error).message,
         },
       },
-      { status: 401 },
+      { status: 401 }
     );
   }
 }
