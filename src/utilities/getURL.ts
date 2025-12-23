@@ -42,10 +42,10 @@ export const generateDocUrl = (args: {
 
     switch (collection) {
       case "posts":
-        return `/${slug}.html`;
+        return `/${slug}`;
 
       case "categories":
-        return `/t/${slug}`;
+        return `/collections/${slug}`;
 
       default:
         return `/page/${slug}`;

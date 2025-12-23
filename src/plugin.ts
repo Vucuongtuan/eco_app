@@ -164,6 +164,7 @@ export const plugins: Plugin[] = [
             readOnly: true,
           },
           label: "Plain Title",
+          localized: true,
         },
         {
           name: "url",
@@ -172,6 +173,7 @@ export const plugins: Plugin[] = [
             readOnly: true,
           },
         },
+
         {
           name: "thumbnail",
           type: "text",

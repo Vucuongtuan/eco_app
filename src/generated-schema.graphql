@@ -9110,6 +9110,9 @@ type Search {
   title: String
   priority: Float
   doc(draft: Boolean, locale: LocaleInputType, fallbackLocale: FallbackLocaleInputType): Search_Doc_Relationship!
+  _title: String
+  url: String
+  thumbnail: String
   updatedAt: DateTime
   createdAt: DateTime
 }
@@ -9120,14 +9123,12 @@ type Search_Doc_Relationship {
 }
 
 enum Search_Doc_RelationTo {
-  categories
   products
-  variants
   posts
-  pages
+  categories
 }
 
-union Search_Doc = Category | Product | Variant | Post | Page
+union Search_Doc = Product | Post | Category
 
 type Searches {
   docs: [Search!]!
@@ -9147,6 +9148,9 @@ input Search_where {
   title: Search_title_operator
   priority: Search_priority_operator
   doc: Search_doc_Relation
+  _title: Search__title_operator
+  url: Search_url_operator
+  thumbnail: Search_thumbnail_operator
   updatedAt: Search_updatedAt_operator
   createdAt: Search_createdAt_operator
   id: Search_id_operator
@@ -9181,11 +9185,42 @@ input Search_doc_Relation {
 }
 
 enum Search_doc_Relation_RelationTo {
-  categories
   products
-  variants
   posts
-  pages
+  categories
+}
+
+input Search__title_operator {
+  equals: String
+  not_equals: String
+  like: String
+  contains: String
+  in: [String]
+  not_in: [String]
+  all: [String]
+  exists: Boolean
+}
+
+input Search_url_operator {
+  equals: String
+  not_equals: String
+  like: String
+  contains: String
+  in: [String]
+  not_in: [String]
+  all: [String]
+  exists: Boolean
+}
+
+input Search_thumbnail_operator {
+  equals: String
+  not_equals: String
+  like: String
+  contains: String
+  in: [String]
+  not_in: [String]
+  all: [String]
+  exists: Boolean
 }
 
 input Search_updatedAt_operator {
@@ -9225,6 +9260,9 @@ input Search_where_and {
   title: Search_title_operator
   priority: Search_priority_operator
   doc: Search_doc_Relation
+  _title: Search__title_operator
+  url: Search_url_operator
+  thumbnail: Search_thumbnail_operator
   updatedAt: Search_updatedAt_operator
   createdAt: Search_createdAt_operator
   id: Search_id_operator
@@ -9236,6 +9274,9 @@ input Search_where_or {
   title: Search_title_operator
   priority: Search_priority_operator
   doc: Search_doc_Relation
+  _title: Search__title_operator
+  url: Search_url_operator
+  thumbnail: Search_thumbnail_operator
   updatedAt: Search_updatedAt_operator
   createdAt: Search_createdAt_operator
   id: Search_id_operator
@@ -9259,6 +9300,9 @@ type SearchDocAccessFields {
   title: SearchDocAccessFields_title
   priority: SearchDocAccessFields_priority
   doc: SearchDocAccessFields_doc
+  _title: SearchDocAccessFields__title
+  url: SearchDocAccessFields_url
+  thumbnail: SearchDocAccessFields_thumbnail
   updatedAt: SearchDocAccessFields_updatedAt
   createdAt: SearchDocAccessFields_createdAt
 }
@@ -9329,6 +9373,75 @@ type SearchDocAccessFields_doc_Update {
 }
 
 type SearchDocAccessFields_doc_Delete {
+  permission: Boolean!
+}
+
+type SearchDocAccessFields__title {
+  create: SearchDocAccessFields__title_Create
+  read: SearchDocAccessFields__title_Read
+  update: SearchDocAccessFields__title_Update
+  delete: SearchDocAccessFields__title_Delete
+}
+
+type SearchDocAccessFields__title_Create {
+  permission: Boolean!
+}
+
+type SearchDocAccessFields__title_Read {
+  permission: Boolean!
+}
+
+type SearchDocAccessFields__title_Update {
+  permission: Boolean!
+}
+
+type SearchDocAccessFields__title_Delete {
+  permission: Boolean!
+}
+
+type SearchDocAccessFields_url {
+  create: SearchDocAccessFields_url_Create
+  read: SearchDocAccessFields_url_Read
+  update: SearchDocAccessFields_url_Update
+  delete: SearchDocAccessFields_url_Delete
+}
+
+type SearchDocAccessFields_url_Create {
+  permission: Boolean!
+}
+
+type SearchDocAccessFields_url_Read {
+  permission: Boolean!
+}
+
+type SearchDocAccessFields_url_Update {
+  permission: Boolean!
+}
+
+type SearchDocAccessFields_url_Delete {
+  permission: Boolean!
+}
+
+type SearchDocAccessFields_thumbnail {
+  create: SearchDocAccessFields_thumbnail_Create
+  read: SearchDocAccessFields_thumbnail_Read
+  update: SearchDocAccessFields_thumbnail_Update
+  delete: SearchDocAccessFields_thumbnail_Delete
+}
+
+type SearchDocAccessFields_thumbnail_Create {
+  permission: Boolean!
+}
+
+type SearchDocAccessFields_thumbnail_Read {
+  permission: Boolean!
+}
+
+type SearchDocAccessFields_thumbnail_Update {
+  permission: Boolean!
+}
+
+type SearchDocAccessFields_thumbnail_Delete {
   permission: Boolean!
 }
 
@@ -21885,6 +21998,9 @@ type SearchFields {
   title: SearchFields_title
   priority: SearchFields_priority
   doc: SearchFields_doc
+  _title: SearchFields__title
+  url: SearchFields_url
+  thumbnail: SearchFields_thumbnail
   updatedAt: SearchFields_updatedAt
   createdAt: SearchFields_createdAt
 }
@@ -21955,6 +22071,75 @@ type SearchFields_doc_Update {
 }
 
 type SearchFields_doc_Delete {
+  permission: Boolean!
+}
+
+type SearchFields__title {
+  create: SearchFields__title_Create
+  read: SearchFields__title_Read
+  update: SearchFields__title_Update
+  delete: SearchFields__title_Delete
+}
+
+type SearchFields__title_Create {
+  permission: Boolean!
+}
+
+type SearchFields__title_Read {
+  permission: Boolean!
+}
+
+type SearchFields__title_Update {
+  permission: Boolean!
+}
+
+type SearchFields__title_Delete {
+  permission: Boolean!
+}
+
+type SearchFields_url {
+  create: SearchFields_url_Create
+  read: SearchFields_url_Read
+  update: SearchFields_url_Update
+  delete: SearchFields_url_Delete
+}
+
+type SearchFields_url_Create {
+  permission: Boolean!
+}
+
+type SearchFields_url_Read {
+  permission: Boolean!
+}
+
+type SearchFields_url_Update {
+  permission: Boolean!
+}
+
+type SearchFields_url_Delete {
+  permission: Boolean!
+}
+
+type SearchFields_thumbnail {
+  create: SearchFields_thumbnail_Create
+  read: SearchFields_thumbnail_Read
+  update: SearchFields_thumbnail_Update
+  delete: SearchFields_thumbnail_Delete
+}
+
+type SearchFields_thumbnail_Create {
+  permission: Boolean!
+}
+
+type SearchFields_thumbnail_Read {
+  permission: Boolean!
+}
+
+type SearchFields_thumbnail_Update {
+  permission: Boolean!
+}
+
+type SearchFields_thumbnail_Delete {
   permission: Boolean!
 }
 
@@ -28595,6 +28780,9 @@ input mutationSearchInput {
   title: String
   priority: Float
   doc: Search_DocRelationshipInput
+  _title: String
+  url: String
+  thumbnail: String
   updatedAt: String
   createdAt: String
 }
@@ -28605,17 +28793,18 @@ input Search_DocRelationshipInput {
 }
 
 enum Search_DocRelationshipInputRelationTo {
-  categories
   products
-  variants
   posts
-  pages
+  categories
 }
 
 input mutationSearchUpdateInput {
   title: String
   priority: Float
   doc: SearchUpdate_DocRelationshipInput
+  _title: String
+  url: String
+  thumbnail: String
   updatedAt: String
   createdAt: String
 }
@@ -28626,11 +28815,9 @@ input SearchUpdate_DocRelationshipInput {
 }
 
 enum SearchUpdate_DocRelationshipInputRelationTo {
-  categories
   products
-  variants
   posts
-  pages
+  categories
 }
 
 input mutationAddressInput {
