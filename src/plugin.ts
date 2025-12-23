@@ -91,13 +91,13 @@ export const plugins: Plugin[] = [
     beforeSync: async ({ originalDoc, searchDoc, req: { payload } }) => {
       let thumbnail = null;
 
-      if (originalDoc.featureImage) {
+      if (originalDoc.image) {
         let media: Media;
 
         if (searchDoc.doc.relationTo === "products") {
           media = originalDoc.gallery?.[0].image[0];
         } else if (searchDoc.doc.relationTo === "posts") {
-          media = originalDoc.featureImage;
+          media = originalDoc.image;
         } else if (searchDoc.doc.relationTo === "categories") {
           media = originalDoc.meta.image;
         }
