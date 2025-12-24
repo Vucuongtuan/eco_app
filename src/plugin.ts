@@ -93,13 +93,17 @@ export const plugins: Plugin[] = [
 
       if (originalDoc.image) {
         let media: Media;
+        let blurMedia: string;
 
         if (searchDoc.doc.relationTo === "products") {
           media = originalDoc.gallery?.[0].image[0];
+          blurMedia = originalDoc.gallery?.[0].image[0]?.blurDataURL;
         } else if (searchDoc.doc.relationTo === "posts") {
           media = originalDoc.image;
+          blurMedia = originalDoc.image?.blurDataURL;
         } else if (searchDoc.doc.relationTo === "categories") {
           media = originalDoc.meta.image;
+          blurMedia = originalDoc.meta.image?.blurDataURL;
         }
 
         if (typeof media === "string") {
@@ -112,6 +116,7 @@ export const plugins: Plugin[] = [
             .catch(() => null);
         } else {
           thumbnail = media.thumbnailURL ?? null;
+          blurMedia = media.blurDataURL;
         }
       }
       return {
@@ -135,6 +140,7 @@ export const plugins: Plugin[] = [
           collection: searchDoc.doc.relationTo,
         }),
         thumbnail: thumbnail,
+        blurMedia: blurMedia || "",
       };
     },
     collections: ["products", "posts", "categories"],
