@@ -77,5 +77,11 @@ export const Posts: CollectionConfig = {
     update: () => true,
     delete: () => true,
   },
-  versions: true,
+  versions: {
+    drafts: {
+      schedulePublish: {
+        timeIntervals: 30,
+      },
+    },
+  },
 };

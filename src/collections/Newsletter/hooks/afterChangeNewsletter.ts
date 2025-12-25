@@ -31,7 +31,6 @@ export const afterChangeNewsletter: CollectionAfterChangeHook = async ({
       }
 
       for (const email of emailsToSend) {
-        // @ts-expect-error
         const renderTemplate = templateHtml({
           title: data.title,
           content: "",

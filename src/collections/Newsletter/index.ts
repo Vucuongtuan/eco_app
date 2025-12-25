@@ -84,6 +84,10 @@ export const Newsletter: CollectionConfig = {
     },
   ],
   versions: {
-    drafts: true,
+    drafts: {
+      schedulePublish: {
+        timeIntervals: 30,
+      },
+    },
   },
 };

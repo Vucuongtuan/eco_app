@@ -5,15 +5,17 @@ import { slugField } from "@/fields/slug";
 import { uploadCustomField } from "@/fields/upload";
 import { afterReadContent } from "@/hooks/afterReadContent";
 import { beforeChangeMetaImage } from "@/hooks/beforeChangeMetaImage";
+import { Category } from "@/payload-types";
 import { generatePreviewPath } from "@/utilities/generatePreviewPath";
 import { CollectionOverride } from "@payloadcms/plugin-ecommerce/types";
 import {
-    MetaDescriptionField,
-    MetaImageField,
-    MetaTitleField,
-    OverviewField,
-    PreviewField,
+  MetaDescriptionField,
+  MetaImageField,
+  MetaTitleField,
+  OverviewField,
+  PreviewField,
 } from "@payloadcms/plugin-seo/fields";
+import { revalidatePath } from "next/cache";
 import { DefaultDocumentIDType, Where } from "payload";
 
 export const ProductsCollection: CollectionOverride = ({
@@ -44,6 +46,21 @@ export const ProductsCollection: CollectionOverride = ({
   },
   hooks: {
     beforeChange: [beforeChangeMetaImage],
+    afterChange: [
+      async ({ doc, req }) => {
+        // details page
+        revalidatePath(`/products/${doc.slug}`);
+        revalidatePath(`/en/products/${doc.slug}`);
+
+        // collections pages
+        doc?.taxonomies?.categories.map((cate: Category) =>
+          revalidatePath(`/collections/${cate.slug}`)
+        );
+
+        // revalidate home page if product is featured
+        revalidatePath("/");
+      },
+    ],
   },
   defaultPopulate: {
     ...defaultCollection?.defaultPopulate,
@@ -332,7 +349,10 @@ export const ProductsCollection: CollectionOverride = ({
   ],
   versions: {
     drafts: {
-      autosave: false,
+      autosave: true,
+      schedulePublish: {
+        timeIntervals: 30,
+      },
     },
     maxPerDoc: 30,
   },

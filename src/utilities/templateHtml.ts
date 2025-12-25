@@ -1,4 +1,13 @@
-import { Post, Product, Transaction } from "@/payload-types";
+import { Post, Product } from "@/payload-types";
+
+interface TemplateProps {
+  title: string;
+  content?: string;
+  type: "blog" | "product" | "cart";
+  cart?: any;
+  products?: Product[];
+  blogs?: Post[];
+}
 
 const wrap = (body: string, title = "Thông báo") => `<!doctype html>
 <html lang="vi">
@@ -7,258 +16,148 @@ const wrap = (body: string, title = "Thông báo") => `<!doctype html>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>${title}</title>
     <style>
-      body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; background:#f5f7fb; margin:0; padding:20px; }
-      .container{max-width:680px;margin:0 auto;background:#ffffff;border-radius:8px;overflow:hidden;box-shadow:0 2px 8px rgba(16,24,40,0.08)}
-      .header{padding:20px;border-bottom:1px solid #eef2f7;background:#fbfdff}
-      .content{padding:20px}
-      .btn{display:inline-block;padding:10px 16px;background:#00a86b;color:#fff;border-radius:6px;text-decoration:none}
-      .item{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid #f1f5f9}
-      .item img{width:88px;height:64px;object-fit:cover;border-radius:6px}
-      .muted{color:#64748b;font-size:13px}
-      .price{color:#0f766e;font-weight:600}
-      .footer{padding:16px 20px;background:#fbfdff;border-top:1px solid #eef2f7;color:#64748b;font-size:13px}
-      @media (max-width:480px){ .item{flex-direction:row} }
+      body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background:#f4f4f5; margin:0; padding:20px; color: #18181b; }
+      .container { max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
+      .header { padding: 32px; background: #18181b; color: #ffffff; text-align: center; }
+      .header h1 { margin: 0; font-size: 24px; letter-spacing: -0.5px; }
+      .content { padding: 32px; }
+      .footer { padding: 24px; background: #f8fafc; border-top: 1px solid #e2e8f0; text-align: center; color: #64748b; font-size: 13px; }
+      .h2 { font-size: 20px; font-weight: 600; margin: 0 0 16px 0; color: #18181b; }
+      .p { font-size: 15px; line-height: 1.6; color: #52525b; margin: 0 0 20px 0; }
+      .btn { display: inline-block; padding: 12px 24px; background: #000000; color: #ffffff !important; border-radius: 6px; text-decoration: none; font-weight: 500; font-size: 14px; }
+      .list-item { display: flex; gap: 16px; padding: 20px 0; border-bottom: 1px solid #f1f5f9; text-decoration: none; color: inherit; }
+      .list-item:last-child { border-bottom: none; }
+      .list-img { width: 100px; height: 100px; border-radius: 8px; object-fit: cover; background: #f1f5f9; }
+      .list-info { flex: 1; }
+      .list-title { font-size: 16px; font-weight: 600; margin: 0 0 6px 0; }
+      .list-desc { font-size: 14px; color: #64748b; margin: 0 0 12px 0; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+      .price { color: #000; font-weight: 700; font-size: 16px; }
+      .order-summary { background: #f8fafc; border-radius: 8px; padding: 20px; margin-bottom: 24px; }
+      .summary-row { display: flex; justify-content: space-between; font-size: 14px; margin-bottom: 8px; }
+      .total-row { display: flex; justify-content: space-between; font-size: 18px; font-weight: 700; margin-top: 12px; padding-top: 12px; border-top: 1px dashed #cbd5e1; }
+      @media (max-width: 480px) {
+        .content { padding: 20px; }
+        .list-item { flex-direction: column; }
+        .list-img { width: 100%; height: 180px; }
+      }
     </style>
   </head>
   <body>
     <div class="container">
-      ${body}
+      <div class="header"><h1>Moon co.</h1></div>
+      <div class="content">${body}</div>
+      <div class="footer">
+        © ${new Date().getFullYear()} Moon co. — Phong cách hiện đại cho bạn.<br/>
+        Bạn nhận được email này vì đã đăng ký hoặc mua hàng tại cửa hàng chúng tôi.
+      </div>
     </div>
   </body>
-</html>`;
+</html>
+`;
 
-const safeText = (s?: string) => (s ? String(s) : "");
-
-export const blogTemplate = (title: string, blogs?: Post[], intro?: string) => {
-  const body = `
-    <div class="header">
-      <h2 style="margin:0">${title}</h2>
-      <p class="muted" style="margin:6px 0 0">${safeText(intro)}</p>
-    </div>
-    <div class="content">
-      ${(blogs || [])
-        .map((b) => {
-          const bTitle = (b as any).title ?? (b as any).name ?? "Bài viết";
-          const excerpt = (b as any).excerpt ?? (b as any).summary ?? "";
-          const img =
-            (b as any).featureImage?.url ?? (b as any).image?.url ?? "";
-          const url = (b as any).url ?? (b as any).slug ?? "#";
-          return `
-            <div class="item">
-              ${img ? `<img src="${img}" alt="${bTitle}"/>` : ""}
-              <div style="flex:1">
-                <h3 style="margin:0 0 6px">${bTitle}</h3>
-                <p class="muted" style="margin:0 0 8px">${excerpt}</p>
-                <a class="btn" href="${url}">Đọc thêm</a>
-              </div>
-            </div>`;
-        })
-        .join("")}
-    </div>
-    <div class="footer">Cảm ơn bạn đã theo dõi. Truy cập trang để đọc thêm.</div>
-  `;
-
-  return wrap(body, title);
+const fmtPrice = (amount: number, currency = "VND") => {
+  return new Intl.NumberFormat("vi-VN", { style: "currency", currency }).format(amount / 100);
 };
 
-export const productListTemplate = (
-  title: string,
-  products?: Product[],
-  intro?: string
-) => {
-  const body = `
-    <div class="header">
-      <h2 style="margin:0">${title}</h2>
-      <p class="muted" style="margin:6px 0 0">${safeText(intro)}</p>
-    </div>
-    <div class="content">
-      ${(products || [])
-        .map((p) => {
-          const pTitle = (p as any).title ?? (p as any).name ?? "Sản phẩm";
-          const price = (p as any).price ?? (p as any).formattedPrice ?? "";
-          const img =
-            (p as any).image?.url ?? (p as any).images?.[0]?.url ?? "";
-          const url = (p as any).url ?? (p as any).slug ?? "#";
-          return `
-            <div class="item">
-              ${img ? `<img src="${img}" alt="${pTitle}"/>` : ""}
-              <div style="flex:1">
-                <h3 style="margin:0 0 6px">${pTitle}</h3>
-                <div style="display:flex;gap:8px;align-items:center">
-                  <div class="price">${price}</div>
-                  <a class="btn" href="${url}">Xem chi tiết</a>
-                </div>
-              </div>
-            </div>`;
-        })
-        .join("")}
-    </div>
-    <div class="footer">Xem thêm sản phẩm trên cửa hàng của chúng tôi.</div>
-  `;
-
-  return wrap(body, title);
-};
-
-export const orderSuccessTemplate = (
-  title: string,
-  cart?: Transaction,
-  products?: Product[]
-) => {
-  const transaction = cart as Transaction | undefined;
-
-  const formatDate = (d?: string) => {
-    try {
-      return d
-        ? new Date(d).toLocaleString("vi-VN", {
-            dateStyle: "medium",
-            timeStyle: "short",
-          })
-        : "";
-    } catch (e) {
-      return d ?? "";
-    }
-  };
-
-  const currencyCode = (transaction as any)?.currency ?? "VND";
-  const fmtMoney = (amount?: number | null) => {
-    if (amount == null) return "";
-    try {
-      return new Intl.NumberFormat("vi-VN", {
-        style: "currency",
-        currency: currencyCode,
-      }).format(amount);
-    } catch (e) {
-      return `${amount} ${currencyCode}`;
-    }
-  };
-
-  const statusMap: Record<string, string> = {
-    pending: "Đang chờ",
-    succeeded: "Thành công",
-    failed: "Thất bại",
-    cancelled: "Đã hủy",
-    expired: "Hết hạn",
-    refunded: "Đã hoàn tiền",
-  };
-
-  const renderAddress = (addr?: any) => {
-    if (!addr) return "";
-    const parts = [
-      addr.title,
-      addr.firstName,
-      addr.lastName,
-      addr.company,
-      addr.addressLine1,
-      addr.addressLine2,
-      addr.city,
-      addr.state,
-      addr.postalCode,
-      addr.country,
-      addr.phone,
-    ];
-    return parts.filter(Boolean).join(", ");
-  };
-
-  const items = (transaction?.items ?? []) as any[];
-
-  const lines = items
-    .map((it) => {
-      // Resolve product object
-      let productObj: any = undefined;
-      if (it.product && typeof it.product === "object") productObj = it.product;
-      else if (it.product && typeof it.product === "string")
-        productObj = products?.find((p) => (p as any).id === it.product);
-
-      const variantObj: any =
-        it.variant && typeof it.variant === "object" ? it.variant : undefined;
-
-      const name =
-        productObj?.title ?? productObj?.name ?? it.name ?? "Sản phẩm";
-      const variantName =
-        variantObj?.name ??
-        variantObj?.title ??
-        (it.variant && typeof it.variant === "string" ? it.variant : "");
-      const qty = it.quantity ?? it.qty ?? 1;
-
-      // Determine unit price: item may carry price, fall back to product/variant
-      let unitPrice = Number(
-        it.price ?? it.unitPrice ?? productObj?.price ?? variantObj?.price ?? 0
-      );
-      if (Number.isNaN(unitPrice)) unitPrice = 0;
-      const lineTotal = unitPrice * Number(qty || 0);
-
-      const img = productObj?.image?.url ?? productObj?.images?.[0]?.url ?? "";
-
-      return `
-        <div class="item">
-          ${img ? `<img src="${img}" alt="${name}"/>` : ""}
-          <div style="flex:1">
-            <h4 style="margin:0 0 6px">${name}${variantName ? ` — <span class=\"muted\">${variantName}</span>` : ""}</h4>
-            <div class="muted">Số lượng: ${qty}</div>
-            <div class="muted">Đơn giá: ${fmtMoney(unitPrice)}</div>
-            <div class="price">Thành tiền: ${fmtMoney(lineTotal)}</div>
-          </div>
-        </div>`;
-    })
-    .join("");
-
-  const total = transaction?.amount ?? (transaction as any)?.total ?? null;
-
-  const body = `
-    <div class="header">
-      <h2 style="margin:0">${title}</h2>
-      <p class="muted" style="margin:6px 0 0">Đơn hàng của bạn đã được nhận.</p>
-    </div>
-    <div class="content">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-        <div>
-          <div><strong>Mã đơn:</strong> ${(transaction as any)?.id ?? "-"}</div>
-          <div><strong>Trạng thái:</strong> ${statusMap[(transaction as any)?.status ?? ""] ?? (transaction as any)?.status ?? "-"}</div>
-          <div><strong>Ngày:</strong> ${formatDate((transaction as any)?.createdAt)}</div>
-        </div>
-        <div style="text-align:right">
-          <div><strong>Thanh toán:</strong> ${(transaction as any)?.paymentMethod ?? "-"}</div>
-          <div><strong>Email:</strong> ${(transaction as any)?.customerEmail ?? ((transaction as any)?.customer as any)?.email ?? "-"}</div>
-          <div><strong>Tổng:</strong> <span class="price">${fmtMoney(total)}</span></div>
-        </div>
+const blogTemplate = (title: string, blogs?: Post[], intro?: string) => `
+  <h2 class="h2">${title}</h2>
+  <p class="p">${intro || "Những bài viết mới nhất từ Moon co. mà bạn không thể bỏ qua."}</p>
+  ${(blogs || []).map(b => {
+    const img = (b as any).featureImage?.url || (b as any).image?.url || "";
+    return `
+    <div class="list-item">
+      ${img ? `<img src="${img}" class="list-img"/>` : ""}
+      <div class="list-info">
+        <h3 class="list-title">${b.title}</h3>
+        <p class="list-desc">${(b as any).excerpt || ""}</p>
+        <a href="${process.env.NEXT_PUBLIC_SERVER_URL}/posts/${b.slug}" class="btn" style="padding: 6px 16px; font-size: 12px;">Đọc bài</a>
       </div>
-
-      <h3 style="margin-top:0">Chi tiết đơn hàng</h3>
-      ${lines || '<div class="muted">Không có sản phẩm trong đơn.</div>'}
-
-      <div style="padding:12px 0;display:flex;justify-content:space-between;align-items:center">
-        <div class="muted">Tổng thanh toán</div>
-        <div class="price" style="font-size:16px">${fmtMoney(total)}</div>
-      </div>
-
-      <h4>Thông tin giao hàng</h4>
-      <div class="muted">${renderAddress((transaction as any)?.billingAddress)}</div>
     </div>
-    <div class="footer">Cảm ơn bạn đã mua hàng — chúng tôi sẽ cập nhật trạng thái vận chuyển sớm.</div>
-  `;
+`;
+  }).join("")}
+`;
 
-  return wrap(body, title);
+const productTemplate = (title: string, products?: Product[], intro?: string) => `
+  <h2 class="h2">${title}</h2>
+  <p class="p">${intro || "Khám phá những sản phẩm mới nhất đang có mặt tại cửa hàng."}</p>
+  ${(products || []).map(p => {
+    const img = (p as any).image?.url || (p as any).gallery?.[0]?.image?.url || "";
+    return `
+    <div class="list-item">
+      ${img ? `<img src="${img}" class="list-img"/>` : ""}
+      <div class="list-info">
+        <h3 class="list-title">${p.title}</h3>
+        <div class="price" style="margin-bottom: 12px;">${fmtPrice((p as any).priceInVND || (p as any).price || 0, "VND")}</div>
+        <a href="${process.env.NEXT_PUBLIC_SERVER_URL}/products/${p.slug}" class="btn" style="padding: 6px 16px; font-size: 12px;">Mua ngay</a>
+      </div>
+    </div>
+`;
+  }).join("")}
+`;
+
+const cartTemplate = (title: string, transaction: any) => {
+  const items = transaction.items || [];
+  return `
+  <h2 class="h2">Cảm ơn bạn đã đặt hàng! 🎉</h2>
+  <p class="p">Xin chào, đơn hàng <b>#${transaction.id}</b> của bạn đã được thanh toán thành công và đang được chuẩn bị.</p>
+  
+  <div class="order-summary">
+    <div class="summary-row"><span style="color:#64748b">Ngày đặt:</span> <span>${new Date(transaction.createdAt).toLocaleDateString("vi-VN")}</span></div>
+    <div class="summary-row"><span style="color:#64748b">Trạng thái:</span> <span style="color:#059669; font-weight:600">Thành công</span></div>
+    <div class="summary-row"><span style="color:#64748b">Phương thức:</span> <span>Card</span></div>
+  </div>
+
+  <h3 style="font-size:16px; margin-bottom:12px;">Chi tiết sản phẩm:</h3>
+  ${items.map((it: any) => `
+    <div style="display:flex; justify-content:space-between; margin-bottom:12px; font-size:14px; border-bottom:1px solid #f1f5f9; padding-bottom:12px;">
+      <div>
+        <div style="font-weight:600">${it.product?.title || it.title || "Sản phẩm"}</div>
+        <div style="color:#64748b; font-size:12px">Số lượng: ${it.quantity}</div>
+      </div>
+      <div style="font-weight:600">${fmtPrice(it.price * it.quantity, transaction.currency)}</div>
+    </div>
+  `).join("")}
+
+  <div class="total-row">
+    <span>Tổng cộng</span>
+    <span>${fmtPrice(transaction.amount, transaction.currency)}</span>
+  </div>
+
+  <div style="text-align:center; margin-top:32px;">
+    <a href="${process.env.NEXT_PUBLIC_SERVER_URL}/account/orders/${transaction.id}" class="btn">Theo dõi đơn hàng</a>
+  </div>
+`;
 };
 
-export const templateHtml = (
-  title: string,
-  content: string,
-  type: "blog" | "product" | "cart",
-  cart?: Transaction,
-  products?: Product[],
-  blogs?: Post[]
-): string => {
-  switch (type) {
-    case "blog":
-      return blogTemplate(title, blogs, content);
-    case "product":
-      return productListTemplate(title, products, content);
-    case "cart":
-      return orderSuccessTemplate(title, cart, products);
-    default:
-      return wrap(
-        `<div class="content"><h2>${title}</h2><p>${safeText(content)}</p></div>`,
-        title
-      );
+export function templateHtml(propsOrTitle: any, ...args: any[]): string {
+  let title: string;
+  let type: string;
+  let content: string | undefined;
+  let cart: any;
+  let products: Product[] | undefined;
+  let blogs: Post[] | undefined;
+
+  if (typeof propsOrTitle === "object" && propsOrTitle !== null) {
+    title = propsOrTitle.title;
+    type = propsOrTitle.type || "default";
+    content = propsOrTitle.content;
+    cart = propsOrTitle.cart;
+    products = propsOrTitle.products;
+    blogs = propsOrTitle.blogs;
+  } else {
+    title = propsOrTitle;
+    content = args[0];
+    type = args[1] || "default";
+    cart = args[2];
+    products = args[3];
+    blogs = args[4];
   }
-};
+
+  let body = "";
+  if (type === "blog") body = blogTemplate(title, blogs, content);
+  else if (type === "product") body = productTemplate(title, products, content);
+  else if (type === "cart") body = cartTemplate(title, cart);
+  else body = `<h2 class="h2">${title}</h2><p class="p">${content || ""}</p>`;
+
+  return wrap(body, title);
+}
