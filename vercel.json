@@ -10,11 +10,5 @@
         }
       ]
     }
-  ],
-  "crons": [
-    {
-      "path": "/api/payload-jobs/run?limit=20",
-      "schedule": "*/30 * * * *"
-    }
   ]
 }

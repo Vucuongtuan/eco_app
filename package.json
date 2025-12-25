@@ -5,7 +5,7 @@
   "license": "MIT",
   "type": "module",
   "scripts": {
-    "build": "pnpm payload-graphql generate:schema && next build",
+    "build": "next build",
     "dev": "next dev --turbopack",
     "devsafe": "rm -rf .next && cross-env NODE_OPTIONS=--no-deprecation next dev ",
     "generate:importmap": "cross-env NODE_OPTIONS=--no-deprecation payload generate:importmap",
