@@ -16,8 +16,5 @@
       "path": "/api/payload-jobs/run?limit=20",
       "schedule": "*/30 * * * *"
     }
-  ],
-  "git": {
-    "deploymentEnabled": false
-  }
+  ]
 }
