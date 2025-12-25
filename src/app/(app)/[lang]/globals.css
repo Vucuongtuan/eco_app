@@ -180,13 +180,12 @@ h6{
 }
 
 html {
-  opacity: 0;
   @apply font-sans;
 }
 
 html[data-theme="dark"],
 html[data-theme="light"] {
-  opacity: initial;
+  /* opacity: initial; */
 }
 
 a,

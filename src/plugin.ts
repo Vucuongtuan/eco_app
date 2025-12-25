@@ -20,6 +20,7 @@ import { Plugin } from "payload";
 import slugify from "slugify";
 import { ProductsCollection } from "./collections/Products";
 import { Media } from "./payload-types";
+import { sendTelegramMessage } from "./utilities/telegram";
 import { templateHtml } from "./utilities/templateHtml";
 export const defaultMeta = {
   brandName: "Moon co.",
@@ -463,12 +464,43 @@ export const plugins: Plugin[] = [
                     content: "",
                   });
                   // Send order confirmation email
-                  await req.payload.sendEmail({
-                    to: data.customerEmail || data.customer.email,
-                    form: "vucuongtuansin1@gmail.com",
-                    subject: "Xác nhận đơn hàng từ Moon co.",
-                    html: template,
-                  });
+                  try {
+                    await req.payload.sendEmail({
+                      to: data.customerEmail || data.customer.email,
+                      form: "vucuongtuansin1@gmail.com",
+                      subject: "Xác nhận đơn hàng từ Moon co.",
+                      html: template,
+                    });
+                  } catch (error) {
+                    req.payload.logger.error(`Error sending email: ${error}`);
+                  }
+
+                  // Send Notification to Telegram Admin Group
+                  try {
+                    const amount = new Intl.NumberFormat("vi-VN", {
+                      style: "currency",
+                      currency: data.currency || "VND",
+                    }).format((data.amount || 0) / 100);
+                    const customerEmail =
+                      data.customerEmail || data.customer?.email || "Unknown";
+                    const transactionId = data.id;
+
+                    const message = `
+                        <b>🚀 ĐƠN HÀNG MỚI!</b>
+                        --------------------------------
+                        💰 <b>Tổng tiền:</b> ${amount}
+                        📧 <b>Khách hàng:</b> ${customerEmail}
+                        🆔 <b>Mã GD:</b> <code>${transactionId}</code>
+                        --------------------------------
+                        <i>Kiểm tra ngay trong trang quản trị.</i>
+                    `;
+
+                    await sendTelegramMessage(message);
+                  } catch (error) {
+                    req.payload.logger.error(
+                      `Error sending Telegram notification: ${error}`
+                    );
+                  }
                 }
               },
             ],
