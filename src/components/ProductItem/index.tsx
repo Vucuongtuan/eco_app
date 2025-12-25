@@ -53,7 +53,6 @@ export const ProductItem: React.FC<Props> = ({
 
       return hasMatch;
     });
-    console.log({ imageVariant, product, variant: variant.options });
     if (imageVariant && typeof imageVariant.image !== "string") {
       image = imageVariant.image as MediaType[];
     }

@@ -455,7 +455,7 @@ export const plugins: Plugin[] = [
               },
             ],
             afterChange: [
-              // @ts-expect-error
+              //
               async ({ data, req, operation }) => {
                 if (operation === "create") {
                   const template = templateHtml({
