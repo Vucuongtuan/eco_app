@@ -298,23 +298,21 @@ export const plugins: Plugin[] = [
                   return;
                 }
 
+                const customerEmail =
+                  transaction.customerEmail || transaction.customer.email;
                 console.log("✅ Transaction found:", {
                   id: transaction.id,
-                  customerEmail:
-                    transaction.customerEmail || transaction.customer.email,
+                  customerEmail: customerEmail,
                   amount: transaction.amount,
                   currency: transaction.currency,
                 });
 
-                if (transaction.customerEmail) {
-                  console.log(
-                    "📧 Attempting to send email to:",
-                    transaction.customerEmail
-                  );
+                if (customerEmail) {
+                  console.log("📧 Attempting to send email to:", customerEmail);
 
                   try {
                     await req.payload.sendEmail({
-                      to: transaction.customerEmail,
+                      to: customerEmail,
                       from: "noreply@moon.co",
                       subject: "Order Confirmation - Moon co.",
                       html: `
@@ -329,10 +327,10 @@ export const plugins: Plugin[] = [
 
                     console.log(
                       "✅ Email sent successfully to:",
-                      transaction.customerEmail
+                      customerEmail
                     );
                     req.payload.logger.info(
-                      `Order confirmation email sent to ${transaction.customerEmail}`
+                      `Order confirmation email sent to ${customerEmail}`
                     );
                   } catch (emailErr) {
                     console.error("❌ Email sending failed:", emailErr);
