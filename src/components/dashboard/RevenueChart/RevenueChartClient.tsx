@@ -1,7 +1,7 @@
 "use client";
 
 import { Skeleton } from "@/components/ui/skeleton";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   Bar,
   BarChart,
@@ -56,11 +56,30 @@ const CustomTooltip = ({ active, payload, label }: any) => {
   return null;
 };
 
-export const RevenueChartClient = ({ orders }: { orders: any[] }) => {
-  const [totalRevenue, setTotalRevenue] = useState(0);
+export const RevenueChartClient = () => {
+  const [orders, setOrders] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const data = useMemo(() => {
-    if (!orders) return null;
+  useEffect(() => {
+    const fetchOrders = async () => {
+      try {
+        const res = await fetch("/api/orders?limit=1000&sort=-createdAt");
+        if (!res.ok) throw new Error("Failed to fetch orders");
+        const data = await res.json();
+        setOrders(data.docs || []);
+      } catch (error) {
+        console.error("Error fetching orders:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchOrders();
+  }, []);
+
+  const { data, totalRevenue } = useMemo(() => {
+    if (!orders || orders.length === 0)
+      return { data: null, totalRevenue: 0 };
     const last7Days = [...Array(7)]
       .map((_, i) => {
         const d = new Date();
@@ -84,22 +103,23 @@ export const RevenueChartClient = ({ orders }: { orders: any[] }) => {
 
       // Format date as DD/MM
       const [year, month, day] = date.split("-");
-      setTotalRevenue(calculatedTotal);
       return {
         date: `${day}/${month}`,
         fullDate: date,
         revenue: dailyTotal,
       };
     });
+
+    return { data: chartData, totalRevenue: calculatedTotal };
   }, [orders]);
 
-  if (!orders || !data)
+  if (isLoading)
     return (
       <div
         className="dashboard-group__card"
         style={{ flex: 1, minWidth: "300px", margin: "1rem" }}
       >
-        ,<Skeleton className="flex-1" />
+        <Skeleton className="h-[400px] w-full" />
       </div>
     );
 
