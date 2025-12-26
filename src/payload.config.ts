@@ -79,7 +79,7 @@ export default buildConfig({
       },
       {
         slug: 'revenue-chart',
-        ComponentPath: '@/components/dashboard/RevenueChart#RevenueChart',
+        ComponentPath: '@/components/dashboard/RevenueChart/RevenueChartServer#RevenueChartServer',
         label: 'Revenue Chart',
          maxWidth: 'full',
         minWidth: 'large',  
