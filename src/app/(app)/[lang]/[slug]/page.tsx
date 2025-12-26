@@ -58,6 +58,9 @@ export async function generateStaticParams() {
       pagination: {
         limit: 0,
       },
+      select: {
+        slug: true,
+      },
     });
   });
 
@@ -65,17 +68,17 @@ export async function generateStaticParams() {
     console.log(err);
     return [
       { lang: "en" as const, slug: "/" }, // /en/home
-      { slug: "/" }, 
+      { lang: "vi" as const, slug: "/" },
     ];
   }
 
   const params = result.docs.flatMap((doc) => [
     { lang: "en" as const, slug: doc.slug },
-    { slug: doc.slug },
+    { lang: "vi" as const, slug: doc.slug },
   ]);
 
   params.push({ lang: "en" as const, slug: "/" });
-  params.push({ slug: "/" });
+  params.push({ lang: "vi" as const, slug: "/" });
 
   return params;
 }
