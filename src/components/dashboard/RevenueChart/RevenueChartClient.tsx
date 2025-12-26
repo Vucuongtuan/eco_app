@@ -78,8 +78,7 @@ export const RevenueChartClient = () => {
   }, []);
 
   const { data, totalRevenue } = useMemo(() => {
-    if (!orders || orders.length === 0)
-      return { data: null, totalRevenue: 0 };
+    if (!orders || orders.length === 0) return { data: null, totalRevenue: 0 };
     const last7Days = [...Array(7)]
       .map((_, i) => {
         const d = new Date();
@@ -174,7 +173,7 @@ export const RevenueChartClient = () => {
         <div style={{ width: "100%", height: 320 }}>
           <ResponsiveContainer>
             <BarChart
-              data={data}
+              data={data || []}
               margin={{ top: 10, right: 0, left: -20, bottom: 0 }}
             >
               <CartesianGrid
