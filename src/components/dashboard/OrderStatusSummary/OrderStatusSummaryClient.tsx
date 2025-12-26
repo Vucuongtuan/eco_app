@@ -3,7 +3,7 @@
 import { Skeleton } from "@/components/ui/skeleton";
 import { CheckCircle2, Clock, Package, Truck } from "lucide-react";
 import Link from "next/link";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 const StatusCard = ({
   title,
@@ -71,8 +71,27 @@ const StatusCard = ({
   </div>
 );
 
-export const OrderStatusSummaryClient = ({ orders }: { orders: any[] }) => {
-  //   const [stats, setStats] = useState<Record<string, number>>({});
+export const OrderStatusSummaryClient = () => {
+  const [orders, setOrders] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchOrders = async () => {
+      try {
+        const res = await fetch("/api/orders?limit=1000");
+        if (!res.ok) throw new Error("Failed to fetch orders");
+        const data = await res.json();
+        setOrders(data.docs || []);
+      } catch (error) {
+        console.error("Error fetching orders:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchOrders();
+  }, []);
+
   const counts = useMemo(() => {
     return orders.reduce((acc: any, order: any) => {
       const status = order.status || "unknown";
@@ -81,13 +100,13 @@ export const OrderStatusSummaryClient = ({ orders }: { orders: any[] }) => {
     }, {});
   }, [orders]);
 
-  if (!orders)
+  if (isLoading)
     return (
       <div
         className="dashboard-group__card"
         style={{ flex: 1, minWidth: "300px", margin: "1rem" }}
       >
-        <Skeleton className="flex-1" />
+        <Skeleton className="h-[200px] w-full" />
       </div>
     );
 

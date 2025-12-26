@@ -72,14 +72,14 @@ export default buildConfig({
        widgets: [
       {
         slug: 'order-status-summary',
-        ComponentPath: '@/components/dashboard/OrderStatusSummary/OrderStatusSummaryServer#OrderStatusSummaryServer',
+        ComponentPath: '@/components/dashboard/OrderStatusSummary/OrderStatusSummaryClient#OrderStatusSummaryClient',
         label: 'Order Status Summary',
         maxWidth: 'full',
         minWidth: 'large',
       },
       {
         slug: 'revenue-chart',
-        ComponentPath: '@/components/dashboard/RevenueChart/RevenueChartServer#RevenueChartServer',
+        ComponentPath: '@/components/dashboard/RevenueChart/RevenueChartClient#RevenueChartClient',
         label: 'Revenue Chart',
          maxWidth: 'full',
         minWidth: 'large',  

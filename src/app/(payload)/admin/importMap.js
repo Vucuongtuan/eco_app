@@ -45,8 +45,8 @@ import { FolderTypeField as FolderTypeField_3817bf644402e67bfe6577f60ef982de } f
 import { BtnChangeRate as BtnChangeRate_fabaf90855b0ab36790141ba6b9d0994 } from '@/globals/Rate/Components'
 import { BeforeLogin as BeforeLogin_658145b49192f700169cbc3866f07a9b } from '@/components/(dashboard)/BeforeLogin'
 import { VercelBlobClientUploadHandler as VercelBlobClientUploadHandler_16c82c5e25f430251a3e3ba57219ff4e } from '@payloadcms/storage-vercel-blob/client'
-import { OrderStatusSummaryServer as OrderStatusSummaryServer_e1d3f929bf8fdb787e76f50af3b726ad } from '@/components/dashboard/OrderStatusSummary/OrderStatusSummaryServer'
-import { RevenueChartServer as RevenueChartServer_fa3a92089ca65a5f5686d64d7c843031 } from '@/components/dashboard/RevenueChart/RevenueChartServer'
+import { OrderStatusSummaryClient as OrderStatusSummaryClient_d3a81de2a5f8b653082defb2361a2b20 } from '@/components/dashboard/OrderStatusSummary/OrderStatusSummaryClient'
+import { RevenueChartClient as RevenueChartClient_f53b0e606f8efeec18f683e27977c83a } from '@/components/dashboard/RevenueChart/RevenueChartClient'
 import { CollectionCards as CollectionCards_ab83ff7e88da8d3530831f296ec4756a } from '@payloadcms/ui/rsc'
 
 export const importMap = {
@@ -97,7 +97,7 @@ export const importMap = {
   "@/globals/Rate/Components#BtnChangeRate": BtnChangeRate_fabaf90855b0ab36790141ba6b9d0994,
   "@/components/(dashboard)/BeforeLogin#BeforeLogin": BeforeLogin_658145b49192f700169cbc3866f07a9b,
   "@payloadcms/storage-vercel-blob/client#VercelBlobClientUploadHandler": VercelBlobClientUploadHandler_16c82c5e25f430251a3e3ba57219ff4e,
-  "@/components/dashboard/OrderStatusSummary/OrderStatusSummaryServer#OrderStatusSummaryServer": OrderStatusSummaryServer_e1d3f929bf8fdb787e76f50af3b726ad,
-  "@/components/dashboard/RevenueChart/RevenueChartServer#RevenueChartServer": RevenueChartServer_fa3a92089ca65a5f5686d64d7c843031,
+  "@/components/dashboard/OrderStatusSummary/OrderStatusSummaryClient#OrderStatusSummaryClient": OrderStatusSummaryClient_d3a81de2a5f8b653082defb2361a2b20,
+  "@/components/dashboard/RevenueChart/RevenueChartClient#RevenueChartClient": RevenueChartClient_f53b0e606f8efeec18f683e27977c83a,
   "@payloadcms/ui/rsc#CollectionCards": CollectionCards_ab83ff7e88da8d3530831f296ec4756a
 }
