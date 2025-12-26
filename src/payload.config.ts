@@ -72,7 +72,7 @@ export default buildConfig({
        widgets: [
       {
         slug: 'order-status-summary',
-        ComponentPath: '@/components/dashboard/OrderStatusSummary#OrderStatusSummary',
+        ComponentPath: '@/components/dashboard/OrderStatusSummary/OrderStatusSummaryServer#OrderStatusSummaryServer',
         label: 'Order Status Summary',
         maxWidth: 'full',
         minWidth: 'large',
@@ -138,14 +138,10 @@ export default buildConfig({
   globals: golobalCollections,
   plugins: [
     ...plugins,
-    // storage-adapter-placeholder
   ],
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {
     outputFile: path.resolve(dirname, 'payload-types.ts'),
   },
-  // Sharp is now an optional dependency -
-  // if you want to resize images, crop, set focal point, etc.
-  // make sure to install it and pass it to the config.
-  // sharp,
+
 })
