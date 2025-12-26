@@ -91,10 +91,10 @@ export const plugins: Plugin[] = [
   searchPlugin({
     beforeSync: async ({ originalDoc, searchDoc, req: { payload } }) => {
       let thumbnail = null;
+      let blurMedia: string;
 
       if (originalDoc.image) {
         let media: Media;
-        let blurMedia: string;
 
         if (searchDoc.doc.relationTo === "products") {
           media = originalDoc.gallery?.[0].image[0];
