@@ -8,7 +8,7 @@ export const spacing = (
 
   switch (type) {
     case "none":
-      return `${prefix}-0`;
+      return `${prefix}-1`;
     case "small":
       return `${prefix}-4 md:${prefix}-6`;
     case "medium":

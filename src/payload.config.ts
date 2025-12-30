@@ -132,7 +132,6 @@ export default buildConfig({
       },
     },
     },
-    
   ),
   endpoints: [],
   globals: golobalCollections,

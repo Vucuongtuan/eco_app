@@ -23,10 +23,10 @@ interface ListProductProps {
 
 export default function CarouselListProduct(props: ListProductProps) {
   const { data: d, lang, enableMedia, media, caption } = props;
-  const {width} = useWindowSize() 
+  const { width } = useWindowSize();
   const data = d.length < 5 ? [...d, ...d, ...d] : [...d, ...d];
   const isDesktop = useMemo(() => (width ?? 0) > 1023, [width]);
-  const ITEMS_PER_VIEW = isDesktop ? 3.5 : 2.2;
+  const ITEMS_PER_VIEW = isDesktop ? (enableMedia ? 3.5 : 4) : 2.2;
 
   const [currentSlide, setCurrentSlide] = useState<number>(0);
 
@@ -54,40 +54,50 @@ export default function CarouselListProduct(props: ListProductProps) {
           {/* Media View */}
           {enableMedia && media && (
             <aside className="relative aspect-figcard w-[23%] mr-4 max-lg:hidden">
-              <Media resource={media} fClassName="w-full h-full object-cover" fill imgSize="large" />
+              <Media
+                resource={media}
+                fClassName="w-full h-full object-cover"
+                fill
+                imgSize="large"
+              />
               {caption && (
                 <>
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
-                <div className="absolute bottom-0 left-0 right-0 p-4 text-white text-lg font-semibold">
-                  <RichText data={caption as any} className="text-white" enableProse={false} enableGutter={false} />
-                </div>
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
+                  <div className="absolute bottom-0 left-0 right-0 p-4 text-white text-lg font-semibold">
+                    <RichText
+                      data={caption as any}
+                      className="text-white"
+                      enableProse={false}
+                      enableGutter={false}
+                    />
+                  </div>
                 </>
               )}
             </aside>
           )}
           {/* Carousel Track */}
           <div className="flex-1 overflow-hidden">
-          <motion.ul
-            className="flex"
-            animate={{
-              x: `-${currentSlide * (100 / ITEMS_PER_VIEW)}%`,
-            }}
-            transition={{
-              type: "spring",
-              stiffness: 300,
-              damping: 30,
-            }}
-          >
-            {data.map((item, idx) => (
-              <li
-                key={`${item.id}-${idx}`}
-                className="shrink-0 box-border px-1"
-                style={{ width: `${100 / ITEMS_PER_VIEW}%` }}
-              >
-                <ProductCard doc={item as Product} lang={lang as Lang} />
-              </li>
-            ))}
-          </motion.ul>
+            <motion.ul
+              className="flex"
+              animate={{
+                x: `-${currentSlide * (100 / ITEMS_PER_VIEW)}%`,
+              }}
+              transition={{
+                type: "spring",
+                stiffness: 300,
+                damping: 30,
+              }}
+            >
+              {data.map((item, idx) => (
+                <li
+                  key={`${item.id}-${idx}`}
+                  className="shrink-0 box-border px-1"
+                  style={{ width: `${100 / ITEMS_PER_VIEW}%` }}
+                >
+                  <ProductCard doc={item as Product} lang={lang as Lang} />
+                </li>
+              ))}
+            </motion.ul>
           </div>
         </div>
       </div>

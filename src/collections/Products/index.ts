@@ -27,20 +27,22 @@ export const ProductsCollection: CollectionOverride = ({
     ...defaultCollection?.admin,
     defaultColumns: ["title", "enableVariants", "_status", "variants.variants"],
     livePreview: {
-      url: ({ data, req }) => {
+      url: ({ data, req, locale }) => {
         const path = generatePreviewPath({
           slug: typeof data?.slug === "string" ? data.slug : "",
           collection: "products",
           req,
+          locale: locale.code,
         });
         return path;
       },
     },
-    preview: (data, { req }) =>
+    preview: (data, { req, locale }) =>
       generatePreviewPath({
         slug: typeof data?.slug === "string" ? data.slug : "",
         collection: "products",
         req,
+        locale,
       }),
     useAsTitle: "title",
   },

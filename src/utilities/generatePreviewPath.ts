@@ -1,25 +1,29 @@
-import { PayloadRequest, CollectionSlug } from 'payload'
+import { CollectionSlug, PayloadRequest } from "payload";
 
 const collectionPrefixMap: Partial<Record<CollectionSlug, string>> = {
-  products: '/products',
-  pages: '',
-}
+  pages: "/pages",
+  posts: "/posts",
+};
 
 type Props = {
-  collection: keyof typeof collectionPrefixMap
-  slug: string
-  req: PayloadRequest
-}
+  collection: keyof typeof collectionPrefixMap;
+  slug: string;
+  req: PayloadRequest;
+  locale: string;
+};
 
-export const generatePreviewPath = ({ collection, slug }: Props) => {
+export const generatePreviewPath = ({ collection, slug, locale }: Props) => {
+  const isHomePage = collection === "pages" && slug === "home";
+  const path = isHomePage ? "/" : `${collectionPrefixMap[collection]}/${slug}`;
   const encodedParams = new URLSearchParams({
     slug,
     collection,
-    path: `${collectionPrefixMap[collection]}/${slug}`,
-    previewSecret: process.env.PREVIEW_SECRET || '',
-  })
+    path,
+    previewSecret: process.env.PREVIEW_SECRET || "",
+    locale,
+  });
 
-  const url = `/next/preview?${encodedParams.toString()}`
+  const url = `/preview?${encodedParams}`;
 
-  return url
-}
+  return url;
+};
