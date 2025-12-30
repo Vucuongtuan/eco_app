@@ -9,16 +9,14 @@ import { cookies } from "next/headers";
 import { notFound } from "next/navigation";
 import { PaginatedDocs } from "payload";
 
-function isPage(doc: Page | Error): doc is Page {
-  return !(doc instanceof Error);
-}
-
 interface PageProps {
   params: Promise<{
     lang: Lang;
     slug: string;
   }>;
 }
+
+const whileList = ["", "men", "women"];
 
 export default async function PageTemplate({ params }: PageProps) {
   await cookies();
@@ -33,7 +31,7 @@ export default async function PageTemplate({ params }: PageProps) {
 
   return (
     <>
-      {!isHomepage ? (
+      {!isHomepage && !whileList.includes(slug) ? (
         <MetaTitle title={doc.title} align="center" />
       ) : (
         <h1 className="sr-only">{doc?.meta?.title || doc?.title}</h1>
