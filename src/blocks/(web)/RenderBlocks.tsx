@@ -11,6 +11,7 @@ import { Lang } from "@/types";
 import { spacing } from "@/utilities/cssVariable";
 import { CarouselBlock } from "./Carousel/Components";
 import { ColumnMedia } from "./ColumnMedia/Component";
+import GalleryComponent from "./Gallery/Component";
 import InfoListComponent from "./InfoList/Component";
 import ListProductsComp from "./ListProduct/Component";
 import ModelComponent from "./Model/Component";
@@ -24,15 +25,15 @@ const blockComponents = {
   carousel: CarouselBlock,
   rowBlock: RowBlock,
   ListProducts: ListProductsComp,
-  SpotlightMedia:SpotlightMediaComponent,
-  InfoList:InfoListComponent,
-  Model:ModelComponent
+  SpotlightMedia: SpotlightMediaComponent,
+  InfoList: InfoListComponent,
+  Model: ModelComponent,
+  gallery: GalleryComponent,
 };
 export const RenderBlocks: React.FC<{
   blocks: Page["sections"];
   lang: Lang;
 }> = (props) => {
-
   const { blocks } = props;
   const hasBlocks = blocks && Array.isArray(blocks) && blocks.length > 0;
 
@@ -49,7 +50,8 @@ export const RenderBlocks: React.FC<{
               return (
                 <section
                   className={cn(
-                    idx !== 0 && `${spacing(block.spacing || block.configs?.spacing || "none")}`,
+                    idx !== 0 &&
+                      `${spacing(block.spacing || block.configs?.spacing || "none")}`,
                     idx === 0 && ""
                   )}
                   style={

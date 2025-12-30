@@ -5,6 +5,7 @@ import { adminOrPublishedStatus } from "@/access/adminOrPublishedStatus";
 import { Carousel } from "@/blocks/(web)/Carousel/config";
 import { ColumnMedia } from "@/blocks/(web)/ColumnMedia/config";
 import { Content } from "@/blocks/(web)/Content/config";
+import { GalleryBlock } from "@/blocks/(web)/Gallery/config";
 import { InfoList } from "@/blocks/(web)/InfoList/config";
 import { ListProducts } from "@/blocks/(web)/ListProduct/config";
 import { MediaBlock } from "@/blocks/(web)/MediaBlock/config";
@@ -27,21 +28,23 @@ export const Pages: CollectionConfig = {
     group: "Content",
     defaultColumns: ["title", "slug", "updatedAt"],
     livePreview: {
-      url: ({ data, req }) => {
+      url: ({ data, req, locale }) => {
         const path = generatePreviewPath({
           slug: typeof data?.slug === "string" ? data.slug : "",
           collection: "pages",
           req,
+          locale: locale.code,
         });
 
         return path;
       },
     },
-    preview: (data, { req }) =>
+    preview: (data, { req, locale }) =>
       generatePreviewPath({
         slug: typeof data?.slug === "string" ? data.slug : "",
         collection: "pages",
         req,
+        locale,
       }),
     useAsTitle: "title",
   },
@@ -95,6 +98,7 @@ export const Pages: CollectionConfig = {
                 SpotlightMedia,
                 InfoList,
                 Model,
+                GalleryBlock,
               ],
             },
           ],

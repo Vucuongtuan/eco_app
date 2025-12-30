@@ -712,6 +712,7 @@ export interface Page {
         | SpotlightMediaBlock
         | InfoListBlock
         | ModelBlock
+        | GalleryBlockProps
       )[]
     | null;
   slug: string;
@@ -883,6 +884,22 @@ export interface ModelBlock {
   id?: string | null;
   blockName?: string | null;
   blockType: 'Model';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "GalleryBlockProps".
+ */
+export interface GalleryBlockProps {
+  gallery?:
+    | {
+        link: LinkGroup;
+        image?: (string | null) | Media;
+        id?: string | null;
+      }[]
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'gallery';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1683,6 +1700,7 @@ export interface PagesSelect<T extends boolean = true> {
         SpotlightMedia?: T | SpotlightMediaBlockSelect<T>;
         InfoList?: T | InfoListBlockSelect<T>;
         Model?: T | ModelBlockSelect<T>;
+        gallery?: T | GalleryBlockPropsSelect<T>;
       };
   slug?: T;
   slugLock?: T;
@@ -1896,6 +1914,21 @@ export interface InfoListArraySelect<T extends boolean = true> {
 export interface ModelBlockSelect<T extends boolean = true> {
   title?: T;
   content?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "GalleryBlockProps_select".
+ */
+export interface GalleryBlockPropsSelect<T extends boolean = true> {
+  gallery?:
+    | T
+    | {
+        link?: T | LinkGroupSelect<T>;
+        image?: T;
+        id?: T;
+      };
   id?: T;
   blockName?: T;
 }

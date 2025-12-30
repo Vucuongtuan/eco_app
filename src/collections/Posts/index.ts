@@ -1,4 +1,5 @@
 import { slugField } from "@/fields/slug";
+import { generatePreviewPath } from "@/utilities/generatePreviewPath";
 import { revalidatePath } from "next/cache";
 import { CollectionConfig } from "payload";
 import { uploadCustomField } from "../../fields/upload";
@@ -17,6 +18,25 @@ export const Posts: CollectionConfig = {
   },
   admin: {
     useAsTitle: "title",
+    livePreview: {
+      url: ({ data, req, locale }) => {
+        const path = generatePreviewPath({
+          slug: typeof data?.slug === "string" ? data.slug : "",
+          collection: "posts",
+          req,
+          locale: locale.code,
+        });
+
+        return path;
+      },
+    },
+    preview: (data, { req, locale }) =>
+      generatePreviewPath({
+        slug: typeof data?.slug === "string" ? data.slug : "",
+        collection: "posts",
+        req,
+        locale,
+      }),
   },
   hooks: {
     afterChange: [

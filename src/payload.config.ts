@@ -48,7 +48,7 @@ export default buildConfig({
       "http://localhost:8081",
       // Mobile 
       "http://192.168.1.41:8081",
-      "**"
+      "*"
     ],
     headers: ["*"],
   },
@@ -132,7 +132,6 @@ export default buildConfig({
       },
     },
     },
-    
   ),
   endpoints: [],
   globals: golobalCollections,
