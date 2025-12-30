@@ -28,8 +28,8 @@ export default function GalleryComponent({ gallery }: GalleryBlockProps) {
                 fClassName="aspect-square"
                 fill
               />
-              <div className="absolute inset-0 bg-black/10 flex items-end justify-start p-5">
-                <h3 className="text-lg font-display text-white">
+              <div className="absolute inset-0 bg-black/10 flex items-end justify-start p-2 md:p-5">
+                <h3 className="text-base md:text-lg font-display text-white">
                   {item.link?.label}
                 </h3>
               </div>

@@ -54,27 +54,25 @@ export interface FindProductByType {
 export const findProductListByType = async ({
   categories,
   options,
-  lang
-
+  lang,
 }: FindProductByType) => {
   return cacheFunc(
     async () => {
-
       let where: Record<string, any> = {};
 
-      if (categories ) {
+      if (categories) {
         let categoryIds: string;
-        if (typeof categories !== 'string') {
+        if (typeof categories !== "string") {
           categoryIds = categories.id;
         } else {
           categoryIds = categories;
         }
-        
+
         where = {
           or: [
             {
               "taxonomies.category": {
-                equals: categoryIds,
+                in: [categoryIds],
               },
             },
           ],
@@ -83,7 +81,7 @@ export const findProductListByType = async ({
           },
         };
       }
-   
+
       const [result, err] = await query<PaginatedDocs<Product>>((payload) => {
         return payload.find({
           collection: "products",
@@ -92,7 +90,7 @@ export const findProductListByType = async ({
           page: options?.page || 1,
           sort: "-publishedAt",
           locale: lang,
-        });;
+        });
       });
       if (err) throw err;
       return result.docs as Product[];
