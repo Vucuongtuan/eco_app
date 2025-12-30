@@ -1,8 +1,7 @@
 "use client";
 
 import { Check, Copy, Share2 } from "lucide-react";
-import { useTranslations } from "next-intl";
-import { usePathname } from "next/navigation";
+import { useLocale, useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 
 interface ShareProps {
@@ -13,17 +12,16 @@ interface ShareProps {
 
 export default function Share({ title, description, slug }: ShareProps) {
   const t = useTranslations("posts");
+  const locale = useLocale();
   const [copied, setCopied] = useState(false);
   const [shareUrl, setShareUrl] = useState("");
-  const pathname = usePathname();
 
   useEffect(() => {
     if (typeof window !== "undefined") {
-      const locale = pathname.split("/")[1] || "vi";
       const url = `${window.location.origin}/${locale}/posts/${slug}`;
       setShareUrl(url);
     }
-  }, [slug, pathname]);
+  }, [slug, locale]);
 
   const handleShare = async () => {
     if (!shareUrl) return;
@@ -84,7 +82,9 @@ export default function Share({ title, description, slug }: ShareProps) {
           {copied ? (
             <>
               <Check className="w-4 h-4 text-green-600" />
-              <span className="hidden lg:inline text-green-600">{t("copied")}</span>
+              <span className="hidden lg:inline text-green-600">
+                {t("copied")}
+              </span>
             </>
           ) : (
             <>
