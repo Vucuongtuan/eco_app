@@ -5,10 +5,11 @@ import { Lang } from "@/types";
 import { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 
-
-
 export async function generateStaticParams() {
-  return [{ lang: "vi" }, { lang: "en" }];
+  return [
+    { lang: "vi", slug: "/posts" },
+    { lang: "en", slug: "/posts" },
+  ];
 }
 
 export default async function PostsPage({
@@ -18,7 +19,7 @@ export default async function PostsPage({
 }) {
   "use memo";
   const { lang } = await params;
-  const docs = await findLatestPostByLang(lang as Lang)
+  const docs = await findLatestPostByLang(lang as Lang);
   const t = await getTranslations("posts");
 
   if (!docs || docs.docs.length === 0) {
@@ -31,12 +32,12 @@ export default async function PostsPage({
 
   return (
     <>
-       <MetaTitle
-            title={t("title")}
-            description={t("description")}
-            className="py-16 space-y-2"
-          />
-          <ArchivesList initData={docs} lang={lang as Lang}/>
+      <MetaTitle
+        title={t("title")}
+        description={t("description")}
+        className="py-16 space-y-2"
+      />
+      <ArchivesList initData={docs} lang={lang as Lang} />
     </>
   );
 }
@@ -45,6 +46,6 @@ export async function generateMetadata(): Promise<Metadata> {
 
   return {
     title: t("title") || "Posts",
-    description: t("description") ,
+    description: t("description"),
   };
 }

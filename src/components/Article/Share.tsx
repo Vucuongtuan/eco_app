@@ -26,7 +26,6 @@ export default function Share({ title, description, slug }: ShareProps) {
   const handleShare = async () => {
     if (!shareUrl) return;
 
-    // Kiểm tra nếu trình duyệt hỗ trợ Web Share API
     if (navigator.share) {
       try {
         await navigator.share({

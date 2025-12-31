@@ -53,7 +53,7 @@ export function ProductInfo({
         </Link>
         <ChevronRight className="h-4 w-4" aria-hidden="true" />
         <Link
-          href={"/" + lang + "/" + category[0].slug}
+          href={"/" + "collections/" + category[0].slug}
           className="transition-colors hover:text-foreground"
         >
           {category[0].title}
@@ -105,7 +105,6 @@ export function ProductInfo({
           aria-label={t("priceProduct")}
         >
           <Price lang={lang} {...price} />
-          
         </motion.div>
       </header>
       <div className="h-px bg-gray-300" role="separator" aria-hidden="true" />
