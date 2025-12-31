@@ -31,7 +31,7 @@ export const MegaDropdown = memo(function MegaDropdown({
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -10 }}
           transition={{ duration: 0.2, ease: "easeOut" }}
-          className="absolute top-full left-0 w-full bg-[var(--color-primary-background)]/65  backdrop-blur-lg  z-40"
+          className="absolute top-full left-0 w-full bg-[var(--color-primary-background)] z-40"
           onMouseEnter={onMouseEnter}
           onMouseLeave={onMouseLeave}
         >
