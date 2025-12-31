@@ -46,7 +46,7 @@ export async function generateStaticParams() {
     return payload.find({
       collection: "pages",
       where: {
-        status: {
+        _status: {
           equals: "published",
         },
         slug: {

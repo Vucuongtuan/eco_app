@@ -6,7 +6,9 @@ import { Lang } from "@/types";
 import { generateMeta } from "@/utilities/generateMeta";
 import { genStaticParams } from "@/utilities/generateStaticParam";
 import { notFound } from "next/navigation";
-import { cache, Suspense } from "react";
+import { Suspense } from "react";
+
+export const dynamic = "force-dynamic";
 
 // Generate static params for all categories
 //    - vi, en
@@ -15,10 +17,6 @@ export async function generateStaticParams() {
   return genStaticParams({ collection: "categories" });
 }
 
-// Memoizing data cache using React cache
-const memoizingCache = cache(findCategoryBySlug);
-// ---
-
 interface Props {
   params: Promise<{ lang: string; slug: string }>;
 }
@@ -26,18 +24,26 @@ export default async function PageCollection({ params }: Props) {
   "use memo"; // react compiler mode
   const { lang, slug } = await params;
 
-  const category = await  memoizingCache({ slug, lang: lang as Lang });
-  
+  const category = await findCategoryBySlug({ slug, lang: lang as Lang });
+
   if (!category || !category.id) return notFound();
-  const products = await findListProductByCategory({ lang: lang as Lang, slug,categoryId:category.id });
+  const products = await findListProductByCategory({
+    lang: lang as Lang,
+    slug,
+    categoryId: category.id,
+  });
   return (
     <>
-     {/* Breadcrumbs */}
-     <section className="max-w-screen-3xl mx-auto px-6 md:px-16 py-5 ">
-      <Breadcrumbs breadcrumbs={[{
-        label: category.title,
-        href: `/collections/${category.slug}`,
-      }]} />
+      {/* Breadcrumbs */}
+      <section className="max-w-screen-3xl mx-auto px-6 md:px-16 py-5 ">
+        <Breadcrumbs
+          breadcrumbs={[
+            {
+              label: category.title,
+              href: `/collections/${category.slug}`,
+            },
+          ]}
+        />
       </section>
 
       {/* Title Category */}
@@ -61,7 +67,7 @@ export default async function PageCollection({ params }: Props) {
 
 export async function generateMetadata({ params }: Props) {
   const { slug, lang } = await params;
-  const category = await memoizingCache({
+  const category = await findCategoryBySlug({
     slug,
     lang: lang as Lang,
   });

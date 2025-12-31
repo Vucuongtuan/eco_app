@@ -23,12 +23,11 @@ declare global {
 //   };
 // });
 export default getRequestConfig(async ({ requestLocale }) => {
-  // Typically corresponds to the `[locale]` segment
-  const requested = await requestLocale;
+  let locale = await requestLocale;
 
-  const locale = hasLocale(routing.locales, requested)
-    ? requested
-    : routing.defaultLocale;
+  if (!locale || !hasLocale(routing.locales, locale)) {
+    locale = routing.defaultLocale;
+  }
 
   return {
     locale,

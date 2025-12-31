@@ -51,7 +51,7 @@ export function UserDropdown() {
             {t("hi")} - {user.name}
           </div>
           <Link
-            href="/profile"
+            href="/account"
             className="flex items-center px-4 py-2 text-sm hover:bg-gray-100"
             onClick={() => setIsOpen(false)}
           >

@@ -19,14 +19,15 @@ import { Suspense } from "react";
 export async function generateStaticParams() {
   const products = await findSlugAllProduct();
   return products.flatMap((item) => [
-    { slug: item.slug },
+    { slug: item.slug, lang: "vi" },
     { slug: item.slug, lang: "en" },
   ]);
 }
 
-
 async function getRelatedProducts(product: Product, lang: Lang) {
-  const slugCategory = (product.taxonomies?.category as Category[]).map((item) => item.slug) as string[];
+  const slugCategory = (product.taxonomies?.category as Category[]).map(
+    (item) => item.slug
+  ) as string[];
   const tags = product.taxonomies?.tags || [];
 
   if (!slugCategory && tags.length === 0) return [];
