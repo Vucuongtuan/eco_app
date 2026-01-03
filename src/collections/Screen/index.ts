@@ -1,5 +1,6 @@
 import { Content } from "@/blocks/(mobile)/Content/config";
 import { Notification } from "@/blocks/(mobile)/Notifications/config";
+import { MobilePosts } from "@/blocks/(mobile)/Posts/config";
 import { ProductArchives } from "@/blocks/(mobile)/ProductsArchives/config";
 import { CollectionConfig, slugField } from "payload";
 
@@ -20,7 +21,7 @@ export const Screen: CollectionConfig = {
     {
       name: "sections",
       type: "blocks",
-      blocks: [Notification, ProductArchives, Content],
+      blocks: [Notification, ProductArchives, Content, MobilePosts],
     },
   ],
   versions: {
