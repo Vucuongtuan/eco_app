@@ -1,19 +1,23 @@
-import type { Footer } from "@/payload-types";
+import type { Footer as FooterType } from "@/payload-types";
 
 import { FooterMenu } from "@/components/(layout)/Footer/menu";
 import EmailSubscribeForm from "@/components/form/EmailSubscribeForm";
 import { LogoIcon } from "@/components/icons/logo";
-import { findGlobal } from "@/service/layout";
 import { Lang } from "@/types";
 import { Github, Linkedin } from "lucide-react";
 import Link from "next/link";
 import { Suspense } from "react";
 const { COMPANY_NAME, SITE_NAME } = process.env;
 
-export async function Footer({ lang }: { lang: Lang }) {
-  const footer = await findGlobal<Footer>(lang, "footer");
-  if (!footer) return null;
-  const menu = footer.navItems || [];
+export async function Footer({
+  lang,
+  data,
+}: {
+  lang: Lang;
+  data?: FooterType;
+}) {
+  if (!data) return null;
+  const menu = data.navItems || [];
   const currentYear = new Date().getFullYear();
 
   const skeleton =

@@ -20,7 +20,6 @@ export function useProductVariants(doc: Product) {
         typeof item.variantOption.variantType === "object" &&
         item.variantOption.variantType.name === "color"
     ) || [];
-  console.log({ colorVariants });
 
   const [selectedColor, setSelectedColor] = useState<any | null>(() => {
     const variantParam = searchParams.get("variant");
@@ -67,17 +66,19 @@ export function useProductVariants(doc: Product) {
 
     if (sizeVariants.length > 0) {
       // Smart Default: Find first size with inventory > 0 for the selected color (or default color)
-      // Note: selectedColor might not be fully initialized here if it depends on state, 
+      // Note: selectedColor might not be fully initialized here if it depends on state,
       // but we initialized it with a function so we can replicate that logic or use the result if we were inside an effect.
       // However, useState initializers run once. selectedColor is also state.
       // We need to determine the effective color here to check stock.
-      
+
       let effectiveColor = null;
       const variantParam = searchParams.get("variant");
       if (variantParam && colorVariants.length > 0) {
         const foundItem = colorVariants.find((item) => {
           const option = item.variantOption as any;
-          return option?.value === variantParam || option?.label === variantParam;
+          return (
+            option?.value === variantParam || option?.label === variantParam
+          );
         });
         effectiveColor = foundItem?.variantOption || null;
       } else if (colorVariants.length > 0) {
@@ -86,16 +87,18 @@ export function useProductVariants(doc: Product) {
 
       if (effectiveColor) {
         const firstInStockSize = sizeVariants.find((size) => {
-           const matchingVariant = variants.find((v) => {
-             const hasColor = v.options?.some((opt: any) => opt.id === effectiveColor.id);
-             const hasSize = v.options?.some((opt: any) => opt.id === size.id);
-             return hasColor && hasSize;
-           });
-           return matchingVariant && (matchingVariant.inventory || 0) > 0;
+          const matchingVariant = variants.find((v) => {
+            const hasColor = v.options?.some(
+              (opt: any) => opt.id === effectiveColor.id
+            );
+            const hasSize = v.options?.some((opt: any) => opt.id === size.id);
+            return hasColor && hasSize;
+          });
+          return matchingVariant && (matchingVariant.inventory || 0) > 0;
         });
         if (firstInStockSize) return firstInStockSize;
       }
-      
+
       return sizeVariants[0];
     }
     return null;

@@ -1,11 +1,14 @@
 import { LivePreviewListener } from "@/components/(dashboard)/LivePreviewListener";
 import { Footer } from "@/components/(layout)/Footer";
 import { Header } from "@/components/(layout)/Header";
+import { AdminBar } from "@/components/AdminBar";
 import { routing } from "@/i18n/routing";
 import { cn } from "@/lib/utils";
+import { Footer as FooterType, Header as HeaderType } from "@/payload-types";
 import { Providers } from "@/providers";
 import { BingUET } from "@/seo/bing/BingAnalytics";
 import { Analytics } from "@/seo/google/Analytics";
+import { findGlobal } from "@/service/layout";
 import { Lang } from "@/types";
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
@@ -33,6 +36,12 @@ export default async function RootLayout(props: {
     console.error("Error fetching messages:", error);
     return <>Error loading messages {lang}</>;
   }
+
+  const [header, footer] = await Promise.all([
+    findGlobal<HeaderType>(lang, "header"),
+    findGlobal<FooterType>(lang, "footer"),
+  ]);
+
   return (
     <html lang={lang} suppressHydrationWarning>
       <head>
@@ -48,11 +57,11 @@ export default async function RootLayout(props: {
         <Suspense>
           <NextIntlClientProvider messages={msg}>
             <Providers>
-              {/* <AdminBar /> */}
+              <AdminBar />
               <LivePreviewListener />
-              <Header lang={lang} />
+              <Header lang={lang} data={header as HeaderType} />
               <main className={"min-h-[800px]"}>{children}</main>
-              <Footer lang={lang} />
+              <Footer lang={lang} data={footer as FooterType} />
             </Providers>
           </NextIntlClientProvider>
         </Suspense>

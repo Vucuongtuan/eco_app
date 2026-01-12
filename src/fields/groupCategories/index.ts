@@ -7,19 +7,19 @@ export const groupCategoriesField = ({
 }): Field[] => {
   return [
     {
-      name:"gender",
-      type:"select",
-      options:[
+      name: "gender",
+      type: "select",
+      options: [
         {
-          label:"Nam",
-          value:"men"
+          label: "Nam",
+          value: "men",
         },
         {
-          label:"Nữ",
-          value:"women"
+          label: "Nữ",
+          value: "women",
         },
       ],
-      required:true,
+      required: true,
       ...(admin && admin),
     },
     {
@@ -29,23 +29,21 @@ export const groupCategoriesField = ({
       required: true,
       hasMany: true,
       filterOptions: ({ siblingData }) => {
-        // category filter slug 
+        // category filter slug
         // vd : "men-shirts", 'women-shirts'
         // ta sẽ filter chỉ chọn theo field gender
-        console.log({siblingData})
         const gender = (siblingData as { gender?: string })?.gender;
         return {
           slug: {
             like: gender ? `${gender}-` : "",
           },
-        }
+        };
       },
-      admin:{
-
+      admin: {
         ...(admin as any),
-        condition: (_, siblingData) => !!(siblingData as { gender?: string })?.gender,
-      }
+        condition: (_, siblingData) =>
+          !!(siblingData as { gender?: string })?.gender,
+      },
     },
- 
   ];
 };

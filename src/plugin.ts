@@ -15,7 +15,7 @@ import {
   GenerateURL,
 } from "@payloadcms/plugin-seo/types";
 import { vercelBlobStorage } from "@payloadcms/storage-vercel-blob";
-import { FieldsOverride } from "node_modules/@payloadcms/plugin-ecommerce/dist/types";
+import { FieldsOverride } from "@payloadcms/plugin-ecommerce/dist/types";
 import { Plugin } from "payload";
 import slugify from "slugify";
 import { ProductsCollection } from "./collections/Products";
@@ -633,7 +633,7 @@ export const plugins: Plugin[] = [
                   try {
                     await req.payload.sendEmail({
                       to: data.customerEmail || data.customer.email,
-                      form: "vucuongtuansin1@gmail.com",
+                      from: "vucuongtuansin1@gmail.com",
                       subject: "Xác nhận đơn hàng từ Moon co.",
                       html: template,
                     });

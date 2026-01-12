@@ -250,7 +250,6 @@ export const findReviewByProduct = async ({
     });
   });
   if (err) throw err;
-  console.log({ result });
   return result;
 };
 
