@@ -28,7 +28,7 @@ export async function GET() {
       ? new Date(doc.updatedAt).toISOString()
       : new Date().toISOString();
     return [
-      `  <url><loc>${baseUrl}/collections/${encodeURIComponent(doc.slug)}</loc><lastmod>${last}</lastmod></url>`,
+      `  <url><loc>${baseUrl}/vi/collections/${encodeURIComponent(doc.slug)}</loc><lastmod>${last}</lastmod></url>`,
       `  <url><loc>${baseUrl}/en/collections/${encodeURIComponent(doc.slug)}</loc><lastmod>${last}</lastmod></url>`,
     ];
   });

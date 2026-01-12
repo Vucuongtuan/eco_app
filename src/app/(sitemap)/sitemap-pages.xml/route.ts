@@ -50,7 +50,7 @@ export async function GET() {
     ? new Date(docs.find((d) => d.slug === "home")!.updatedAt!).toISOString()
     : nowISO();
 
-  urls.push(buildUrl(`${baseUrl}/`, homeLast, 1.0, "daily"));
+  urls.push(buildUrl(`${baseUrl}/vi/`, homeLast, 1.0, "daily"));
   urls.push(buildUrl(`${baseUrl}/en/`, homeLast, 1.0, "daily"));
 
   // Other pages

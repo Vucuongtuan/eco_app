@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 
 const baseUrl = process.env.PAYLOAD_PUBLIC_SERVER_URL
   ? `https://${process.env.PAYLOAD_PUBLIC_SERVER_URL}`
-  : "http://localhost:3000";
+  : "https://moon-co.vercel.app";
 
 export async function GET() {
   const [result, err] = await query<any>((payload) =>
@@ -29,7 +29,7 @@ export async function GET() {
       ? new Date(doc.updatedAt).toISOString()
       : new Date().toISOString();
     return [
-      `  <url><loc>${baseUrl}/products/${encodeURIComponent(doc.slug)}</loc><lastmod>${last}</lastmod></url>`,
+      `  <url><loc>${baseUrl}/vi/products/${encodeURIComponent(doc.slug)}</loc><lastmod>${last}</lastmod></url>`,
       `  <url><loc>${baseUrl}/en/products/${encodeURIComponent(doc.slug)}</loc><lastmod>${last}</lastmod></url>`,
     ];
   });
