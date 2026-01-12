@@ -40,7 +40,7 @@ export const afterChangeNewsletter: CollectionAfterChangeHook = async ({
         });
         await req.payload.sendEmail({
           to: email,
-          form: "vucuongtuansin1@gmail.com",
+          from: "vucuongtuansin1@gmail.com",
           subject: data.title,
           html: renderTemplate,
         });

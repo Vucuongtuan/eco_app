@@ -10,7 +10,6 @@ export const BtnChangeRate = () => {
   const handleChangeRate = useCallback(async (e: React.MouseEvent<Element>) => {
     e.preventDefault();
     const ratesData = getDataByPath("rates");
-    console.log(ratesData);
     if (!ratesData) return;
     const result = await updateRateGlobal({
       rates: ratesData as Rate["rates"],

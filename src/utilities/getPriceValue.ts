@@ -16,8 +16,6 @@ export function getDisplayPrice(
     selectedVariant.priceInUSD != null
   ) {
     const variantPrice = selectedVariant.priceInUSD;
-    console.log("==================");
-    console.log({ product, selectedVariant });
 
     if (variantPrice < basePrice) {
       const discountPercent = Math.round(

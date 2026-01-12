@@ -142,7 +142,6 @@ export const ProductsCollection: CollectionOverride = ({
 
                       const variantTypeIDs = data.variantTypes.map(
                         (item: any) => {
-                          console.log({ item });
                           if (typeof item === "object" && item?.id) {
                             return item.id;
                           }
@@ -162,7 +161,6 @@ export const ProductsCollection: CollectionOverride = ({
                           in: variantTypeIDs,
                         },
                       };
-                      console.log({ query });
                       return query;
                     }
 

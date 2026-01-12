@@ -22,10 +22,7 @@ export function AddToCart({ product, selectedVariant, quantity }: Props) {
     (e: React.FormEvent<HTMLButtonElement>) => {
       e.preventDefault();
       setMessageAction(t("adding"));
-      console.log({
-        product: product.id,
-        variant: selectedVariant?.id ?? undefined,
-      });
+
       addItem(
         {
           product: product.id,
@@ -33,7 +30,6 @@ export function AddToCart({ product, selectedVariant, quantity }: Props) {
         },
         quantity || 1
       ).then((doc) => {
-        console.log("Added to cart:", doc);
         toast.success("Item added to cart.");
         setMessageAction(t("addedToCart"));
       });
@@ -88,12 +84,18 @@ export function AddToCart({ product, selectedVariant, quantity }: Props) {
     return false;
   }, [selectedVariant, cart?.items, product]);
 
-
   return (
-    <button aria-label={t("addToCart")} onClick={addToCart} disabled={disabled} type="submit" className={
-      cn("w-full py-2 bg-black  text-white text-lg cursor-pointer", disabled && "opacity-50 cursor-not-allowed")
-    }>
+    <button
+      aria-label={t("addToCart")}
+      onClick={addToCart}
+      disabled={disabled}
+      type="submit"
+      className={cn(
+        "w-full py-2 bg-black  text-white text-lg cursor-pointer",
+        disabled && "opacity-50 cursor-not-allowed"
+      )}
+    >
       {messageAction}
     </button>
-  )
+  );
 }

@@ -20,7 +20,6 @@ export default function EmailSubscribeForm() {
           e.currentTarget.email.value,
           locale as Lang
         );
-        console.log("Subscribe result:", result);
         if (result) {
           setIsSubscribed(true);
         } else {

@@ -15,7 +15,7 @@ import {
   GenerateURL,
 } from "@payloadcms/plugin-seo/types";
 import { vercelBlobStorage } from "@payloadcms/storage-vercel-blob";
-import { FieldsOverride } from "node_modules/@payloadcms/plugin-ecommerce/dist/types";
+import { FieldsOverride } from "@payloadcms/plugin-ecommerce/dist/types";
 import { Plugin } from "payload";
 import slugify from "slugify";
 import { ProductsCollection } from "./collections/Products";
@@ -312,18 +312,18 @@ export const plugins: Plugin[] = [
                   console.log("📧 Attempting to send email to:", customerEmail);
 
                   try {
+                    const emailTemplate = templateHtml({
+                      title: "Xác nhận đơn hàng từ Moon co.",
+                      type: "cart",
+                      cart: transaction,
+                      content: "",
+                    });
+
                     await req.payload.sendEmail({
                       to: customerEmail,
-                      from: "noreply@moon.co",
-                      subject: "Order Confirmation - Moon co.",
-                      html: `
-                      <h1>Thank you for your order!</h1>
-                      <p>Your payment was successful.</p>
-                      <p>Transaction ID: ${transaction.id}</p>
-                      <p>Amount: ${(transaction.amount || 0) / 100} ${
-                        transaction.currency
-                      }</p>
-                    `,
+                      from: "vucuongtuansin1@gmail.com",
+                      subject: "Xác nhận đơn hàng từ Moon co.",
+                      html: emailTemplate,
                     });
 
                     console.log(
@@ -333,14 +333,101 @@ export const plugins: Plugin[] = [
                     req.payload.logger.info(
                       `Order confirmation email sent to ${customerEmail}`
                     );
+
+                    // Thông báo Telegram khi thanh toán thành công
+                    try {
+                      const amount = new Intl.NumberFormat("vi-VN", {
+                        style: "currency",
+                        currency: transaction.currency || "VND",
+                      }).format((transaction.amount || 0) / 100);
+
+                      const items = transaction.items || [];
+                      const itemsList = items
+                        .map(
+                          (item: any, index: number) =>
+                            `${index + 1}. ${item.product?.title || item.title || "Sản phẩm"} x${item.quantity}`
+                        )
+                        .join("\n                        ");
+
+                      const successMessage = `
+                        ✅ <b>THANH TOÁN THÀNH CÔNG!</b>
+                        --------------------------------
+                        💰 <b>Tổng tiền:</b> ${amount}
+                        📧 <b>Khách hàng:</b> ${customerEmail}
+                        🆔 <b>Mã GD:</b> <code>${transaction.id}</code>
+                        💳 <b>Payment Intent:</b> <code>${paymentIntentID}</code>
+                        📦 <b>Sản phẩm:</b>
+                            ${itemsList || "Không có thông tin"}
+                        --------------------------------
+                        <i>✅ Email xác nhận đã được gửi cho khách hàng.</i>
+                      `;
+
+                      await sendTelegramMessage(successMessage);
+                    } catch (telegramErr) {
+                      console.error(
+                        "❌ Failed to send Telegram success notification:",
+                        telegramErr
+                      );
+                    }
                   } catch (emailErr) {
                     console.error("❌ Email sending failed:", emailErr);
                     req.payload.logger.error(
                       `Failed to send email: ${emailErr}`
                     );
+
+                    // Thông báo Telegram khi gửi email thất bại
+                    try {
+                      const amount = new Intl.NumberFormat("vi-VN", {
+                        style: "currency",
+                        currency: transaction.currency || "VND",
+                      }).format((transaction.amount || 0) / 100);
+
+                      const errorMessage = `
+                        ⚠️ <b>LỖI GỬI EMAIL XÁC NHẬN</b>
+                        --------------------------------
+                        💰 <b>Tổng tiền:</b> ${amount}
+                        📧 <b>Khách hàng:</b> ${customerEmail}
+                        🆔 <b>Mã GD:</b> <code>${transaction.id}</code>
+                        ❌ <b>Lỗi:</b> ${emailErr instanceof Error ? emailErr.message : String(emailErr)}
+                        --------------------------------
+                        <i>⚠️ Thanh toán thành công nhưng email không gửi được. Vui lòng liên hệ khách hàng thủ công.</i>
+                      `;
+
+                      await sendTelegramMessage(errorMessage);
+                    } catch (telegramErr) {
+                      console.error(
+                        "❌ Failed to send Telegram notification:",
+                        telegramErr
+                      );
+                    }
                   }
                 } else {
                   console.warn("⚠️ Transaction found but no customerEmail");
+
+                  // Thông báo Telegram khi không có email khách hàng
+                  try {
+                    const amount = new Intl.NumberFormat("vi-VN", {
+                      style: "currency",
+                      currency: transaction.currency || "VND",
+                    }).format((transaction.amount || 0) / 100);
+
+                    const warningMessage = `
+                    ⚠️ <b>CẢNH BÁO: KHÔNG CÓ EMAIL KHÁCH HÀNG</b>
+                    --------------------------------
+                    💰 <b>Tổng tiền:</b> ${amount}
+                    🆔 <b>Mã GD:</b> <code>${transaction.id}</code>
+                    💳 <b>Payment Intent:</b> <code>${paymentIntentID}</code>
+                    --------------------------------
+                    <i>⚠️ Thanh toán thành công nhưng không có email để gửi xác nhận.</i>
+                  `;
+
+                    await sendTelegramMessage(warningMessage);
+                  } catch (telegramErr) {
+                    console.error(
+                      "❌ Failed to send Telegram notification:",
+                      telegramErr
+                    );
+                  }
                 }
               } catch (err) {
                 console.error("❌ Error processing webhook:", err);
@@ -351,16 +438,95 @@ export const plugins: Plugin[] = [
                 req.payload.logger.error(
                   `Error processing payment success webhook: ${err}`
                 );
+
+                // Thông báo Telegram khi có lỗi xử lý webhook
+                try {
+                  const errorMessage = `
+                    🚨 <b>LỖI XỬ LÝ WEBHOOK THANH TOÁN</b>
+                    --------------------------------
+                    💳 <b>Payment Intent:</b> <code>${paymentIntentID}</code>
+                    ❌ <b>Lỗi:</b> ${err instanceof Error ? err.message : String(err)}
+                    📋 <b>Stack:</b> <code>${err instanceof Error ? err.stack?.substring(0, 200) : "N/A"}</code>
+                    --------------------------------
+                    <i>🚨 Cần kiểm tra ngay! Có thể có đơn hàng chưa được xử lý.</i>
+                  `;
+
+                  await sendTelegramMessage(errorMessage);
+                } catch (telegramErr) {
+                  console.error(
+                    "❌ Failed to send Telegram notification:",
+                    telegramErr
+                  );
+                }
               }
 
               console.log("============================================");
               console.log("✅ WEBHOOK PROCESSING COMPLETED");
               console.log("============================================");
             },
-            "payment_intent.payment_failed": ({ event, req, stripe }) => {
+            "payment_intent.payment_failed": async ({ event, req, stripe }) => {
+              console.log("============================================");
+              console.log(
+                "❌ WEBHOOK TRIGGERED: payment_intent.payment_failed"
+              );
+              console.log("============================================");
+
+              const paymentIntent = event.data.object as any;
+              const paymentIntentID = paymentIntent.id;
+
               console.log("❌ Payment failed:", event.id);
               console.log("Event data:", JSON.stringify(event.data, null, 2));
               req.payload.logger.error(`Payment failed: ${event.id}`);
+
+              // Thông báo Telegram khi thanh toán thất bại
+              try {
+                const amount = paymentIntent.amount || 0;
+                const currency = paymentIntent.currency?.toUpperCase() || "VND";
+                const formattedAmount = new Intl.NumberFormat("vi-VN", {
+                  style: "currency",
+                  currency: currency === "USD" ? "USD" : "VND",
+                }).format(amount / 100);
+
+                const customerEmail =
+                  paymentIntent.receipt_email ||
+                  paymentIntent.metadata?.customerEmail ||
+                  "Unknown";
+                const errorMessage =
+                  paymentIntent.last_payment_error?.message ||
+                  "Không có thông tin lỗi";
+                const errorCode =
+                  paymentIntent.last_payment_error?.code || "N/A";
+
+                const failureMessage = `
+                  ❌ <b>THANH TOÁN THẤT BẠI!</b>
+                  --------------------------------
+                  💰 <b>Số tiền:</b> ${formattedAmount}
+                  📧 <b>Khách hàng:</b> ${customerEmail}
+                  💳 <b>Payment Intent:</b> <code>${paymentIntentID}</code>
+                  ❌ <b>Mã lỗi:</b> <code>${errorCode}</code>
+                  📝 <b>Chi tiết lỗi:</b> ${errorMessage}
+                  🕐 <b>Thời gian:</b> ${new Date().toLocaleString("vi-VN")}
+                  --------------------------------
+                  <i>❌ Khách hàng có thể cần hỗ trợ. Vui lòng theo dõi.</i>
+                `;
+
+                await sendTelegramMessage(failureMessage);
+                console.log(
+                  "✅ Telegram notification sent for payment failure"
+                );
+              } catch (telegramErr) {
+                console.error(
+                  "❌ Failed to send Telegram notification:",
+                  telegramErr
+                );
+                req.payload.logger.error(
+                  `Failed to send Telegram notification for payment failure: ${telegramErr}`
+                );
+              }
+
+              console.log("============================================");
+              console.log("❌ PAYMENT FAILURE PROCESSING COMPLETED");
+              console.log("============================================");
             },
           },
         }),
@@ -467,7 +633,7 @@ export const plugins: Plugin[] = [
                   try {
                     await req.payload.sendEmail({
                       to: data.customerEmail || data.customer.email,
-                      form: "vucuongtuansin1@gmail.com",
+                      from: "vucuongtuansin1@gmail.com",
                       subject: "Xác nhận đơn hàng từ Moon co.",
                       html: template,
                     });

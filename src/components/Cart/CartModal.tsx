@@ -73,7 +73,6 @@ export function CartModal() {
             : parseInt(discount?.value || "0");
 
         if (variant.priceInUSD && valueDiscount > 0) {
-          console.log("Mount discount:", valueDiscount);
           price =
             variant.priceInUSD - (variant.priceInUSD * valueDiscount) / 100;
         } else if (variant.priceInUSD) {
@@ -83,11 +82,9 @@ export function CartModal() {
           price = basePrice - (basePrice * valueDiscount) / 100;
         }
       }
-      console.log({ total, price, quantity: item.quantity || 1 });
       return total + price * (item.quantity || 1);
     }, 0);
   }, [cart]);
-  console.log("Total price:", totalPrice);
   return (
     <Sheet onOpenChange={setIsOpen} open={isOpen}>
       <SheetTrigger asChild aria-label="Cart">
