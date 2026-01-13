@@ -1300,6 +1300,21 @@ export interface MobileRichTextProps {
     };
     [k: string]: unknown;
   } | null;
+  content_en?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
   id?: string | null;
   blockName?: string | null;
   blockType: 'mobile-richtext';
@@ -2112,6 +2127,7 @@ export interface MobileFeatureMediaPropsSelect<T extends boolean = true> {
  */
 export interface MobileRichTextPropsSelect<T extends boolean = true> {
   content?: T;
+  content_en?: T;
   id?: T;
   blockName?: T;
 }

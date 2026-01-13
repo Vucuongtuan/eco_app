@@ -8,5 +8,9 @@ export const RichText: Block = {
       name: "content",
       type: "richText",
     },
+    {
+      name: "content_en",
+      type: "richText",
+    },
   ],
 };
