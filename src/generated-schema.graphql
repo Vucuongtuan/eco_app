@@ -591,7 +591,7 @@ type Page {
   _status: Page__status
 }
 
-union Page_Sections = ContentBlock | MediaBlock | ColumnMediaBlock | RowBlock | Carousel | ListProductsBlock | SpotlightMediaBlock | InfoListBlock | ModelBlock
+union Page_Sections = ContentBlock | MediaBlock | ColumnMediaBlock | RowBlock | Carousel | ListProductsBlock | SpotlightMediaBlock | InfoListBlock | ModelBlock | GalleryBlockProps
 
 type ColumnMediaBlock {
   items: [ColumnMediaItems!]
@@ -846,6 +846,19 @@ type ModelBlock {
   id: String
   blockName: String
   blockType: String
+}
+
+type GalleryBlockProps {
+  gallery: [GalleryBlockProps_Gallery!]
+  id: String
+  blockName: String
+  blockType: String
+}
+
+type GalleryBlockProps_Gallery {
+  link: LinkGroup
+  image(locale: LocaleInputType, fallbackLocale: FallbackLocaleInputType): Media
+  id: String
 }
 
 type Page_Meta {
@@ -6779,7 +6792,7 @@ type PageVersion_Version {
   _status: PageVersion_Version__status
 }
 
-union PageVersion_Version_Sections = ContentBlock | MediaBlock | ColumnMediaBlock | RowBlock | Carousel | ListProductsBlock | SpotlightMediaBlock | InfoListBlock | ModelBlock
+union PageVersion_Version_Sections = ContentBlock | MediaBlock | ColumnMediaBlock | RowBlock | Carousel | ListProductsBlock | SpotlightMediaBlock | InfoListBlock | ModelBlock | GalleryBlockProps
 
 type PageVersion_Version_Meta {
   title: String
@@ -7988,7 +8001,7 @@ type Screen {
   _status: Screen__status
 }
 
-union Screen_Sections = MobileNotificationProps | MobileProductArchivesProps | MobileContentProps
+union Screen_Sections = MobileNotificationProps | MobileProductArchivesProps | MobileContentProps | MobilePostsProps | MobileFeatureMediaProps
 
 type MobileNotificationProps {
   title: String
@@ -8027,6 +8040,33 @@ type MobileContentProps {
   description_en: String
   content(depth: Int): JSON
   content_en(depth: Int): JSON
+  id: String
+  blockName: String
+  blockType: String
+}
+
+type MobilePostsProps {
+  title: String
+  title_en: String
+  description: String
+  description_en: String
+  type: MobilePostsProps_type
+  posts(draft: Boolean, locale: LocaleInputType, fallbackLocale: FallbackLocaleInputType): Post
+  id: String
+  blockName: String
+  blockType: String
+}
+
+enum MobilePostsProps_type {
+  new_arrivals
+  posts_archives
+}
+
+type MobileFeatureMediaProps {
+  image(locale: LocaleInputType, fallbackLocale: FallbackLocaleInputType): Media
+  enableText: Boolean
+  title: String
+  link: String
   id: String
   blockName: String
   blockType: String
@@ -8391,7 +8431,7 @@ type ScreenVersion_Version {
   _status: ScreenVersion_Version__status
 }
 
-union ScreenVersion_Version_Sections = MobileNotificationProps | MobileProductArchivesProps | MobileContentProps
+union ScreenVersion_Version_Sections = MobileNotificationProps | MobileProductArchivesProps | MobileContentProps | MobilePostsProps | MobileFeatureMediaProps
 
 enum ScreenVersion_Version__status {
   draft
