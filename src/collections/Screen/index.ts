@@ -3,6 +3,7 @@ import { FeatureMedia } from "@/blocks/(mobile)/FeatureMedia/config";
 import { Notification } from "@/blocks/(mobile)/Notifications/config";
 import { MobilePosts } from "@/blocks/(mobile)/Posts/config";
 import { ProductArchives } from "@/blocks/(mobile)/ProductsArchives/config";
+import { RichText } from "@/blocks/(mobile)/RichText/config";
 import { CollectionConfig, slugField } from "payload";
 
 export const Screen: CollectionConfig = {
@@ -28,6 +29,7 @@ export const Screen: CollectionConfig = {
         Content,
         MobilePosts,
         FeatureMedia,
+        RichText,
       ],
     },
   ],
