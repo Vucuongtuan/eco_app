@@ -1172,6 +1172,7 @@ export interface Screen {
         | MobileContentProps
         | MobilePostsProps
         | MobileFeatureMediaProps
+        | MobileRichTextProps
       )[]
     | null;
   updatedAt: string;
@@ -1278,6 +1279,30 @@ export interface MobileFeatureMediaProps {
   id?: string | null;
   blockName?: string | null;
   blockType: 'mobile-feature-media';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "MobileRichTextProps".
+ */
+export interface MobileRichTextProps {
+  content?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'mobile-richtext';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -2007,6 +2032,7 @@ export interface ScreenSelect<T extends boolean = true> {
         'mobile-content'?: T | MobileContentPropsSelect<T>;
         'mobile-posts'?: T | MobilePostsPropsSelect<T>;
         'mobile-feature-media'?: T | MobileFeatureMediaPropsSelect<T>;
+        'mobile-richtext'?: T | MobileRichTextPropsSelect<T>;
       };
   updatedAt?: T;
   createdAt?: T;
@@ -2077,6 +2103,15 @@ export interface MobileFeatureMediaPropsSelect<T extends boolean = true> {
   enableText?: T;
   title?: T;
   link?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "MobileRichTextProps_select".
+ */
+export interface MobileRichTextPropsSelect<T extends boolean = true> {
+  content?: T;
   id?: T;
   blockName?: T;
 }

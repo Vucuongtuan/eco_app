@@ -8001,7 +8001,7 @@ type Screen {
   _status: Screen__status
 }
 
-union Screen_Sections = MobileNotificationProps | MobileProductArchivesProps | MobileContentProps | MobilePostsProps | MobileFeatureMediaProps
+union Screen_Sections = MobileNotificationProps | MobileProductArchivesProps | MobileContentProps | MobilePostsProps | MobileFeatureMediaProps | MobileRichTextProps
 
 type MobileNotificationProps {
   title: String
@@ -8067,6 +8067,13 @@ type MobileFeatureMediaProps {
   enableText: Boolean
   title: String
   link: String
+  id: String
+  blockName: String
+  blockType: String
+}
+
+type MobileRichTextProps {
+  content(depth: Int): JSON
   id: String
   blockName: String
   blockType: String
@@ -8431,7 +8438,7 @@ type ScreenVersion_Version {
   _status: ScreenVersion_Version__status
 }
 
-union ScreenVersion_Version_Sections = MobileNotificationProps | MobileProductArchivesProps | MobileContentProps | MobilePostsProps | MobileFeatureMediaProps
+union ScreenVersion_Version_Sections = MobileNotificationProps | MobileProductArchivesProps | MobileContentProps | MobilePostsProps | MobileFeatureMediaProps | MobileRichTextProps
 
 enum ScreenVersion_Version__status {
   draft
