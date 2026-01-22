@@ -27,14 +27,14 @@ const nextConfig = {
   },
 
   // react compiler
-  // reactCompiler:true,
+  reactCompiler: true,
   //  Experimental Beta
   experimental: {
     // Use React Compiler
     // reactCompiler: {
     //   compilationMode: "annotation",
     // },
-    reactCompiler: true,
+    // reactCompiler: true,
 
     inlineCss: true,
 
@@ -90,5 +90,5 @@ const nextConfig = {
 };
 
 export default withNextIntl(
-  withPayload(nextConfig, { devBundleServerPackages: false })
+  withPayload(nextConfig, { devBundleServerPackages: false }),
 );
