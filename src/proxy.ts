@@ -5,13 +5,13 @@ import { routing } from "./i18n/routing";
 // Initialize intlMiddleware outside to reuse it across requests
 const intlMiddleware = createMiddleware(routing);
 
-export function middleware(request: NextRequest): NextResponse {
+export function proxy(request: NextRequest): NextResponse {
   const { pathname } = request.nextUrl;
 
   const country = request.headers.get("x-vercel-ip-country") || "US";
 
   const hasLocale = routing.locales.some(
-    (locale) => pathname.startsWith(`/${locale}/`) || pathname === `/${locale}`
+    (locale) => pathname.startsWith(`/${locale}/`) || pathname === `/${locale}`,
   );
 
   if (!hasLocale) {

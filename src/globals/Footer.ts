@@ -11,8 +11,8 @@ export const Footer: GlobalConfig = {
   hooks: {
     afterChange: [
       async ({ req }) => {
-        revalidateTag("footer-vi");
-        revalidateTag("footer-en");
+        revalidateTag("footer-vi", "max");
+        revalidateTag("footer-en", "max");
       },
     ],
   },

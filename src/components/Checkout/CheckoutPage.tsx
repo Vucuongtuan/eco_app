@@ -37,7 +37,7 @@ const stripe = loadStripe(apiKey);
 
 export const CheckoutPage: React.FC = () => {
   const { user } = useAuth();
-  
+
   const router = useRouter();
   const { cart } = useCart();
   const [error, setError] = useState<null | string>(null);
@@ -63,8 +63,8 @@ export const CheckoutPage: React.FC = () => {
 
   const canGoToPayment = Boolean(
     (email || user) &&
-      billingAddress &&
-      (billingAddressSameAsShipping || shippingAddress)
+    billingAddress &&
+    (billingAddressSameAsShipping || shippingAddress),
   );
 
   // On initial load wait for addresses to be loaded and check to see if we can prefill a default one
@@ -118,7 +118,7 @@ export const CheckoutPage: React.FC = () => {
         toast.error(errorMessage);
       }
     },
-    [billingAddress, billingAddressSameAsShipping, shippingAddress]
+    [billingAddress, billingAddressSameAsShipping, shippingAddress],
   );
 
   if (!stripe) return null;
@@ -247,7 +247,7 @@ export const CheckoutPage: React.FC = () => {
             id="shippingTheSameAsBilling"
             checked={billingAddressSameAsShipping}
             disabled={Boolean(
-              paymentData || (!user && (!email || Boolean(emailEditable)))
+              paymentData || (!user && (!email || Boolean(emailEditable))),
             )}
             onCheckedChange={(state: boolean) => {
               setBillingAddressSameAsShipping(state);
@@ -329,7 +329,7 @@ export const CheckoutPage: React.FC = () => {
           {/* @ts-ignore */}
           {paymentData && paymentData?.["clientSecret"] && (
             <div className="pb-16">
-              <h2 className="font-medium text-3xl">Payment</h2> 
+              <h2 className="font-medium text-3xl">Payment</h2>
               {error && <p>{`Error: ${error}`}</p>}
               <Elements
                 options={{
@@ -406,14 +406,14 @@ export const CheckoutPage: React.FC = () => {
               const isVariant = Boolean(variant) && typeof variant === "object";
 
               if (isVariant && variant) {
-                const imageVariant = product.gallery?.find((item) => {
+                const imageVariant = product.gallery?.find((item: any) => {
                   if (!item.variantOption) return false;
                   const variantOptionID =
                     typeof item.variantOption === "object"
                       ? item.variantOption.id
                       : item.variantOption;
 
-                  const hasMatch = variant?.options?.some((option) => {
+                  const hasMatch = variant?.options?.some((option: any) => {
                     if (typeof option === "object")
                       return option.id === variantOptionID;
                     else return option === variantOptionID;
@@ -426,13 +426,13 @@ export const CheckoutPage: React.FC = () => {
                   image = imageVariant.image;
                 }
 
-                
+                price = variant.priceInUSDEnabled
+                  ? variant.priceInUSD
+                  : product.priceInUSD;
 
-                price = variant.priceInUSDEnabled ? variant.priceInUSD : product.priceInUSD;
-
-                // const priceSroft = 
+                // const priceSroft =
               }
-        
+
               return (
                 <div className="flex items-start gap-4" key={index}>
                   <div className="flex items-stretch justify-stretch h-20 w-20 p-2 rounded-lg border">
@@ -442,7 +442,6 @@ export const CheckoutPage: React.FC = () => {
                           className=""
                           fill
                           imgClassName="rounded-lg"
-                          // @ts-expect-error
                           resource={image[0] as MediaType}
                         />
                       )}
@@ -454,7 +453,7 @@ export const CheckoutPage: React.FC = () => {
                       {variant && typeof variant === "object" && (
                         <p className="text-sm font-mono text-primary/50 tracking-[0.1em]">
                           {variant.options
-                            ?.map((option) => {
+                            ?.map((option: any) => {
                               if (typeof option === "object")
                                 return option.label;
                               return null;
@@ -487,19 +486,28 @@ export const CheckoutPage: React.FC = () => {
 
           {/* Note Test */}
           <div className="gap-2">
-<div className="note formal">
-  <span className="uppercase">Note</span>
-  <p>Đây là dự án phát triển cá nhân nên hiện tại chưa kích hoạt thanh toán thực tế.</p>
-  <p>Giá trị hiển thị trong giỏ hàng chỉ mang tính chất thử nghiệm (test data).</p>
-  <p>Bạn có thể sử dụng các thẻ test của Stripe để kiểm tra quy trình thanh toán. Khi thanh toán thực tế được cấu hình, chúng tôi sẽ gửi thông báo qua email của bạn.</p>
-  <p>Thẻ test Stripe (ví dụ):</p>
-  <ul>
-    <li>4242 4242 4242 4242 — Visa (thanh toán thành công)</li>
-    <li>4000 0000 0000 0002 — Card bị từ chối (declined)</li>
-    <li>4000 0000 0000 3220 — Yêu cầu 3D Secure (test flow)</li>
-  </ul>
-</div>
-
+            <div className="note formal">
+              <span className="uppercase">Note</span>
+              <p>
+                Đây là dự án phát triển cá nhân nên hiện tại chưa kích hoạt
+                thanh toán thực tế.
+              </p>
+              <p>
+                Giá trị hiển thị trong giỏ hàng chỉ mang tính chất thử nghiệm
+                (test data).
+              </p>
+              <p>
+                Bạn có thể sử dụng các thẻ test của Stripe để kiểm tra quy trình
+                thanh toán. Khi thanh toán thực tế được cấu hình, chúng tôi sẽ
+                gửi thông báo qua email của bạn.
+              </p>
+              <p>Thẻ test Stripe (ví dụ):</p>
+              <ul>
+                <li>4242 4242 4242 4242 — Visa (thanh toán thành công)</li>
+                <li>4000 0000 0000 0002 — Card bị từ chối (declined)</li>
+                <li>4000 0000 0000 3220 — Yêu cầu 3D Secure (test flow)</li>
+              </ul>
+            </div>
           </div>
         </div>
       )}

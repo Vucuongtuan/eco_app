@@ -24,7 +24,7 @@ export const revalidate = async ({
 
   if (collection) {
     try {
-      revalidateTag(collection);
+      revalidateTag(collection, "max");
       console.log(`Revalidated tag: ${collection}`);
     } catch (e) {
       console.error(`Error revalidating tag ${collection}:`, e);
@@ -38,7 +38,7 @@ export async function rv({
   paths?: string[];
   tags?: string[];
 }) {
-  const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ;
+  const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL;
   const url = `${SITE_URL}/api/revalidate`;
   try {
     await fetch(url, {
