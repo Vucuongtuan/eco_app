@@ -43,7 +43,7 @@ export function CartModal() {
     if (!cart || !cart.items || !cart.items.length) return undefined;
     return cart.items.reduce(
       (quantity, item) => (item.quantity || 0) + quantity,
-      0
+      0,
     );
   }, [cart]);
 
@@ -125,7 +125,7 @@ export function CartModal() {
                       : undefined;
 
                   const firstGalleryImage = Array.isArray(
-                    product.gallery?.[0]?.image
+                    product.gallery?.[0]?.image,
                   )
                     ? product.gallery?.[0]?.image[0]
                     : undefined;
@@ -141,14 +141,14 @@ export function CartModal() {
                   // ---
                   if (isVariant) {
                     price = variant?.priceInUSD;
-                    const imageVariant = product.gallery?.find((item) => {
+                    const imageVariant = product.gallery?.find((item: any) => {
                       if (!item.variantOption) return false;
                       const variantOptionID =
                         typeof item.variantOption === "object"
                           ? item.variantOption.id
                           : item.variantOption;
 
-                      const hasMatch = variant?.options?.some((option) => {
+                      const hasMatch = variant?.options?.some((option: any) => {
                         if (typeof option === "object")
                           return option.id === variantOptionID;
                         else return option === variantOptionID;
@@ -194,7 +194,7 @@ export function CartModal() {
                             {isVariant && variant ? (
                               <p className="text-sm text-neutral-500 dark:text-neutral-400 capitalize">
                                 {variant.options
-                                  ?.map((option) => {
+                                  ?.map((option: any) => {
                                     if (typeof option === "object")
                                       return option.label;
                                     return null;
