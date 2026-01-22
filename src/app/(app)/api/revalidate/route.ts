@@ -19,7 +19,7 @@ export async function POST(req: NextRequest) {
       .catch(() => ({ paths: [], tags: [] }));
 
     for (const p of paths) revalidatePath(p, getRevalidateType(p));
-    for (const t of tags) revalidateTag(t);
+    for (const t of tags) revalidateTag(t, "max");
 
     // Always revalidate sitemap index and per-collection sitemaps
     revalidatePath("/sitemap.xml", "layout");
@@ -39,7 +39,7 @@ export async function POST(req: NextRequest) {
           message: (error as Error).message,
         },
       },
-      { status: 401 }
+      { status: 401 },
     );
   }
 }

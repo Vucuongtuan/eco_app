@@ -12,8 +12,8 @@ export const Header: GlobalConfig = {
     afterChange: [
       async ({ req }) => {
         // revalidateTag(["header", "footer"]);
-        revalidateTag("header-vi");
-        revalidateTag("header-en");
+        revalidateTag("header-vi", "max");
+        revalidateTag("header-en", "max");
       },
     ],
   },
