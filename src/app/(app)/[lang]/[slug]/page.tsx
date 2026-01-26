@@ -5,6 +5,8 @@ import { query } from "@/lib/tryCatch";
 import { Page } from "@/payload-types";
 import { findPageDoc } from "@/service/pages";
 import { Lang } from "@/types";
+import { generateMeta } from "@/utilities/generateMeta";
+import { Metadata } from "next";
 import { cookies } from "next/headers";
 import { notFound } from "next/navigation";
 import { PaginatedDocs } from "payload";
@@ -17,6 +19,22 @@ interface PageProps {
 }
 
 const whileList = ["", "men", "women"];
+
+export async function generateMetaData({
+  params,
+}: PageProps): Promise<Metadata> {
+  const { lang, slug = "" } = await params;
+  const isHomepage = slug === "";
+  const doc = await findPageDoc(lang, isHomepage ? "home" : slug);
+
+  if (!doc || doc instanceof Error) {
+    return {
+      title: "Page Not Found",
+    };
+  }
+
+  return await generateMeta({ doc, lang: lang as Lang });
+}
 
 export default async function PageTemplate({ params }: PageProps) {
   await cookies();

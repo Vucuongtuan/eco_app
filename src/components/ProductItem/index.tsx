@@ -78,7 +78,7 @@ export const ProductItem: React.FC<Props> = ({
     return new URLSearchParams(params).toString();
   })();
 
-  const itemURL = `/products/${product.slug}${variant ? `?${query}` : ""}`;
+  const itemURL = `/${lang}/products/${product.slug}${variant ? `?${query}` : ""}`;
 
   return (
     <div className="flex items-center gap-4">
