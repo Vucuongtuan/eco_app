@@ -3,8 +3,10 @@
 import { SearchButton } from "@/components/Search";
 import { Header } from "@/payload-types";
 import { useAuth } from "@/providers/Auth";
+import { Lang } from "@/types";
 import { resolveLink, resolveTitle } from "@/utilities/getLinkAndTitle";
 import { AnimatePresence, motion, type Variants } from "framer-motion";
+import { useLocale } from "next-intl";
 import Link from "next/link";
 
 interface MobileMenuOverlayProps {
@@ -86,6 +88,7 @@ export function MobileMenuOverlay({
   onToggle,
 }: MobileMenuOverlayProps) {
   const { status, user, logout } = useAuth();
+  const locale = useLocale();
 
   return (
     <AnimatePresence>
@@ -153,7 +156,7 @@ export function MobileMenuOverlay({
                   return (
                     <motion.div key={link.id} variants={itemVariants}>
                       <Link
-                        href={resolveLink(link)}
+                        href={resolveLink(link, locale as Lang)}
                         className="block py-3 text-2xl font-display font-light text-text-primary hover:text-text-secondary transition-colors border-b border-border-light hover:border-border"
                         onClick={onToggle}
                       >

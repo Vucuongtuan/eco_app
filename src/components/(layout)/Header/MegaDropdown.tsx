@@ -3,8 +3,10 @@
 "use client";
 
 import { Header } from "@/payload-types";
+import { Lang } from "@/types";
 import { resolveLink, resolveTitle } from "@/utilities/getLinkAndTitle";
 import { AnimatePresence, motion } from "framer-motion";
+import { useLocale } from "next-intl";
 import Link from "next/link";
 import { memo } from "react";
 
@@ -21,6 +23,7 @@ export const MegaDropdown = memo(function MegaDropdown({
   onMouseEnter,
   onMouseLeave,
 }: MegaDropdownProps) {
+  const locale = useLocale();
   if (!activeItem?.child?.length) return null;
 
   return (
@@ -46,7 +49,7 @@ export const MegaDropdown = memo(function MegaDropdown({
               {activeItem.child.slice(0, 3).map((childItem, index) => (
                 <div key={childItem.id || index}>
                   <Link
-                    href={resolveLink(childItem)}
+                    href={resolveLink(childItem, locale as Lang)}
                     className="block font-semibold text-lg mb-4 hover:text-gray-600 transition-colors"
                   >
                     {resolveTitle(childItem)}
@@ -56,7 +59,7 @@ export const MegaDropdown = memo(function MegaDropdown({
                       {childItem.subChild.map((subItem, subIndex) => (
                         <li key={subItem.id || subIndex}>
                           <Link
-                            href={resolveLink(subItem)}
+                            href={resolveLink(subItem, locale as Lang)}
                             className="text-gray-600 hover:text-black transition-colors text-sm"
                           >
                             {resolveTitle(subItem)}
