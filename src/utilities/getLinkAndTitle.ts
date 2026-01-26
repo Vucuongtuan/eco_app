@@ -41,15 +41,17 @@ export function resolveLink(linkItem: { link: LinkItem }, locale?: Lang) {
 
     if (relationTo === "pages" && typeof value !== "number") {
       const v = value as Page;
-      return v.isTopLevel ? `${locale}/${v.slug}` : `${locale}/pages/${v.slug}`;
+      return v.isTopLevel
+        ? `/${locale}/${v.slug}`
+        : `/${locale}/pages/${v.slug}`;
     }
     if (relationTo === "categories" && typeof value !== "number") {
       const c = value as Category;
-      return `${locale}/collections/${c.slug}`;
+      return `/${locale}/collections/${c.slug}`;
     }
     if (relationTo === "products" && typeof value !== "number") {
       const p = value as Product;
-      return `${locale}/${p.slug}`;
+      return `/${locale}/${p.slug}`;
     }
   }
 
