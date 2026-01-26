@@ -1,49 +1,50 @@
-'use client'
+"use client";
 
-import type { Header } from '@/payload-types'
+import type { Header } from "@/payload-types";
 
-import { CMSLink } from '@/components/Link'
-import { Button } from '@/components/ui/button'
+import { CMSLink } from "@/components/Link";
+import { Button } from "@/components/ui/button";
 import {
-    Sheet,
-    SheetContent,
-    SheetDescription,
-    SheetHeader,
-    SheetTitle,
-    SheetTrigger,
-} from '@/components/ui/sheet'
-import { useAuth } from '@/providers/Auth'
-import { MenuIcon } from 'lucide-react'
-import Link from 'next/link'
-import { usePathname, useSearchParams } from 'next/navigation'
-import { useEffect, useState } from 'react'
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+import { useAuth } from "@/providers/Auth";
+import { MenuIcon } from "lucide-react";
+import { useLocale } from "next-intl";
+import Link from "next/link";
+import { usePathname, useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
 
 interface Props {
-  menu: Header['navItems']
+  menu: Header["navItems"];
 }
 
 export function MobileMenu({ menu }: Props) {
-  const { user } = useAuth()
+  const { user } = useAuth();
 
-  const pathname = usePathname()
-  const searchParams = useSearchParams()
-  const [isOpen, setIsOpen] = useState(false)
-
-  const closeMobileMenu = () => setIsOpen(false)
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const [isOpen, setIsOpen] = useState(false);
+  const locale = useLocale();
+  const closeMobileMenu = () => setIsOpen(false);
 
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth > 768) {
-        setIsOpen(false)
+        setIsOpen(false);
       }
-    }
-    window.addEventListener('resize', handleResize)
-    return () => window.removeEventListener('resize', handleResize)
-  }, [isOpen])
+    };
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, [isOpen]);
 
   useEffect(() => {
-    setIsOpen(false)
-  }, [pathname, searchParams])
+    setIsOpen(false);
+  }, [pathname, searchParams]);
 
   return (
     <Sheet onOpenChange={setIsOpen} open={isOpen}>
@@ -76,17 +77,17 @@ export function MobileMenu({ menu }: Props) {
             <hr className="my-2" />
             <ul className="flex flex-col gap-2">
               <li>
-                <Link href="/orders">Orders</Link>
+                <Link href={`/${locale}/orders`}>Orders</Link>
               </li>
               <li>
-                <Link href="/account/addresses">Addresses</Link>
+                <Link href={`/${locale}/account/addresses`}>Addresses</Link>
               </li>
               <li>
-                <Link href="/profile">Profile</Link>
+                <Link href={`/${locale}/profile`}>Profile</Link>
               </li>
               <li className="mt-6">
                 <Button asChild variant="outline">
-                  <Link href="/logout">Log out</Link>
+                  <Link href={`/${locale}/logout`}>Log out</Link>
                 </Button>
               </li>
             </ul>
@@ -96,16 +97,18 @@ export function MobileMenu({ menu }: Props) {
             <h2 className="text-xl mb-4">My account</h2>
             <div className="flex items-center gap-2 mt-4">
               <Button asChild className="w-full" variant="outline">
-                <Link href="/login">Log in</Link>
+                <Link href={`/${locale}/login`}>Log in</Link>
               </Button>
               <span>or</span>
               <Button asChild className="w-full">
-                <Link href="/create-account">Create an account</Link>
+                <Link href={`/${locale}/create-account`}>
+                  Create an account
+                </Link>
               </Button>
             </div>
           </div>
         )}
       </SheetContent>
     </Sheet>
-  )
+  );
 }

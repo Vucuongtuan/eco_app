@@ -2,6 +2,7 @@ import type { Category, Page, Product } from "@/payload-types";
 
 import { Button, type ButtonProps } from "@/components/ui/button";
 import { cn } from "@/utilities/cn";
+import { getLocale } from "next-intl/server";
 import Link from "next/link";
 import React from "react";
 
@@ -21,7 +22,7 @@ type CMSLinkType = {
   isLink?: boolean;
 };
 
-export const CMSLink: React.FC<CMSLinkType> = (props) => {
+export const CMSLink: React.FC<CMSLinkType> = async (props) => {
   const {
     type,
     children,
@@ -33,7 +34,7 @@ export const CMSLink: React.FC<CMSLinkType> = (props) => {
     url,
     isLink = false,
   } = props;
-
+  const locale = await getLocale();
   const href =
     type === "reference" &&
     typeof reference?.value === "object" &&
@@ -51,7 +52,11 @@ export const CMSLink: React.FC<CMSLinkType> = (props) => {
 
   if (isLink) {
     return (
-      <Link className={cn(className)} href={href} {...newTabProps}>
+      <Link
+        className={cn(className)}
+        href={`/${locale}/${href}`}
+        {...newTabProps}
+      >
         {children && children}
       </Link>
     );
@@ -59,7 +64,11 @@ export const CMSLink: React.FC<CMSLinkType> = (props) => {
 
   return (
     <Button asChild className={className}>
-      <Link className={cn(className)} href={href} {...newTabProps}>
+      <Link
+        className={cn(className)}
+        href={`/${locale}/${href}`}
+        {...newTabProps}
+      >
         {label && label}
         {children && children}
       </Link>

@@ -1,5 +1,6 @@
 // utilities/nav.ts
 import { Category, Page, Product } from "@/payload-types";
+import { Lang } from "@/types";
 
 type Reference =
   | { relationTo: "pages"; value: number | Page }
@@ -27,7 +28,7 @@ interface LinkItem {
 }
 
 // build href từ link
-export function resolveLink(linkItem: { link: LinkItem }) {
+export function resolveLink(linkItem: { link: LinkItem }, locale?: Lang) {
   const { type, url, reference } = linkItem.link;
 
   if (type === "custom") {
@@ -40,15 +41,15 @@ export function resolveLink(linkItem: { link: LinkItem }) {
 
     if (relationTo === "pages" && typeof value !== "number") {
       const v = value as Page;
-      return v.isTopLevel ? `/${v.slug}` : `/pages/${v.slug}`;
+      return v.isTopLevel ? `${locale}/${v.slug}` : `${locale}/pages/${v.slug}`;
     }
     if (relationTo === "categories" && typeof value !== "number") {
       const c = value as Category;
-      return `/collections/${c.slug}`;
+      return `${locale}/collections/${c.slug}`;
     }
     if (relationTo === "products" && typeof value !== "number") {
       const p = value as Product;
-      return `/${p.slug}`;
+      return `${locale}/${p.slug}`;
     }
   }
 
