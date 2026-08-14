@@ -1,0 +1,22 @@
+{
+  "name": "@moon/product-importer",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "crawl": "node --experimental-strip-types src/cli.ts",
+    "normalize": "node --experimental-strip-types src/renormalize.ts",
+    "import": "node --env-file-if-exists=../shopify-tools/.env --experimental-strip-types src/import.ts",
+    "link-colors": "node --env-file-if-exists=../shopify-tools/.env --experimental-strip-types src/link-colors.ts",
+    "test": "node --experimental-strip-types --test src/*.test.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "crawlee": "^3.15.3",
+    "zod": "^4.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "latest",
+    "typescript": "latest"
+  }
+}

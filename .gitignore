@@ -1,0 +1,11 @@
+node_modules/
+.env
+.env.*
+!.env.example
+# Local crawl output, normalized catalogs, and import progress
+data/
+
+# Crawlee request/session cache
+tools/product-importer/storage/
+dist/
+.DS_Store
