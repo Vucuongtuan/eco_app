@@ -1,0 +1,16 @@
+{
+  "name": "@moon/shopify-tools",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "products": "node --env-file-if-exists=.env --experimental-strip-types src/products.ts",
+    "publish-products": "node --env-file-if-exists=.env --experimental-strip-types src/publish-products.ts",
+    "create-product": "node --env-file-if-exists=.env --experimental-strip-types src/create-product.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@types/node": "latest",
+    "typescript": "latest"
+  }
+}
