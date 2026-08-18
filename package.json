@@ -5,12 +5,15 @@
   "workspaces": ["apps/*", "tools/*"],
   "scripts": {
     "shopify": "shopify",
+    "dev:clean": "rm -rf apps/storefront/.next && npm run dev --workspace my-app",
     "shopify:products": "npm run products --workspace @moon/shopify-tools --",
+    "shopify:publish-products": "npm run publish-products --workspace @moon/shopify-tools --",
     "shopify:create-product": "npm run create-product --workspace @moon/shopify-tools --",
     "crawl:products": "npm run crawl --workspace @moon/product-importer --",
     "normalize:products": "npm run normalize --workspace @moon/product-importer --",
     "import:products": "npm run import --workspace @moon/product-importer --",
     "link-product-colors": "npm run link-colors --workspace @moon/product-importer --",
+    "setup-shopify-catalog": "npm run setup-catalog --workspace @moon/product-importer --",
     "test": "npm test --workspaces --if-present",
     "typecheck": "npm run typecheck --workspaces --if-present"
   },

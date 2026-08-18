@@ -8,6 +8,8 @@
     "normalize": "node --experimental-strip-types src/renormalize.ts",
     "import": "node --env-file-if-exists=../shopify-tools/.env --experimental-strip-types src/import.ts",
     "link-colors": "node --env-file-if-exists=../shopify-tools/.env --experimental-strip-types src/link-colors.ts",
+    "setup-catalog": "node --env-file-if-exists=../shopify-tools/.env --experimental-strip-types src/setup-catalog.ts",
+    "setup-home-cms": "node --env-file-if-exists=../shopify-tools/.env --experimental-strip-types src/setup-home-cms.ts",
     "test": "node --experimental-strip-types --test src/*.test.ts",
     "typecheck": "tsc --noEmit"
   },
