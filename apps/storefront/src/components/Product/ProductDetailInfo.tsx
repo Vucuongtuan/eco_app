@@ -1,51 +1,39 @@
-"use client";
-
-import { useState } from "react";
 import type { Product } from "@/lib/shopify/types";
+import { ColorSwatches } from "@/components/common";
+import { ProductPurchaseControls } from "./ProductPurchaseControls";
 
 type ProductDetailInfoProps = { product: Product };
 
 export function ProductDetailInfo({ product }: ProductDetailInfoProps) {
-  const sizes = product.variants.nodes;
-  const firstAvailable = sizes.find((variant) => variant.availableForSale)?.id ?? sizes[0]?.id;
-  const [selectedVariant, setSelectedVariant] = useState(firstAvailable);
-  const variant = sizes.find((item) => item.id === selectedVariant) ?? sizes[0];
-  const price = variant?.price ?? product.priceRange.minVariantPrice;
+  const colorProducts = [...(product.colorSiblings?.references.nodes ?? []), product]
+    .filter((item): item is NonNullable<typeof item> => item !== null)
+    .filter((item, index, all) => all.findIndex((candidate) => candidate.id === item.id) === index);
 
+    console.log({colorProducts});
+    
   return (
     <div className="flex flex-col gap-8">
-      <div>
+      <header>
         <p className="mb-3 text-xs uppercase tracking-[0.2em] text-gray-500">{product.productType}</p>
         <h1 className="text-2xl font-medium tracking-tight sm:text-3xl">{product.title}</h1>
-        <p className="mt-4 text-lg">{price.amount} {price.currencyCode}</p>
-      </div>
+        {colorProducts.length > 1 ? <fieldset className="mt-6">
+          <legend className="mb-3 text-xs uppercase tracking-[0.2em]">Color</legend>
+          <ColorSwatches items={colorProducts.map((item) => {
+              const colorLabel = item.title.split(" - ").at(-1) ?? item.title;
+              const colorValue = item.color?.value ?? colorLabel;
+              const selected = item.id === product.id;
+              const variantId = item.variants?.nodes.find((variant) => variant.availableForSale)?.id ?? item.variants?.nodes[0]?.id;
+              const href = variantId ? `/products/${item.handle}?variant=${encodeURIComponent(variantId)}` : `/products/${item.handle}`;
+              return { id: item.id, label: colorLabel, value: colorValue, href, selected };
+            })} />
+        </fieldset> : null}
+        <ProductPurchaseControls variants={product.variants.nodes} fallbackPrice={product.priceRange.minVariantPrice} />
+      </header>
 
       {product.descriptionHtml ? (
         <div className="prose prose-sm max-w-none text-gray-600" dangerouslySetInnerHTML={{ __html: product.descriptionHtml }} />
       ) : null}
 
-      {sizes.length ? (
-        <fieldset>
-          <legend className="mb-3 text-xs uppercase tracking-[0.2em]">Size</legend>
-          <div className="grid grid-cols-4 gap-2">
-            {sizes.map((item) => (
-              <button
-                key={item.id}
-                type="button"
-                disabled={!item.availableForSale}
-                onClick={() => setSelectedVariant(item.id)}
-                className={`border px-3 py-3 text-sm transition-colors ${selectedVariant === item.id ? "border-black bg-black text-white" : "border-gray-300 hover:border-black"} ${!item.availableForSale ? "cursor-not-allowed text-gray-300 line-through" : ""}`}
-              >
-                {item.title}
-              </button>
-            ))}
-          </div>
-        </fieldset>
-      ) : null}
-
-      <button type="button" className="w-full bg-black px-5 py-4 text-sm uppercase tracking-[0.16em] text-white transition-opacity hover:opacity-75">
-        Add to bag
-      </button>
     </div>
   );
 }

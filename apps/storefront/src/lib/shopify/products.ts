@@ -27,10 +27,15 @@ const PRODUCT_QUERY = `
       descriptionHtml
       detailImages: images(first: 20) { nodes { ...ShopifyImage } }
       variants(first: 100) { nodes { ...ProductVariantFields } }
-      color: metafield(namespace: "moon", key: "color") { value }
-      colorSiblings: metafield(namespace: "moon", key: "color_siblings") {
+      color: metafield(namespace: "custom", key: "color") { value }
+      colorSiblings: metafield(namespace: "custom", key: "color_siblings") {
         references(first: 20) {
-          nodes { ... on Product { ...ProductCard } }
+          nodes {
+            ... on Product {
+              ...ProductCard
+              color: metafield(namespace: "custom", key: "color") { value }
+            }
+          }
         }
       }
     }
@@ -71,7 +76,7 @@ export async function getProduct(handle: string) {
   const data = await storefrontRequest<{ product: (Product & { detailImages: { nodes: Product["images"]["nodes"] } }) | null }, { handle: string }>(
     PRODUCT_QUERY,
     { handle },
-    { tags: ["shopify-products", `shopify-product:${handle}`] },
+    undefined,
   );
   if (!data.product) return null;
 

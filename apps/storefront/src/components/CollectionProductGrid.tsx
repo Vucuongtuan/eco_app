@@ -22,9 +22,10 @@ function titleParts(title: string) {
 
 function getCardVariants(products: ProductCardData[]): ProductCardVariant[] {
   return products.reduce<ProductCardVariant[]>((result, item) => {
-    const color = item.color?.value ?? titleParts(item.title).color;
+    const colorLabel = titleParts(item.title).color;
+    const colorValue = item.color?.value ?? colorLabel;
     const representative = item.variants?.nodes[0];
-    if (!representative || result.some((variant) => variant.color?.label === color)) return result;
+    if (!representative || result.some((variant) => variant.color?.value === colorValue)) return result;
     result.push({
       id: representative.id,
       href: `/products/${item.handle}`,
@@ -32,7 +33,7 @@ function getCardVariants(products: ProductCardData[]): ProductCardVariant[] {
       price: representative.price,
       image: item.featuredImage,
       images: item.images?.nodes,
-      color: { label: color, value: color },
+      color: { label: colorLabel, value: colorValue },
       sizes: item.variants?.nodes.map((variant) => ({
         label: variant.selectedOptions.find((option) => option.name.toLowerCase() === "size")?.value ?? variant.title,
         available: variant.availableForSale,

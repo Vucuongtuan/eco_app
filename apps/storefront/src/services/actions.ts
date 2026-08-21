@@ -2,10 +2,26 @@
 
 import { cacheLife, cacheTag } from "next/cache";
 import { cookies } from "next/headers";
-import { getCollection, getCollectionUncached, getCollections, getCurrentCustomer, getMetaobjects, getMenu, getProducts, getProductsUncached, type CurrentCustomer, type ProductCard } from "@/lib/shopify";
+import { getCollection, getCollectionUncached, getCollections, getCurrentCustomer, getMetaobjects, getMenu, getProduct, getProducts, getProductsUncached, type CurrentCustomer, type ProductCard } from "@/lib/shopify";
 import { getFeaturedSections, type HomeContent } from "@/lib/shopify/cms";
 
 const MENU_HANDLE_PATTERN = /^[a-z0-9][a-z0-9-]{0,254}$/;
+
+async function getCachedProduct(handle: string) {
+  "use cache";
+
+  cacheLife("days");
+  cacheTag("shopify-products", `shopify-product:${handle}`);
+  return getProduct(handle);
+}
+
+export async function getProductAction(handle: string) {
+  const normalizedHandle = handle.trim().toLowerCase();
+  if (!MENU_HANDLE_PATTERN.test(normalizedHandle)) {
+    throw new Error("Invalid Shopify product handle");
+  }
+  return getCachedProduct(normalizedHandle);
+}
 
 async function getCachedMenu(handle: string) {
   "use cache";
@@ -76,16 +92,16 @@ export async function getCollectionProductsAction(handle: string, first = 24, af
 }
 
 export async function getHomeContent(): Promise<HomeContent> {
-  // "use cache";
+  "use cache";
 
-  // cacheLife("max");
-  // cacheTag("shopify-cms", "shopify-cms:home");
+  cacheLife("max");
+  cacheTag("shopify-cms", "shopify-cms:home");
 
   const [featuredLinks, featuredSections, cards, cardGrids, contentSections] = await Promise.all([
     getMetaobjects("home_featured_link"),
     getFeaturedSections(),
-    getMetaobjects("home_card"),
-    getMetaobjects("home_card_grid"),
+    getMetaobjects("card"),
+    getMetaobjects("card_array"),
     getMetaobjects("home_content_section"),
   ]);
 

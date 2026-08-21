@@ -14,7 +14,7 @@ export function FeaturedSection({ section }: { section: FeaturedSectionData }) {
           <ul className="flex flex-wrap gap-3">
             {links.map((link) => (
               <li key={link.id}>
-                <Link href={link.fields.link ?? "#"} className="inline-flex items-center rounded-full bg-white px-5 py-2.5 text-sm font-medium text-gray-900 transition-colors hover:bg-black hover:text-white">
+                <Link href={link.fields.link ?? "#"} className="inline-flex items-center rounded-full bg-white  backdrop-blur-3xl px-5 py-2.5 text-sm font-medium text-gray-900 transition-colors hover:bg-black hover:text-white">
                   {link.fields.title ?? link.handle}
                   <span aria-hidden="true" className="ml-2 text-base">→</span>
                 </Link>
