@@ -25,18 +25,32 @@ export const ImageCarousel = memo(function ImageCarousel({ images, alt, href, re
 
   useEffect(() => setIndex(0), [resetKey]);
 
+  useEffect(() => {
+    // Prime the first transition as soon as the card mounts. The visible image
+    // is still rendered by Next Image, while this warms the browser cache for
+    // the first next-slide click.
+    preload(slides[0]?.url);
+    preload(slides[1]?.url);
+  }, [slides]);
+
   const preloadAdjacent = () => {
     preload(slides[(index + 1) % slides.length]?.url);
     preload(slides[(index - 1 + slides.length) % slides.length]?.url);
   };
 
-  const image = slides[index] ?? slides[0];
-  const blurDataURL = thumbhashToDataUrl(image.thumbhash);
-  const content = image.url ? <NextImage src={image.url} alt={image.altText ?? alt} fill sizes="(min-width: 768px) 25vw, 50vw" loading="lazy" quality={75} placeholder={blurDataURL ? "blur" : "empty"} blurDataURL={blurDataURL} className="object-cover" /> : null;
-
   return (
     <div className="absolute inset-0" onMouseEnter={preloadAdjacent}>
-      {href ? <Link href={href} aria-label={`View ${alt}`} className="absolute inset-0">{content}</Link> : content}
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="flex h-full transition-transform duration-500 ease-out" style={{ transform: `translateX(-${index * 100}%)` }}>
+          {slides.map((slide, slideIndex) => {
+            const blurDataURL = thumbhashToDataUrl(slide.thumbhash);
+            const content = slide.url ? <NextImage src={slide.url} alt={slide.altText ?? alt} fill sizes="(min-width: 768px) 25vw, 50vw" loading={slideIndex < 2 ? "eager" : "lazy"} quality={75} placeholder={blurDataURL ? "blur" : "empty"} blurDataURL={blurDataURL} className="object-cover" /> : null;
+            return <div key={`${slide.url}-${slideIndex}`} className="relative h-full min-w-full">
+              {href ? <Link href={href} aria-label={`View ${alt}`} className="absolute inset-0">{content}</Link> : content}
+            </div>;
+          })}
+        </div>
+      </div>
       {slides.length > 1 ? <>
         <button type="button" aria-label="Previous image" onClick={() => setIndex((current) => (current - 1 + slides.length) % slides.length)} className="pointer-events-none absolute left-2 top-1/2 z-10 flex size-8 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-lg opacity-0 transition-opacity group-hover:pointer-events-auto group-hover:opacity-100">‹</button>
         <button type="button" aria-label="Next image" onClick={() => setIndex((current) => (current + 1) % slides.length)} className="pointer-events-none absolute right-2 top-1/2 z-10 flex size-8 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-lg opacity-0 transition-opacity group-hover:pointer-events-auto group-hover:opacity-100">›</button>

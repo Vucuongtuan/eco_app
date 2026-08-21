@@ -1,6 +1,13 @@
 import type { CmsMetaobject } from "@/lib/shopify/metaobjects";
 import { Card } from "./Card";
 
-export function CardGrid({ entries }: { entries: CmsMetaobject[] }) {
-  return <section className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">{entries.map((entry) => <Card key={entry.id} entry={entry} />)}</section>;
+export function CardGrid({ id, title, entries }: { id: string; title?: string; entries: CmsMetaobject[] }) {
+  const headingId = `card-grid-${id.replace(/[^a-zA-Z0-9_-]/g, "-")}`;
+  
+  return <section   aria-labelledby={title ? headingId : undefined} className="">
+    {title ? <h2 id={headingId} className="sr-only">{title}</h2> : null}
+    <ul className="grid gap-0.5 sm:grid-cols-2">
+      {entries.map((entry) => <li key={entry.id} className="aspect-square"><Card entry={entry} /></li>)}
+    </ul>
+  </section>;
 }

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ImageCarousel } from "@/components/common";
+import { ColorSwatches, ImageCarousel } from "@/components/common";
 import { WishlistButton } from "@/components/WishlistButton";
 import { cn } from "@/lib/cn";
 import type { Image as ProductImage, Money } from "@/lib/shopify/types";
@@ -63,14 +63,7 @@ export function ProductCard({ title, href, image, price, variants, className }: 
       </div>
       <h3 className=" px-2 mt-3 text-sm font-medium"><Link href={activeHref} className="transition-colors hover:text-gray-600">{activeTitle}</Link></h3>
       {activePrice ? <p className=" px-2  mt-1 text-sm text-gray-600">{activePrice.currencyCode} {activePrice.amount}</p> : null}
-      {colors.length > 1 ? <div className="px-2  mt-3 flex items-center gap-2" aria-label="Color variants">
-        {colors.map((variant) => {
-          const color = getColor(variant);
-          if (!color) return null;
-          const selected = variant.id === activeVariant.id;
-          return <button key={variant.id} type="button" aria-label={color.label} aria-pressed={selected} onClick={() => setActiveVariant(variant)} className={cn("size-4 rounded-full border border-gray-300 transition-transform hover:scale-110", selected && "ring-1 ring-gray-900 ring-offset-2")} style={{ backgroundColor: color.value ?? color.label }} />;
-        })}
-      </div> : null}
+      {colors.length > 1 ? <div className="px-2 mt-3"><ColorSwatches items={colors.map((variant) => ({ id: variant.id, label: getColor(variant)?.label ?? "Color", value: getColor(variant)?.value ?? getColor(variant)?.label ?? "#808080", selected: variant.id === activeVariant.id }))} onSelect={(item) => { const variant = colors.find((colorVariant) => colorVariant.id === item.id); if (variant) setActiveVariant(variant); }} /></div> : null}
 
     </article>
   );

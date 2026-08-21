@@ -24,7 +24,7 @@ const COLLECTION_QUERY = `
       products(first: $first, after: $after) {
         nodes {
           ...ProductCard
-          color: metafield(namespace: "moon", key: "color") { value }
+          color: metafield(namespace: "custom", key: "color") { value }
           styleGroup: metafield(namespace: "moon", key: "style_group") { value }
           colorSiblings: metafield(namespace: "moon", key: "color_siblings") {
             references(first: 20) {
