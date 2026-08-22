@@ -5,15 +5,11 @@ name = "moon-co-integration"
 application_url = "https://shopify.dev/apps/default-app-home"
 embedded = true
 
+[webhooks]
+api_version = "2026-07"
+
 [build]
 automatically_update_urls_on_dev = true
-
-[webhooks]
-api_version = "2026-10"
-
-[[webhooks.subscriptions]]
-topics = [ "menus/create", "menus/update", "menus/delete" ]
-uri = "https://YOUR_STOREFRONT_DOMAIN/api/webhooks/shopify"
 
 [access.admin]
 direct_api_mode = "online"
@@ -21,7 +17,7 @@ embedded_app_direct_api_access = true
 
 [access_scopes]
 # Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
-scopes = "read_products,write_products,read_online_store_navigation,write_online_store_navigation,read_publications,write_publications"
+scopes = "read_products,write_products,read_customers,write_customers,customer_read_customers,customer_write_customers,read_online_store_navigation,write_online_store_navigation,read_publications,write_publications"
 
 [auth]
 redirect_urls = [ "https://shopify.dev/apps/default-app-home/api/auth" ]

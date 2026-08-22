@@ -53,13 +53,13 @@ export function ProductCard({ title, href, image, price, variants, className }: 
   return (
     <article className={cn("group min-w-0 motion-safe:animate-[card-fade-in_500ms_ease-out_both] motion-reduce:animate-none", className)}>
       <div className="relative aspect-[4/6] overflow-hidden bg-[#f3eee9]">
-        <WishlistButton productId={activeVariant.href ?? href} />
+        <WishlistButton productId={activeVariant.href ?? href} item={{ id: activeVariant.href ?? href, title: activeTitle, href: activeHref, image: activeImage?.url, price: activePrice ? `${activePrice.currencyCode} ${activePrice.amount}` : undefined }} />
         <ImageCarousel images={activeVariant.images ?? (activeImage ? [activeImage] : [])} alt={activeTitle} href={activeHref} resetKey={activeVariant.id} />
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 translate-y-full bg-white/95 px-4 py-3 opacity-0 transition-all duration-300 group-hover:pointer-events-auto group-hover:translate-y-0 group-hover:opacity-100">
+        {activeVariant.sizes?.length ? <div className="pointer-events-none absolute inset-x-0 bottom-0 translate-y-full bg-white/95 px-4 py-3 opacity-0 transition-all duration-300 group-hover:pointer-events-auto group-hover:translate-y-0 group-hover:opacity-100">
           <div className="flex flex-wrap justify-center gap-x-4 gap-y-2 text-sm">
             {(activeVariant.sizes ?? []).map((size) => <span key={size.label} className={cn("text-center", !size.available && "text-gray-300 line-through")}>{size.label}</span>)}
           </div>
-        </div>
+        </div> : null}
       </div>
       <h3 className=" px-2 mt-3 text-sm font-medium"><Link href={activeHref} className="transition-colors hover:text-gray-600">{activeTitle}</Link></h3>
       {activePrice ? <p className=" px-2  mt-1 text-sm text-gray-600">{activePrice.currencyCode} {activePrice.amount}</p> : null}
