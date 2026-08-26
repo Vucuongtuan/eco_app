@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Drawer } from "@/components/common";
 import { useCartStore } from "@/context/zustand.provider";
 
@@ -14,12 +14,21 @@ export function CartDrawer() {
   const [updatingLine, setUpdatingLine] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    fetch("/api/cart")
-      .then((response) => response.ok ? response.json() : null)
-      .then((data) => setCart(data?.cart ?? null))
-      .catch(() => undefined);
+  const refreshCart = useCallback(async () => {
+    try {
+      const response = await fetch("/api/cart");
+      const data = response.ok ? await response.json() : null;
+      setCart(data?.cart ?? null);
+    } catch {
+      // Keep the current drawer state when the refresh fails.
+    }
   }, [setCart]);
+
+  useEffect(() => {
+    void refreshCart();
+    window.addEventListener("focus", refreshCart);
+    return () => window.removeEventListener("focus", refreshCart);
+  }, [refreshCart]);
 
   async function updateQuantity(lineId: string, quantity: number) {
     if (updatingLine) return;
@@ -55,6 +64,7 @@ export function CartDrawer() {
               <button type="button" aria-label={`Decrease quantity of ${line.merchandise.product.title}`} disabled={updatingLine === line.id} onClick={() => void updateQuantity(line.id, line.quantity - 1)} className="flex size-8 items-center justify-center border border-gray-300 disabled:opacity-40">−</button>
               <span className="min-w-4 text-center">{line.quantity}</span>
               <button type="button" aria-label={`Increase quantity of ${line.merchandise.product.title}`} disabled={updatingLine === line.id} onClick={() => void updateQuantity(line.id, line.quantity + 1)} className="flex size-8 items-center justify-center border border-gray-300 disabled:opacity-40">+</button>
+              <button type="button" disabled={updatingLine === line.id} onClick={() => void updateQuantity(line.id, 0)} className="ml-1 text-xs text-gray-500 underline underline-offset-2 hover:text-black disabled:opacity-40">Remove</button>
             </div>
             <p className="mt-1">{line.cost.totalAmount.amount} {line.cost.totalAmount.currencyCode}</p>
           </div>

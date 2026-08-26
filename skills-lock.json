@@ -19,6 +19,12 @@
       "skillPath": "skills/shopify-functions/SKILL.md",
       "computedHash": "68dc136d56f2355216aa20872d35f431be0e5fea8601d022652dd6d3952bab8f"
     },
+    "shopify-polaris-checkout-extensions": {
+      "source": "Shopify/shopify-ai-toolkit",
+      "sourceType": "github",
+      "skillPath": "skills/shopify-polaris-checkout-extensions/SKILL.md",
+      "computedHash": "6a2a3239a24f3a900c1bd440a1fc704f6b28fd505a615a321065eac11be8aca6"
+    },
     "ucp": {
       "source": "Shopify/shopify-ai-toolkit",
       "sourceType": "github",

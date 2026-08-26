@@ -12,6 +12,7 @@ export function WishlistDrawer({ authenticated }: { authenticated: boolean }) {
   const close = useWishlistStore((state) => state.closeDrawer);
   const items = useWishlistStore((state) => state.items);
   const hydrate = useWishlistStore((state) => state.hydrate);
+  const toggle = useWishlistStore((state) => state.toggle);
   const pathname = usePathname();
 
   useEffect(() => {
@@ -21,6 +22,21 @@ export function WishlistDrawer({ authenticated }: { authenticated: boolean }) {
   useEffect(() => {
     if (authenticated) fetch("/api/customer/wishlist").then((response) => response.ok ? response.json() : null).then((data) => data?.items && hydrate(data.items)).catch(() => undefined);
   }, [authenticated, hydrate]);
+
+  async function removeItem(itemId: string) {
+    const nextItems = items.filter((item) => item.id !== itemId);
+    toggle(itemId);
+    try {
+      const response = await fetch("/api/customer/wishlist", {
+        method: "PUT",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ items: nextItems }),
+      });
+      if (!response.ok) throw new Error("Unable to remove wishlist item.");
+    } catch {
+      hydrate(items);
+    }
+  }
 
   return (
     <Drawer open={open} onClose={close} title="My Wishlist">
@@ -40,28 +56,26 @@ export function WishlistDrawer({ authenticated }: { authenticated: boolean }) {
         ) : items.length ? (
           <div className="space-y-4">
             {items.map((item) => (
-              <Link
-                key={item.id}
-                href={item.href}
-                onClick={close}
-                className="flex gap-3 border-b border-gray-100 pb-4"
-              >
-                <div className="relative size-20 shrink-0 bg-gray-100">
-                  {item.image ? (
-                    <Image
-                      src={item.image}
-                      alt={item.title}
-                      fill
-                      sizes="80px"
-                      className="object-cover"
-                    />
-                  ) : null}
-                </div>
-                <div className="min-w-0">
-                  <p className="truncate text-sm font-medium text-gray-900">{item.title}</p>
-                  {item.price ? <p className="mt-1 text-sm text-gray-500">{item.price}</p> : null}
-                </div>
-              </Link>
+              <div key={item.id} className="flex gap-3 border-b border-gray-100 pb-4">
+                <Link href={item.href} onClick={close} className="flex min-w-0 flex-1 gap-3">
+                  <div className="relative size-20 shrink-0 bg-gray-100">
+                    {item.image ? (
+                      <Image
+                        src={item.image}
+                        alt={item.title}
+                        fill
+                        sizes="80px"
+                        className="object-cover"
+                      />
+                    ) : null}
+                  </div>
+                  <div className="min-w-0">
+                    <p className="truncate text-sm font-medium text-gray-900">{item.title}</p>
+                    {item.price ? <p className="mt-1 text-sm text-gray-500">{item.price}</p> : null}
+                  </div>
+                </Link>
+                <button type="button" onClick={() => void removeItem(item.id)} className="self-start text-xs text-gray-500 underline underline-offset-2 hover:text-black">Remove</button>
+              </div>
             ))}
           </div>
         ) : (

@@ -9,12 +9,17 @@ export function generateMetadata() {
 }
 
 export default async function Home() {
-  const dataHome = await getHomeContent()
-  console.log(dataHome)
+  const dataHome = await getHomeContent();
   return (
     <main className="min-h-screen text-foreground space-y-0.5">
-     <JsonLd data={websiteJsonLd({ name: "Moon Co.", url: absoluteUrl("/"), description: "Moon Co. online store." })} />
-     <RenderSections home={dataHome} />
+      <JsonLd
+        data={websiteJsonLd({
+          name: "Moon Co.",
+          url: absoluteUrl("/"),
+          description: "Moon Co. online store.",
+        })}
+      />
+      <RenderSections home={dataHome} />
     </main>
   );
 }

@@ -1,6 +1,7 @@
 import "server-only";
 import { storefrontRequest } from "./client";
 import { adminRequest } from "./admin";
+import { getCustomerAccountIdentity } from "./customer-account";
 export type WishlistItem = {
   id: string;
   title: string;
@@ -14,9 +15,19 @@ export type CurrentCustomer = {
   firstName: string | null;
   lastName: string | null;
   wishlist: WishlistItem[];
+  activeCartId: string | null;
 };
+
+export function customerCartSyncEnabled() {
+  return process.env.ENABLE_CUSTOMER_CART_SYNC === "true";
+}
+
+function customerAccessIsUnavailable(error: unknown) {
+  return error instanceof Error && error.message.includes("not approved to access the Customer object");
+}
 type CustomerWithWishlist = Omit<CurrentCustomer, "wishlist"> & {
   wishlist: { value: string | null } | null;
+  activeCart: { value: string | null } | null;
 };
 
 type CustomerPayload = {
@@ -50,7 +61,14 @@ export async function getCurrentCustomer(accessToken: string) {
   >(
     `
     query CurrentCustomer($customerAccessToken: String!) {
-      customer(customerAccessToken: $customerAccessToken) { id email firstName lastName wishlist: metafield(namespace: "custom", key: "wishlist") { value } }
+      customer(customerAccessToken: $customerAccessToken) {
+        id
+        email
+        firstName
+        lastName
+        wishlist: metafield(namespace: "custom", key: "wishlist") { value }
+        activeCart: metafield(namespace: "custom", key: "active_cart_id") { value }
+      }
     }
   `,
     { customerAccessToken: accessToken },
@@ -63,7 +81,11 @@ export async function getCurrentCustomer(accessToken: string) {
   } catch {
     /* Invalid CMS data is treated as empty. */
   }
-  return { ...data.customer, wishlist };
+  return {
+    ...data.customer,
+    wishlist,
+    activeCartId: data.customer.activeCart?.value ?? null,
+  };
 }
 
 export async function updateCustomerWishlist(
@@ -74,26 +96,55 @@ export async function updateCustomerWishlist(
   if (!customer)
     return { customerUserErrors: [{ field: [], message: "Customer session expired." }] };
   const data = await adminRequest<{
-    metafieldsSet: { userErrors: Array<{ field: string[]; message: string }> };
+    customerUpdate: { userErrors: Array<{ field: string[]; message: string }> };
   }>(
-    `
-    mutation WishlistMetafieldSet($metafields: [MetafieldsSetInput!]!) {
-      metafieldsSet(metafields: $metafields) { userErrors { field message } }
-    }
-  `,
+    `mutation WishlistUpdate($input: CustomerInput!) {
+      customerUpdate(input: $input) { userErrors { field message } }
+    }`,
     {
-      metafields: [
-        {
-          ownerId: customer.id,
-          namespace: "custom",
-          key: "wishlist",
-          type: "json",
-          value: JSON.stringify(wishlist),
-        },
-      ],
+      input: {
+        id: customer.id,
+        metafields: [{ namespace: "custom", key: "wishlist", type: "json", value: JSON.stringify(wishlist) }],
+      },
     },
   );
-  return { customerUserErrors: data.metafieldsSet.userErrors };
+  return { customerUserErrors: data.customerUpdate.userErrors };
+}
+
+export async function getCustomerActiveCartId(accessToken: string) {
+  try {
+    const customer = await getCurrentCustomer(accessToken);
+    return customer?.activeCartId ?? null;
+  } catch (error) {
+    if (customerAccessIsUnavailable(error)) return null;
+    throw error;
+  }
+}
+
+export async function saveCustomerActiveCartId(accessToken: string, cartId: string) {
+  try {
+    const customer = await getCurrentCustomer(accessToken).catch(() => null);
+    const customerId = customer?.id ?? (await getCustomerAccountIdentity(accessToken).catch(() => null))?.id;
+    if (!customerId) return;
+    const data = await adminRequest<{
+      customerUpdate: { userErrors: Array<{ field: string[]; message: string }> };
+    }>(
+      `mutation SaveActiveCart($input: CustomerInput!) {
+        customerUpdate(input: $input) { userErrors { field message } }
+      }`,
+      {
+        input: {
+          id: customerId,
+          metafields: [{ namespace: "custom", key: "active_cart_id", type: "single_line_text_field", value: cartId }],
+        },
+      },
+    );
+    const userError = data.customerUpdate.userErrors[0];
+    if (userError) throw new Error(`Unable to save customer active cart: ${userError.message}`);
+  } catch (error) {
+    if (customerAccessIsUnavailable(error)) return;
+    throw error;
+  }
 }
 
 export async function createCustomerAccessToken(input: { email: string; password: string }) {

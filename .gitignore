@@ -9,3 +9,6 @@ data/
 tools/product-importer/storage/
 dist/
 .DS_Store
+checkout-ui
+.agents
+theme_shopify*

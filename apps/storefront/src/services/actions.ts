@@ -43,8 +43,16 @@ export async function getMainMenuAction() {
   return getCachedMenu("main-menu");
 }
 
+async function getCachedTrendingProducts() {
+  "use cache";
+
+  cacheLife("minutes");
+  cacheTag("shopify-products", "shopify-products:trending");
+  return getProducts({ first: 6, sortKey: "BEST_SELLING" });
+}
+
 export async function getTrendingProductsAction(): Promise<ProductCard[]> {
-  const products = await getProductsUncached({ first: 6, sortKey: "BEST_SELLING" });
+  const products = await getCachedTrendingProducts();
   return products.nodes;
 }
 
