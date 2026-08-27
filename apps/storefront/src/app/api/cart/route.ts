@@ -42,12 +42,10 @@ async function saveActiveCart(customerToken: string | undefined, cartId: string)
 export async function GET() {
   const cookieStore = await cookies();
   const { cartId } = await getSessionCart(cookieStore);
-  console.log(cartId);
 
   if (!cartId) return NextResponse.json({ cart: null });
   try {
     const cart = await getCart(cartId);
-    console.log({ cartId, cart });
     if (!cart) {
       const response = NextResponse.json({ cart: null });
       response.cookies.delete(CART_COOKIE);

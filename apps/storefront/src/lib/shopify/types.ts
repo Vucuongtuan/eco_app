@@ -50,12 +50,33 @@ export type Product = ProductCard & {
   } | null;
 };
 
+export type FilterValue = {
+  id: string;
+  label: string;
+  count: number;
+  input: string;
+};
+
+export type Filter = {
+  id: string;
+  label: string;
+  type: "LIST" | "PRICE_RANGE" | "BOOLEAN";
+  values: FilterValue[];
+};
+
+export type ProductFilterInput = Record<string, unknown>;
+
 export type Collection = {
   id: string;
   handle: string;
   title: string;
   description: string;
   image: Image | null;
+  products?: {
+    nodes: ProductCard[];
+    filters: Filter[];
+    pageInfo: PageInfo;
+  };
 };
 
 export type MenuItem = {

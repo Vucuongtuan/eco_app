@@ -1,7 +1,7 @@
 import "server-only";
 import { storefrontRequest } from "./client";
 import { IMAGE_FRAGMENT, MONEY_FRAGMENT, PRODUCT_CARD_FRAGMENT, PRODUCT_VARIANT_FRAGMENT } from "./fragments";
-import type { Collection, PageInfo, ProductCard } from "./types";
+import type { Collection, Filter, PageInfo, ProductCard } from "./types";
 
 const COLLECTIONS_QUERY = `
   ${IMAGE_FRAGMENT}
@@ -18,10 +18,21 @@ const COLLECTION_QUERY = `
   ${MONEY_FRAGMENT}
   ${PRODUCT_VARIANT_FRAGMENT}
   ${PRODUCT_CARD_FRAGMENT}
-  query Collection($handle: String!, $first: Int!, $after: String) {
+  query Collection($handle: String!, $first: Int!, $after: String, $filters: [ProductFilter!], $sortKey: ProductCollectionSortKeys, $reverse: Boolean) {
     collection(handle: $handle) {
       id handle title description image { ...ShopifyImage }
-      products(first: $first, after: $after) {
+      products(first: $first, after: $after, filters: $filters, sortKey: $sortKey, reverse: $reverse) {
+        filters {
+          id
+          label
+          type
+          values {
+            id
+            label
+            count
+            input
+          }
+        }
         nodes {
           ...ProductCard
           color: metafield(namespace: "custom", key: "color") { value }
@@ -53,21 +64,34 @@ export async function getCollections(first = 20, after?: string) {
   return data.collections;
 }
 
-export async function getCollection(handle: string, first = 24, after?: string) {
-  return fetchCollection(handle, first, after);
+export type FetchCollectionOptions = {
+  first?: number;
+  after?: string;
+  filters?: Record<string, unknown>[];
+  sortKey?: string;
+  reverse?: boolean;
+  cache?: "no-store";
+};
+
+export async function getCollection(handle: string, options?: FetchCollectionOptions) {
+  return fetchCollection(handle, options);
 }
 
-export async function getCollectionUncached(handle: string, first = 24, after?: string) {
-  return fetchCollection(handle, first, after, { cache: "no-store" });
+export async function getCollectionUncached(handle: string, options?: FetchCollectionOptions) {
+  return fetchCollection(handle, { ...options, cache: "no-store" });
 }
 
-async function fetchCollection(handle: string, first = 24, after?: string, options?: { cache: "no-store" }) {
+async function fetchCollection(handle: string, options?: FetchCollectionOptions) {
+  const { first = 24, after, filters, sortKey, reverse, cache } = options ?? {};
   const data = await storefrontRequest<{
-    collection: (Collection & { products: { nodes: ProductCard[]; pageInfo: PageInfo } }) | null;
+    collection: (Collection & { products: { nodes: ProductCard[]; filters: Filter[]; pageInfo: PageInfo } }) | null;
   }, Record<string, unknown>>(COLLECTION_QUERY, {
     handle,
     first: Math.min(Math.max(first, 1), 100),
     after,
-  }, options ?? { tags: ["shopify-collections", `shopify-collection:${handle}`, "shopify-products"] });
+    filters,
+    sortKey,
+    reverse,
+  }, cache === "no-store" ? { cache: "no-store" } : { tags: ["shopify-collections", `shopify-collection:${handle}`, "shopify-products"] });
   return data.collection;
 }

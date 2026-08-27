@@ -6,4 +6,6 @@ export { getFeaturedSections } from "./cms";
 export { getMetaobjects, listField } from "./metaobjects";
 export { getCurrentCustomer, type CurrentCustomer } from "./customers";
 export { addCartLines, createCart, getCart, removeCartLines, updateCartLines } from "./cart";
+export { getPage, getPages, type PageData } from "./pages";
+export { getBlogs, getBlog, getArticle, type BlogData, type Article } from "./blogs";
 export type * from "./types";

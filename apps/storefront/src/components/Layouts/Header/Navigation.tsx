@@ -82,8 +82,8 @@ export default function Navigation ({ nav, className = "", collectionImages = {}
 
             {activeItem?.items?.length ? (
                 <OverlayPanel
-                    className="hidden md:block px-5 py-5 lg:px-8 lg:py-7"
-                    contentClassName="relative -left-2 max-w-[80rem]"
+                    className="hidden md:block border-b border-gray-100 bg-white/95 backdrop-blur-md px-6 py-8 shadow-xl"
+                    contentClassName="mx-auto max-w-screen-2xl"
                     onMouseEnter={() => {
                         keepPanelOpen();
                         setActiveItemId(activeItem.id);
@@ -92,27 +92,31 @@ export default function Navigation ({ nav, className = "", collectionImages = {}
                 >
                     <div
                         key={activeItem.id}
-                        className="motion-safe:animate-[menu-content-swap_220ms_cubic-bezier(0.22,1,0.36,1)] grid grid-cols-[minmax(0,1fr)_minmax(230px,0.38fr)] gap-6 lg:gap-8"
+                        className="motion-safe:animate-[menu-content-swap_220ms_cubic-bezier(0.22,1,0.36,1)] grid grid-cols-[1fr_280px] items-stretch gap-10 lg:gap-14"
                     >
-                        <div className="space-y-5">
-                            <ul className="flex flex-wrap gap-x-8 gap-y-2">
-                                {activeItem.items.filter((child) =>
-                                    !child.items?.length && child !== newInItem
-                                ).map((child) => (
-                                    <li key={child.id}>
-                                        <MenuLink item={child} className="text-[0.85rem] text-gray-900" />
-                                    </li>
-                                ))}
-                            </ul>
+                        <div className="space-y-6">
+                            {/* TOP LEVEL UNGROUPED LINKS */}
+                            {activeItem.items.some((child) => !child.items?.length && child !== newInItem) && (
+                                <ul className="flex flex-wrap gap-x-8 gap-y-3 border-b border-gray-100 pb-5">
+                                    {activeItem.items.filter((child) =>
+                                        !child.items?.length && child !== newInItem
+                                    ).map((child) => (
+                                        <li key={child.id}>
+                                            <MenuLink item={child} className="text-sm font-medium text-gray-900 hover:text-black" />
+                                        </li>
+                                    ))}
+                                </ul>
+                            )}
 
-                            <ul className="grid grid-cols-2 gap-x-6 gap-y-5 lg:gap-x-8">
+                            {/* SUB-GROUPS COLUMNS */}
+                            <ul className="grid grid-cols-3 gap-x-8 gap-y-6">
                                 {activeItem.items.filter((child) => child.items?.length).map((group) => (
-                                    <li key={group.id}>
-                                        <MenuLink item={group} className="mb-2 flex items-center gap-2 text-[0.65rem] font-semibold uppercase tracking-wider text-gray-500" showArrow />
-                                        <ul className="space-y-1.5">
+                                    <li key={group.id} className="space-y-3">
+                                        <MenuLink item={group} className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-gray-900" showArrow />
+                                        <ul className="space-y-2">
                                             {group.items?.map((child) => (
                                                 <li key={child.id}>
-                                                    <MenuLink item={child} className="text-[0.8rem] text-gray-700" />
+                                                    <MenuLink item={child} className="text-sm text-gray-600 hover:text-black transition-colors" />
                                                 </li>
                                             ))}
                                         </ul>
@@ -121,19 +125,20 @@ export default function Navigation ({ nav, className = "", collectionImages = {}
                             </ul>
                         </div>
 
-                        <Link href={newInItem?.url ? normalizeMenuUrl(newInItem.url) : activeItem.url ? normalizeMenuUrl(activeItem.url) : "#"} className="group overflow-hidden bg-[#f4eee9]">
-                            <div className="relative h-44 overflow-hidden bg-[radial-gradient(circle_at_60%_35%,#d8c4b4,#eee5de_45%,#c5d0ce)]">
+                        {/* FEATURED BANNER CARD */}
+                        <Link href={newInItem?.url ? normalizeMenuUrl(newInItem.url) : activeItem.url ? normalizeMenuUrl(activeItem.url) : "#"} className="group relative flex flex-col justify-between overflow-hidden rounded-md bg-[#f4eee9]">
+                            <div className="relative min-h-[180px] flex-1 overflow-hidden bg-[radial-gradient(circle_at_60%_35%,#d8c4b4,#eee5de_45%,#c5d0ce)]">
                                 {newInImage ? (
-                                    <Image src={newInImage} alt={newInItem?.title || `New in ${activeItem.title}`} fill sizes="220px" unoptimized className="object-cover transition-transform duration-500 group-hover:scale-105" />
+                                    <Image src={newInImage} alt={newInItem?.title || `New in ${activeItem.title}`} fill sizes="280px" unoptimized className="object-cover transition-transform duration-500 group-hover:scale-105" />
                                 ) : (
-                                    <div className="flex h-full items-center justify-center text-5xl font-light text-white/80">
+                                    <div className="flex h-full min-h-[180px] items-center justify-center text-6xl font-light text-white/80">
                                         {activeItem.title.slice(0, 1)}
                                     </div>
                                 )}
                             </div>
-                            <div className="flex items-center justify-between bg-[#f3c978] px-5 py-4 text-[0.7rem] font-semibold uppercase tracking-wider text-gray-900">
+                            <div className="flex items-center justify-between bg-black px-5 py-3.5 text-xs font-semibold uppercase tracking-wider text-white transition-colors group-hover:bg-gray-800">
                                 <span>{newInItem?.title || `New in ${activeItem.title}`}</span>
-                                <span className="text-lg transition-transform group-hover:translate-x-1">→</span>
+                                <span className="text-sm transition-transform group-hover:translate-x-1">→</span>
                             </div>
                         </Link>
                     </div>

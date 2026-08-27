@@ -2,7 +2,7 @@
 
 import { cacheLife, cacheTag } from "next/cache";
 import { cookies } from "next/headers";
-import { getCollection, getCollectionUncached, getCollections, getCurrentCustomer, getMetaobjects, getMenu, getProduct, getProducts, getProductsUncached, type CurrentCustomer, type ProductCard } from "@/lib/shopify";
+import { getArticle, getBlog, getCollection, getCollectionUncached, getCollections, getCurrentCustomer, getMetaobjects, getMenu, getPage, getPages, getProduct, getProducts, getProductsUncached, type CurrentCustomer, type ProductCard } from "@/lib/shopify";
 import { getFeaturedSections, type HomeContent } from "@/lib/shopify/cms";
 
 const MENU_HANDLE_PATTERN = /^[a-z0-9][a-z0-9-]{0,254}$/;
@@ -72,31 +72,39 @@ export async function getCollectionsAction(first = 20) {
   return getCachedCollections(Math.min(Math.max(first, 1), 100));
 }
 
-async function getCachedCollection(handle: string, first: number, after?: string) {
+export type CollectionParams = {
+  first?: number;
+  after?: string;
+  filters?: Record<string, unknown>[];
+  sortKey?: string;
+  reverse?: boolean;
+};
+
+async function getCachedCollection(handle: string, params?: CollectionParams) {
   "use cache";
 
-  cacheLife("days");
+  cacheLife("minutes");
   cacheTag("shopify-collections", `shopify-collection:${handle}`, "shopify-products");
   if (handle === "all") {
-    const products = await getProducts({ first, after });
-    return { id: "all", handle: "all", title: "All Products", description: "", image: null, products };
+    const products = await getProducts({ first: params?.first ?? 24, after: params?.after });
+    return { id: "all", handle: "all", title: "All Products", description: "", image: null, products: { nodes: products.nodes, filters: [], pageInfo: products.pageInfo } };
   }
-  return getCollection(handle, first, after);
+  return getCollection(handle, params);
 }
 
-export async function getCollectionAction(handle: string, first = 24, after?: string) {
+export async function getCollectionAction(handle: string, params?: CollectionParams) {
   const normalizedHandle = handle.trim().toLowerCase();
   if (!MENU_HANDLE_PATTERN.test(normalizedHandle)) {
     throw new Error("Invalid Shopify collection handle");
   }
-  return getCachedCollection(normalizedHandle, Math.min(Math.max(first, 1), 100), after);
+  return getCachedCollection(normalizedHandle, params);
 }
 
-export async function getCollectionProductsAction(handle: string, first = 24, after?: string) {
+export async function getCollectionProductsAction(handle: string, params?: CollectionParams) {
   const collection = handle === "all"
-    ? await getProductsUncached({ first, after }).then((products) => ({ products }))
-    : after ? await getCollectionUncached(handle, first, after) : await getCollectionAction(handle, first);
-  return collection ? { nodes: collection.products.nodes, pageInfo: collection.products.pageInfo } : { nodes: [], pageInfo: { hasNextPage: false, endCursor: null } };
+    ? await getProductsUncached({ first: params?.first ?? 24, after: params?.after }).then((products) => ({ products: { nodes: products.nodes, filters: [], pageInfo: products.pageInfo } }))
+    : params?.after ? await getCollectionUncached(handle, params) : await getCollectionAction(handle, params);
+  return collection ? { nodes: collection.products.nodes, filters: collection.products.filters, pageInfo: collection.products.pageInfo } : { nodes: [], filters: [], pageInfo: { hasNextPage: false, endCursor: null } };
 }
 
 export async function getHomeContent(): Promise<HomeContent> {
@@ -122,6 +130,59 @@ export async function getAccountVisuals() {
     loginImage: entry?.references.login_image ?? null,
     registerImage: entry?.references.register_image ?? null,
   };
+}
+
+async function getCachedPage(handle: string) {
+  "use cache";
+
+  cacheLife("days");
+  cacheTag("shopify-pages", `shopify-page:${handle}`);
+  return getPage(handle);
+}
+
+export async function getPageAction(handle: string) {
+  const normalizedHandle = handle.trim().toLowerCase();
+  if (!MENU_HANDLE_PATTERN.test(normalizedHandle)) {
+    throw new Error("Invalid Shopify page handle");
+  }
+  return getCachedPage(normalizedHandle);
+}
+
+export async function getPagesAction() {
+  return getPages();
+}
+
+async function getCachedBlog(handle: string, first = 12, after?: string) {
+  "use cache";
+
+  cacheLife("days");
+  cacheTag("shopify-blogs", `shopify-blog:${handle}`);
+  return getBlog(handle, first, after);
+}
+
+export async function getBlogAction(handle: string, first = 12, after?: string) {
+  const normalizedHandle = handle.trim().toLowerCase();
+  if (!MENU_HANDLE_PATTERN.test(normalizedHandle)) {
+    throw new Error("Invalid Shopify blog handle");
+  }
+  return getCachedBlog(normalizedHandle, first, after);
+}
+
+async function getCachedArticle(blogHandle: string, articleHandle: string) {
+  "use cache";
+
+  cacheLife("days");
+  cacheTag("shopify-blogs", `shopify-blog:${blogHandle}`, `shopify-article:${articleHandle}`);
+  return getArticle(blogHandle, articleHandle);
+}
+
+export async function getArticleAction(blogHandle: string, articleHandle: string) {
+  const normBlog = blogHandle.trim().toLowerCase();
+  const normArticle = articleHandle.trim().toLowerCase();
+  if (!MENU_HANDLE_PATTERN.test(normBlog) || !MENU_HANDLE_PATTERN.test(normArticle)) {
+    throw new Error("Invalid Shopify blog or article handle");
+  }
+  return getCachedArticle(normBlog, normArticle);
 }
 
 export async function getCurrentCustomerAction(): Promise<CurrentCustomer | null> {
