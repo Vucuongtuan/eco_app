@@ -1,6 +1,7 @@
 "use client";
 
 import { useInfiniteQuery } from "@tanstack/react-query";
+import { useSearchParams } from "next/navigation";
 import { ProductCard, type ProductCardVariant } from "@/components/Card";
 import { getCollectionProductsAction } from "@/services/actions";
 import type { ProductCard as ProductCardData } from "@/lib/shopify/types";
@@ -53,11 +54,14 @@ function groupProducts(products: ProductCardData[]) {
 }
 
 export function CollectionProductGrid({ handle, initialData }: CollectionProductGridProps) {
+  const searchParams = useSearchParams();
+  const queryKey = ["collection-products", handle, searchParams.toString()];
+
   const query = useInfiniteQuery({
-    queryKey: ["collection-products", handle],
+    queryKey,
     initialPageParam: undefined as string | undefined,
     initialData: { pages: [initialData], pageParams: [undefined] },
-    queryFn: ({ pageParam }) => getCollectionProductsAction(handle, 24, pageParam),
+    queryFn: ({ pageParam }) => getCollectionProductsAction(handle, { first: 24, after: pageParam }),
     getNextPageParam: (lastPage) => lastPage?.pageInfo.hasNextPage ? lastPage.pageInfo.endCursor : undefined,
   });
   const products = query.data?.pages.flatMap((page) => page.nodes) ?? [];

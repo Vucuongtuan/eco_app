@@ -1,11 +1,14 @@
 import NextImage from "next/image";
 import { notFound } from "next/navigation";
 import { ProductDetailInfo } from "@/components/Product/ProductDetailInfo";
+import { YouMayLikeSection } from "@/components/Product/YouMayLikeSection";
+import { RecentlyViewedSection } from "@/components/Product/RecentlyViewedSection";
 import { getProductAction } from "@/services/actions";
 import { thumbhashToDataUrl } from "@/lib/thumbhash";
 import { generateMetadata as createMetadata } from "@/utils/generateMetadata";
 import { absoluteUrl, productJsonLd } from "@/utils/structured-data";
 import { JsonLd } from "@/components/Seo/JsonLd";
+import { Breadcrumb, ImageCarousel } from "@/components/common";
 
 export const instant = false;
 
@@ -38,7 +41,10 @@ export default async function ProductPage({ params }: ProductPageProps) {
     <main className="mt-16">
       <JsonLd data={productJsonLd({ name: product.title, url: absoluteUrl(`/products/${product.handle}`), image: product.featuredImage?.url, description: product.descriptionHtml.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim(), sku: product.variants.nodes[0]?.id, price: product.priceRange.minVariantPrice.amount, currency: product.priceRange.minVariantPrice.currencyCode, availability: product.variants.nodes.some((variant) => variant.availableForSale) })} />
       <article className="grid grid-cols-1 gap-0 lg:grid-cols-12">
-        <section aria-label="Product images" className="grid grid-cols-2 gap-0 self-start lg:col-span-7">
+        <section aria-label="Product images" className="relative aspect-[3/4] overflow-hidden lg:hidden">
+          <ImageCarousel images={images} alt={product.title} showControls={false} showDots />
+        </section>
+        <section aria-label="Product images" className="hidden grid-cols-2 gap-0 self-start lg:col-span-7 lg:grid">
           {images.map((image, index) => (
             <div key={`${image.url}-${index}`} className="relative w-full">
               <NextImage
@@ -55,10 +61,16 @@ export default async function ProductPage({ params }: ProductPageProps) {
           ))}
         </section>
 
-        <aside className="lg:col-span-5 px-6 py-10 sm:px-10 lg:sticky lg:top-24 lg:self-start lg:px-16 lg:py-16">
+        <aside className="lg:col-span-5 lg:sticky lg:top-16 lg:self-start px-6 py-4">
+          <Breadcrumb
+            className="mb-4 text-xs"
+            items={[{ label: "Home", href: "/" }, { label: "Products", href: "/search" }, { label: product.title }]}
+          />
           <ProductDetailInfo product={product} />
         </aside>
       </article>
+      <YouMayLikeSection currentHandle={product.handle} />
+      <RecentlyViewedSection product={product} />
     </main>
   );
 }

@@ -12,6 +12,7 @@ import type { CurrentCustomer } from "@/lib/shopify";
 
 export default function Actions({ trendingProducts, authenticated, customer }: { trendingProducts: ProductCard[]; authenticated: boolean; customer: CurrentCustomer | null }) {
     const toggleCart = useCartStore((store) => store.toggleCart);
+    const cartQuantity = useCartStore((store) => store.cart?.totalQuantity ?? 0);
 
     const actionClass =
         "group relative inline-flex size-9 items-center justify-center rounded-full text-gray-600 transition-colors hover:bg-gray-100 hover:text-black sm:size-10";
@@ -36,9 +37,10 @@ export default function Actions({ trendingProducts, authenticated, customer }: {
                     <circle cx="10" cy="19" r="1" fill="currentColor" stroke="none" />
                     <circle cx="18" cy="19" r="1" fill="currentColor" stroke="none" />
                 </svg>
+                {cartQuantity ? <span className="absolute right-0 top-0 flex size-4 items-center justify-center rounded-full bg-black text-[0.6rem] text-white">{cartQuantity > 99 ? "99+" : cartQuantity}</span> : null}
             </button>
             <CartDrawer />
-            <WishlistDrawer />
+            <WishlistDrawer authenticated={authenticated} />
         </div>
     )
 }

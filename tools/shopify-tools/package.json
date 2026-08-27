@@ -7,6 +7,8 @@
     "products": "node --env-file-if-exists=.env --experimental-strip-types src/products.ts",
     "publish-products": "node --env-file-if-exists=.env --experimental-strip-types src/publish-products.ts",
     "create-product": "node --env-file-if-exists=.env --experimental-strip-types src/create-product.ts",
+    "seed-pages": "node --env-file-if-exists=.env --experimental-strip-types src/seed-pages.ts",
+    "seed-blogs": "node --env-file-if-exists=.env --experimental-strip-types src/seed-blogs.ts",
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
