@@ -7,6 +7,7 @@ import { getCurrentCustomerAction } from "@/services/actions";
 export const instant = false; // block prerendering — requires live request (Next.js 16 cacheComponents)
 
 export default async function AccountPage() {
+  "use memo";
   await connection(); // opt out of prerendering — requires live request
   const customer = await getCurrentCustomerAction();
   if (customer) return <ProfilePanel customer={customer} />;

@@ -25,6 +25,7 @@ export async function generateMetadata({ params }: ArticlePageProps) {
 export const instant = false;
 
 export default async function ArticlePage({ params }: ArticlePageProps) {
+  "use memo";
   "use cache";
   const { blogHandle, articleHandle } = await params;
   cacheLife("weeks");
@@ -85,7 +86,9 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
 
       {article.tags.length > 0 && (
         <footer className="mt-12 pt-6 border-t border-gray-100 flex items-center gap-2">
-          <span className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Tags:</span>
+          <span className="text-xs font-semibold text-gray-400 uppercase tracking-wider">
+            Tags:
+          </span>
           <div className="flex flex-wrap gap-2">
             {article.tags.map((tag) => (
               <span key={tag} className="text-xs bg-gray-100 px-3 py-1 rounded-full text-gray-600">

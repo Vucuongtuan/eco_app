@@ -58,6 +58,7 @@ function parseUrlFilters(searchParams: Record<string, string | string[] | undefi
 }
 
 export default async function CollectionPage({ params, searchParams }: CollectionPageProps) {
+  "use memo";
   const { slug } = await params;
   const rawSearchParams = await searchParams;
   const { filters, sortKey, reverse } = parseUrlFilters(rawSearchParams);
@@ -74,12 +75,24 @@ export default async function CollectionPage({ params, searchParams }: Collectio
 
   return (
     <main className="mx-auto w-full max-w-screen-3xl py-24">
-      <JsonLd data={collectionJsonLd({ name: collection.title, url: absoluteUrl(`/collections/${collection.handle}`), description: collection.description })} />
+      <JsonLd
+        data={collectionJsonLd({
+          name: collection.title,
+          url: absoluteUrl(`/collections/${collection.handle}`),
+          description: collection.description,
+        })}
+      />
       <header className="mb-10 grid gap-8 md:grid-cols-[minmax(0,1fr)_280px] md:items-end px-5 sm:px-6 lg:px-12">
         <div>
           <Breadcrumb items={[{ label: "Home", href: "/" }, { label: collection.title }]} />
-          <h1 className="mt-6 text-2xl font-normal tracking-tight md:text-4xl">{collection.title}</h1>
-          {collection.description ? <p className="mt-2 max-w-2xl text-sm leading-6 text-gray-600">{collection.description}</p> : null}
+          <h1 className="mt-6 text-2xl font-normal tracking-tight md:text-4xl">
+            {collection.title}
+          </h1>
+          {collection.description ? (
+            <p className="mt-2 max-w-2xl text-sm leading-6 text-gray-600">
+              {collection.description}
+            </p>
+          ) : null}
         </div>
       </header>
 
@@ -90,7 +103,9 @@ export default async function CollectionPage({ params, searchParams }: Collectio
             <CollectionProductGrid handle={slug} initialData={collection.products} />
           </div>
         ) : (
-          <p className="py-20 text-center text-gray-500">No products found matching your filters.</p>
+          <p className="py-20 text-center text-gray-500">
+            No products found matching your filters.
+          </p>
         )}
       </section>
     </main>
