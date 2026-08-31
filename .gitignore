@@ -12,3 +12,6 @@ dist/
 checkout-ui
 .agents
 theme_shopify*
+tools
+docs
+data
