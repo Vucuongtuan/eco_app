@@ -19,13 +19,17 @@ export async function generateMetadata({ params }: ProductPageProps) {
   const product = await getProductAction(handle);
   return createMetadata({
     title: product?.title,
-    description: product?.descriptionHtml.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim(),
+    description: product?.descriptionHtml
+      .replace(/<[^>]*>/g, " ")
+      .replace(/\s+/g, " ")
+      .trim(),
     path: `/products/${handle}`,
     image: product?.featuredImage,
   });
 }
 
 export default async function ProductPage({ params }: ProductPageProps) {
+  "use memo";
   const { handle } = await params;
   const product = await getProductAction(handle);
 
@@ -39,12 +43,32 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
   return (
     <main className="mt-16">
-      <JsonLd data={productJsonLd({ name: product.title, url: absoluteUrl(`/products/${product.handle}`), image: product.featuredImage?.url, description: product.descriptionHtml.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim(), sku: product.variants.nodes[0]?.id, price: product.priceRange.minVariantPrice.amount, currency: product.priceRange.minVariantPrice.currencyCode, availability: product.variants.nodes.some((variant) => variant.availableForSale) })} />
+      <JsonLd
+        data={productJsonLd({
+          name: product.title,
+          url: absoluteUrl(`/products/${product.handle}`),
+          image: product.featuredImage?.url,
+          description: product.descriptionHtml
+            .replace(/<[^>]*>/g, " ")
+            .replace(/\s+/g, " ")
+            .trim(),
+          sku: product.variants.nodes[0]?.id,
+          price: product.priceRange.minVariantPrice.amount,
+          currency: product.priceRange.minVariantPrice.currencyCode,
+          availability: product.variants.nodes.some((variant) => variant.availableForSale),
+        })}
+      />
       <article className="grid grid-cols-1 gap-0 lg:grid-cols-12">
-        <section aria-label="Product images" className="relative aspect-[3/4] overflow-hidden lg:hidden">
+        <section
+          aria-label="Product images"
+          className="relative aspect-[3/4] overflow-hidden lg:hidden"
+        >
           <ImageCarousel images={images} alt={product.title} showControls={false} showDots />
         </section>
-        <section aria-label="Product images" className="hidden grid-cols-2 gap-0 self-start lg:col-span-7 lg:grid">
+        <section
+          aria-label="Product images"
+          className="hidden grid-cols-2 gap-0 self-start lg:col-span-7 lg:grid"
+        >
           {images.map((image, index) => (
             <div key={`${image.url}-${index}`} className="relative w-full">
               <NextImage
@@ -55,7 +79,9 @@ export default async function ProductPage({ params }: ProductPageProps) {
                 sizes="(max-width: 1023px) 50vw, 25vw"
                 className="h-auto w-full"
                 placeholder={image.thumbhash ? "blur" : "empty"}
-                blurDataURL={image.thumbhash ? thumbhashToDataUrl(image.thumbhash) ?? undefined : undefined}
+                blurDataURL={
+                  image.thumbhash ? (thumbhashToDataUrl(image.thumbhash) ?? undefined) : undefined
+                }
               />
             </div>
           ))}
@@ -64,7 +90,11 @@ export default async function ProductPage({ params }: ProductPageProps) {
         <aside className="lg:col-span-5 lg:sticky lg:top-16 lg:self-start px-6 py-4">
           <Breadcrumb
             className="mb-4 text-xs"
-            items={[{ label: "Home", href: "/" }, { label: "Products", href: "/search" }, { label: product.title }]}
+            items={[
+              { label: "Home", href: "/" },
+              { label: "Products", href: "/search" },
+              { label: product.title },
+            ]}
           />
           <ProductDetailInfo product={product} />
         </aside>

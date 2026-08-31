@@ -25,6 +25,8 @@ export async function generateMetadata({ params }: BlogPageProps) {
 export const instant = false;
 
 export default async function BlogPage({ params }: BlogPageProps) {
+  "use memo";
+
   "use cache";
   const { blogHandle } = await params;
   cacheLife("weeks");

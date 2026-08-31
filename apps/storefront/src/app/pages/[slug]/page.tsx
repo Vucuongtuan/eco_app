@@ -30,17 +30,16 @@ export async function generateMetadata({ params }: DynamicPageProps) {
 export const instant = false;
 
 export default async function DynamicPage({ params }: DynamicPageProps) {
+  "use memo";
   "use cache";
   const { slug } = await params;
   cacheLife("max");
   cacheTag("shopify-pages", `shopify-page:${slug}`);
 
-  // 1. Try fetching standard Shopify Page
   let page: { title: string; body: string; handle: string } | null = await getPageAction(
     slug,
   ).catch(() => null);
 
-  // 2. Fallback: If not found, fetch Article under 'pages' blog
   if (!page) {
     const article = await getArticleAction("pages", slug).catch(() => null);
     if (article) {
