@@ -1,6 +1,11 @@
 import "server-only";
 import { storefrontRequest } from "./client";
-import { IMAGE_FRAGMENT, MONEY_FRAGMENT, PRODUCT_CARD_FRAGMENT, PRODUCT_VARIANT_FRAGMENT } from "./fragments";
+import {
+  IMAGE_FRAGMENT,
+  MONEY_FRAGMENT,
+  PRODUCT_CARD_FRAGMENT,
+  PRODUCT_VARIANT_FRAGMENT,
+} from "./fragments";
 import type { PageInfo, Product, ProductCard } from "./types";
 
 const PRODUCTS_QUERY = `
@@ -46,7 +51,14 @@ export type GetProductsOptions = {
   first?: number;
   after?: string;
   query?: string;
-  sortKey?: "BEST_SELLING" | "CREATED_AT" | "PRICE" | "PRODUCT_TYPE" | "RELEVANCE" | "TITLE" | "UPDATED_AT";
+  sortKey?:
+    | "BEST_SELLING"
+    | "CREATED_AT"
+    | "PRICE"
+    | "PRODUCT_TYPE"
+    | "RELEVANCE"
+    | "TITLE"
+    | "UPDATED_AT";
   reverse?: boolean;
 };
 
@@ -54,30 +66,61 @@ export async function getProducts(options: GetProductsOptions = {}) {
   return fetchProducts(options);
 }
 
-export async function getProductsUncached(options: GetProductsOptions = {}) {
-  return fetchProducts(options, { cache: "no-store" });
+export async function getProductsUncached(options: GetProductsOptions = {}, all: boolean = false) {
+  return fetchProducts(options, { cache: "no-store" }, all);
 }
 
-async function fetchProducts(options: GetProductsOptions = {}, requestOptions?: { cache: "no-store" }) {
-  const first = Math.min(Math.max(options.first ?? 24, 1), 100);
-  const data = await storefrontRequest<{
-    products: { nodes: ProductCard[]; pageInfo: PageInfo };
-  }, Record<string, unknown>>(PRODUCTS_QUERY, {
-    first,
-    after: options.after,
-    query: options.query,
-    sortKey: options.sortKey,
-    reverse: options.reverse,
-  }, requestOptions ?? { tags: ["shopify-products"] });
-  return data.products;
-}
+async function fetchProducts(
+  options: GetProductsOptions = {},
+  requestOptions?: { cache: "no-store" },
+  all = false,
+) {
+  const products: ProductCard[] = [];
+  let after: string | null = options.after ?? null;
+  let hasNextPage = true;
 
+  while (hasNextPage) {
+    const data = await storefrontRequest<
+      {
+        products: {
+          nodes: ProductCard[];
+          pageInfo: PageInfo;
+        };
+      },
+      Record<string, unknown>
+    >(
+      PRODUCTS_QUERY,
+      {
+        first: Math.min(Math.max(options.first ?? 100, 1), 100),
+        after,
+        query: options.query,
+        sortKey: options.sortKey,
+        reverse: options.reverse,
+      },
+      requestOptions ?? { tags: ["shopify-products"] },
+    );
+
+    products.push(...data.products.nodes);
+
+    if (!all) return data.products;
+
+    hasNextPage = data.products.pageInfo.hasNextPage;
+    after = data.products.pageInfo.endCursor;
+  }
+
+  return {
+    nodes: products,
+    pageInfo: {
+      hasNextPage: false,
+      endCursor: after,
+    },
+  };
+}
 export async function getProduct(handle: string) {
-  const data = await storefrontRequest<{ product: (Product & { detailImages: { nodes: Product["images"]["nodes"] } }) | null }, { handle: string }>(
-    PRODUCT_QUERY,
-    { handle },
-    undefined,
-  );
+  const data = await storefrontRequest<
+    { product: (Product & { detailImages: { nodes: Product["images"]["nodes"] } }) | null },
+    { handle: string }
+  >(PRODUCT_QUERY, { handle }, undefined);
   if (!data.product) return null;
 
   return { ...data.product, images: data.product.detailImages };

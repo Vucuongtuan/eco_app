@@ -28,6 +28,7 @@ export type ProductCard = {
   color?: { value: string } | null;
   styleGroup?: { value: string } | null;
   colorSiblings?: { references: { nodes: Array<ProductCard | null> } } | null;
+  updatedAt: string;
 };
 
 export type ProductVariant = {
@@ -77,6 +78,7 @@ export type Collection = {
     filters: Filter[];
     pageInfo: PageInfo;
   };
+  updatedAt: string;
 };
 
 export type MenuItem = {
