@@ -2,7 +2,23 @@
 
 import { cacheLife, cacheTag } from "next/cache";
 import { cookies } from "next/headers";
-import { getArticle, getBlog, getCollection, getCollectionUncached, getCollections, getCurrentCustomer, getMetaobjects, getMenu, getPage, getPages, getProduct, getProducts, getProductsUncached, type CurrentCustomer, type ProductCard } from "@/lib/shopify";
+import {
+  getArticle,
+  getBlog,
+  getCollection,
+  getCollectionUncached,
+  getCollections,
+  getCurrentCustomer,
+  getMetaobjects,
+  getMenu,
+  getPage,
+  getPages,
+  getProduct,
+  getProducts,
+  getProductsUncached,
+  type CurrentCustomer,
+  type ProductCard,
+} from "@/lib/shopify";
 import { getFeaturedSections, type HomeContent } from "@/lib/shopify/cms";
 
 const MENU_HANDLE_PATTERN = /^[a-z0-9][a-z0-9-]{0,254}$/;
@@ -83,11 +99,18 @@ export type CollectionParams = {
 async function getCachedCollection(handle: string, params?: CollectionParams) {
   "use cache";
 
-  cacheLife("minutes");
+  cacheLife("max");
   cacheTag("shopify-collections", `shopify-collection:${handle}`, "shopify-products");
   if (handle === "all") {
     const products = await getProducts({ first: params?.first ?? 24, after: params?.after });
-    return { id: "all", handle: "all", title: "All Products", description: "", image: null, products: { nodes: products.nodes, filters: [], pageInfo: products.pageInfo } };
+    return {
+      id: "all",
+      handle: "all",
+      title: "All Products",
+      description: "",
+      image: null,
+      products: { nodes: products.nodes, filters: [], pageInfo: products.pageInfo },
+    };
   }
   return getCollection(handle, params);
 }
@@ -101,10 +124,23 @@ export async function getCollectionAction(handle: string, params?: CollectionPar
 }
 
 export async function getCollectionProductsAction(handle: string, params?: CollectionParams) {
-  const collection = handle === "all"
-    ? await getProductsUncached({ first: params?.first ?? 24, after: params?.after }).then((products) => ({ products: { nodes: products.nodes, filters: [], pageInfo: products.pageInfo } }))
-    : params?.after ? await getCollectionUncached(handle, params) : await getCollectionAction(handle, params);
-  return collection ? { nodes: collection.products.nodes, filters: collection.products.filters, pageInfo: collection.products.pageInfo } : { nodes: [], filters: [], pageInfo: { hasNextPage: false, endCursor: null } };
+  const collection =
+    handle === "all"
+      ? await getProductsUncached({ first: params?.first ?? 24, after: params?.after }).then(
+          (products) => ({
+            products: { nodes: products.nodes, filters: [], pageInfo: products.pageInfo },
+          }),
+        )
+      : params?.after
+        ? await getCollectionUncached(handle, params)
+        : await getCollectionAction(handle, params);
+  return collection
+    ? {
+        nodes: collection.products.nodes,
+        filters: collection.products.filters,
+        pageInfo: collection.products.pageInfo,
+      }
+    : { nodes: [], filters: [], pageInfo: { hasNextPage: false, endCursor: null } };
 }
 
 export async function getHomeContent(): Promise<HomeContent> {

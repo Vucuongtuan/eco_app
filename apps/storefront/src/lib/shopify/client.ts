@@ -55,31 +55,87 @@ function storefrontAuthHeader(): Record<string, string> {
   throw new Error("SHOPIFY_STOREFRONT_TOKEN_TYPE must be private or public");
 }
 
-export async function storefrontRequest<TData, TVariables extends Record<string, unknown> = Record<string, never>>(
-  query: string,
-  variables?: TVariables,
-  options: StorefrontRequestOptions = {},
-): Promise<TData> {
+const MAX_CONCURRENT_REQUESTS = 8;
+let activeRequests = 0;
+const pendingRequests: Array<() => void> = [];
+
+function acquireRequestSlot(): Promise<void> {
+  if (activeRequests < MAX_CONCURRENT_REQUESTS) {
+    activeRequests += 1;
+    return Promise.resolve();
+  }
+  return new Promise((resolve) => {
+    pendingRequests.push(() => {
+      activeRequests += 1;
+      resolve();
+    });
+  });
+}
+
+function releaseRequestSlot() {
+  activeRequests -= 1;
+  pendingRequests.shift()?.();
+}
+
+function isRetryableFetchError(error: unknown): boolean {
+  if (!(error instanceof TypeError)) return false;
+  const cause = error.cause as { code?: string } | undefined;
+  return (
+    cause?.code === "ETIMEDOUT" || cause?.code === "ECONNRESET" || cause?.code === "ECONNREFUSED"
+  );
+}
+
+async function fetchStorefront(
+  url: string,
+  init: RequestInit & { next?: { revalidate?: number | false; tags?: string[] } },
+): Promise<Response> {
+  const maxAttempts = 3;
+  for (let attempt = 0; attempt < maxAttempts; attempt += 1) {
+    await acquireRequestSlot();
+    try {
+      return await fetch(url, init);
+    } catch (error) {
+      if (!isRetryableFetchError(error) || attempt === maxAttempts - 1) throw error;
+      await new Promise((resolve) => setTimeout(resolve, 250 * 2 ** attempt));
+    } finally {
+      releaseRequestSlot();
+    }
+  }
+  throw new Error("Shopify Storefront API request failed");
+}
+
+export async function storefrontRequest<
+  TData,
+  TVariables extends Record<string, unknown> = Record<string, never>,
+>(query: string, variables?: TVariables, options: StorefrontRequestOptions = {}): Promise<TData> {
   const version = process.env.SHOPIFY_STOREFRONT_API_VERSION?.trim() || DEFAULT_API_VERSION;
-  const response = await fetch(`https://${shopDomain()}/api/${version}/graphql.json`, {
+  const response = await fetchStorefront(`https://${shopDomain()}/api/${version}/graphql.json`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      ...(options.accessToken ? { "X-Shopify-Storefront-Access-Token": options.accessToken } : storefrontAuthHeader()),
+      ...(options.accessToken
+        ? { "X-Shopify-Storefront-Access-Token": options.accessToken }
+        : storefrontAuthHeader()),
     },
     body: JSON.stringify({ query, variables: variables ?? {} }),
     cache: options.cache,
-    next: options.cache === "no-store" ? undefined : {
-      revalidate: options.revalidate ?? 60,
-      tags: options.tags,
-    },
+    next:
+      options.cache === "no-store"
+        ? undefined
+        : {
+            revalidate: options.revalidate ?? 60,
+            tags: options.tags,
+          },
   });
 
   let body: GraphqlEnvelope<TData>;
   try {
-    body = await response.json() as GraphqlEnvelope<TData>;
+    body = (await response.json()) as GraphqlEnvelope<TData>;
   } catch {
-    throw new ShopifyStorefrontError(`Shopify returned a non-JSON response (${response.status})`, response.status);
+    throw new ShopifyStorefrontError(
+      `Shopify returned a non-JSON response (${response.status})`,
+      response.status,
+    );
   }
 
   if (!response.ok || body.errors?.length || !body.data) {
@@ -95,6 +151,8 @@ export async function storefrontRequest<TData, TVariables extends Record<string,
 
 export function throwOnUserErrors(operation: string, errors: Array<{ message: string }> = []) {
   if (errors.length) {
-    throw new ShopifyStorefrontError(`${operation}: ${errors.map((error) => error.message).join("; ")}`);
+    throw new ShopifyStorefrontError(
+      `${operation}: ${errors.map((error) => error.message).join("; ")}`,
+    );
   }
 }

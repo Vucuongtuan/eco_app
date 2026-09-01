@@ -1,6 +1,11 @@
 import "server-only";
 import { storefrontRequest } from "./client";
-import { IMAGE_FRAGMENT, MONEY_FRAGMENT, PRODUCT_CARD_FRAGMENT, PRODUCT_VARIANT_FRAGMENT } from "./fragments";
+import {
+  IMAGE_FRAGMENT,
+  MONEY_FRAGMENT,
+  PRODUCT_CARD_FRAGMENT,
+  PRODUCT_VARIANT_FRAGMENT,
+} from "./fragments";
 import type { Collection, Filter, PageInfo, ProductCard } from "./types";
 
 const COLLECTIONS_QUERY = `
@@ -47,6 +52,7 @@ const COLLECTION_QUERY = `
               }
             }
           }
+          updatedAt
         }
         pageInfo { hasNextPage endCursor }
       }
@@ -55,12 +61,19 @@ const COLLECTION_QUERY = `
 `;
 
 export async function getCollections(first = 20, after?: string) {
-  const data = await storefrontRequest<{
-    collections: { nodes: Collection[]; pageInfo: PageInfo };
-  }, Record<string, unknown>>(COLLECTIONS_QUERY, {
-    first: Math.min(Math.max(first, 1), 100),
-    after,
-  }, { tags: ["shopify-collections"] });
+  const data = await storefrontRequest<
+    {
+      collections: { nodes: Collection[]; pageInfo: PageInfo };
+    },
+    Record<string, unknown>
+  >(
+    COLLECTIONS_QUERY,
+    {
+      first: Math.min(Math.max(first, 1), 100),
+      after,
+    },
+    { tags: ["shopify-collections"] },
+  );
   return data.collections;
 }
 
@@ -83,15 +96,28 @@ export async function getCollectionUncached(handle: string, options?: FetchColle
 
 async function fetchCollection(handle: string, options?: FetchCollectionOptions) {
   const { first = 24, after, filters, sortKey, reverse, cache } = options ?? {};
-  const data = await storefrontRequest<{
-    collection: (Collection & { products: { nodes: ProductCard[]; filters: Filter[]; pageInfo: PageInfo } }) | null;
-  }, Record<string, unknown>>(COLLECTION_QUERY, {
-    handle,
-    first: Math.min(Math.max(first, 1), 100),
-    after,
-    filters,
-    sortKey,
-    reverse,
-  }, cache === "no-store" ? { cache: "no-store" } : { tags: ["shopify-collections", `shopify-collection:${handle}`, "shopify-products"] });
+  const data = await storefrontRequest<
+    {
+      collection:
+        | (Collection & {
+            products: { nodes: ProductCard[]; filters: Filter[]; pageInfo: PageInfo };
+          })
+        | null;
+    },
+    Record<string, unknown>
+  >(
+    COLLECTION_QUERY,
+    {
+      handle,
+      first: Math.min(Math.max(first, 1), 100),
+      after,
+      filters,
+      sortKey,
+      reverse,
+    },
+    cache === "no-store"
+      ? { cache: "no-store" }
+      : { tags: ["shopify-collections", `shopify-collection:${handle}`, "shopify-products"] },
+  );
   return data.collection;
 }

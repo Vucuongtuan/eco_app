@@ -4,11 +4,11 @@ import { ProfilePanel } from "@/components/Account/ProfilePanel";
 import { getAccountVisuals } from "@/services/actions";
 import { getCurrentCustomerAction } from "@/services/actions";
 
-export const instant = false; // block prerendering — requires live request (Next.js 16 cacheComponents)
+export const instant = false;
 
 export default async function AccountPage() {
   "use memo";
-  await connection(); // opt out of prerendering — requires live request
+  await connection();
   const customer = await getCurrentCustomerAction();
   if (customer) return <ProfilePanel customer={customer} />;
   const visuals = await getAccountVisuals();

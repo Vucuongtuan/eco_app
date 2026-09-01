@@ -25,6 +25,7 @@ export const PRODUCT_CARD_FRAGMENT = `
     images(first: 5) { nodes { ...ShopifyImage } }
     priceRange { minVariantPrice { ...ShopifyMoney } }
     variants(first: 100) { nodes { ...ProductVariantFields } }
+    updatedAt
   }
 `;
 
