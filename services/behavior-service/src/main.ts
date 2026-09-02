@@ -24,6 +24,15 @@ async function bootstrap(): Promise<void> {
     }),
   );
 
+  // Enable permissive CORS for all origins (development / internal use)
+  // Adjust before production if stricter policies are required.
+  app.enableCors({
+    origin: '*',
+    methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true,
+  });
+
   await app.listen(process.env.PORT ?? 8080);
 }
 

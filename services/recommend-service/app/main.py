@@ -1,6 +1,7 @@
 from contextlib import asynccontextmanager
 import logging
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from app.config import settings
 from app.api.routes import recommend, health
 from app.consumers.rabbitmq_consumer import start_consumer
@@ -34,6 +35,15 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(title=settings.APP_NAME, lifespan=lifespan)
+
+# Allow all CORS origins for development/testing. Restrict in production.
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 app.include_router(health.router, prefix=settings.API_PREFIX)
 app.include_router(recommend.router, prefix=settings.API_PREFIX)

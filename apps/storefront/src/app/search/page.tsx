@@ -1,6 +1,7 @@
 import { ProductCard } from "@/components/Card";
 import { Breadcrumb } from "@/components/common";
 import { searchProductsAction } from "@/services/actions";
+import { Recommendations } from "@/components/Product/Recommendations";
 
 type SearchPageProps = {
   searchParams: Promise<{ q?: string }>;
@@ -16,6 +17,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
   return (
     <main className="mx-auto w-full max-w-screen-3xl px-5 py-32 sm:px-6 lg:px-12">
       <Breadcrumb items={[{ label: "Home", href: "/" }, { label: "Search" }]} />
+      <Recommendations title="Recommended for you" limit={6} />
       <header className="mt-8 border-b border-gray-300 pb-8">
         <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gray-500">
           Search results
