@@ -2,7 +2,11 @@
   "name": "eco-app",
   "version": "0.1.0",
   "private": true,
-  "workspaces": ["apps/*", "tools/*"],
+  "workspaces": [
+    "apps/*",
+    "tools/*",
+    "infrastructure/*"
+  ],
   "scripts": {
     "shopify": "shopify",
     "dev:clean": "rm -rf apps/storefront/.next && npm run dev --workspace my-app",

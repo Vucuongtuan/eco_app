@@ -1,0 +1,23 @@
+[project]
+name = "recommend-service"
+version = "0.1.0"
+requires-python = ">=3.14"
+dependencies = [
+    "fastapi[standard]==0.115.0",
+    "uvicorn[standard]==0.30.0",
+    "pydantic==2.9.0",
+    "pydantic-settings==2.4.0",
+    "sqlalchemy==2.0.35",
+    "aiomysql==0.2.0",
+    "redis==5.0.1",
+    "aio-pika==9.4.2",
+    "scikit-learn==1.5.1",
+    "scipy==1.14.0",
+    "pandas==2.2.2",
+    "numpy==1.26.4",
+    "implicit==0.7.2",
+    "joblib==1.4.2",
+    "anyio==4.6.0",
+    "loguru==0.7.2",
+    "python-dotenv==1.2.3",
+]
