@@ -1,12 +1,14 @@
 import type { Product } from "@/lib/shopify/types";
 import { ProductPurchaseControls } from "./ProductPurchaseControls";
 import { ProductColorSelector } from "./ProductColorSelector";
+import { SendEventClient } from "@/components/Tracking/SendEventClient";
 
 type ProductDetailInfoProps = { product: Product };
 
 export function ProductDetailInfo({ product }: ProductDetailInfoProps) {
   return (
     <div className="flex flex-col gap-12">
+      <SendEventClient eventType="product_viewed" productId={product.handle} />
       <header className="space-y-6">
         <h1 className="text-2xl font-medium tracking-tight sm:text-3xl">{product.title}</h1>
         <p className="text-xs uppercase tracking-[0.2em] text-gray-500">{product.productType}</p>

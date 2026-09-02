@@ -6,6 +6,7 @@ import { ColorSwatches, ImageCarousel } from "@/components/common";
 import { WishlistButton } from "@/components/WishlistButton";
 import { cn } from "@/lib/cn";
 import type { Image as ProductImage, Money } from "@/lib/shopify/types";
+import { SendEventClient } from "@/components/Tracking/SendEventClient";
 
 export type ProductCardVariant = {
   id: string;
@@ -52,6 +53,7 @@ export function ProductCard({ title, href, image, price, variants, className }: 
   
   return (
     <article className={cn("group min-w-0 motion-safe:animate-[card-fade-in_500ms_ease-out_both] motion-reduce:animate-none", className)}>
+      <SendEventClient eventType="product_list_impression" productId={activeVariant.href ?? href} />
       <div className="relative aspect-[4/6] overflow-hidden bg-[#f3eee9]">
         <WishlistButton productId={activeVariant.href ?? href} item={{ id: activeVariant.href ?? href, title: activeTitle, href: activeHref, image: activeImage?.url, price: activePrice ? `${activePrice.currencyCode} ${activePrice.amount}` : undefined }} />
         <ImageCarousel images={activeVariant.images ?? (activeImage ? [activeImage] : [])} alt={activeTitle} href={activeHref} resetKey={activeVariant.id} />

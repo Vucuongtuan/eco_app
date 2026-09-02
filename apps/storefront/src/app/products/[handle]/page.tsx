@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { ProductDetailInfo } from "@/components/Product/ProductDetailInfo";
 import { YouMayLikeSection } from "@/components/Product/YouMayLikeSection";
 import { RecentlyViewedSection } from "@/components/Product/RecentlyViewedSection";
+import { Recommendations } from "@/components/Product/Recommendations";
 import { getProductAction } from "@/services/actions";
 import { thumbhashToDataUrl } from "@/lib/thumbhash";
 import { generateMetadata as createMetadata } from "@/utils/generateMetadata";
@@ -101,6 +102,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
       </article>
       <YouMayLikeSection currentHandle={product.handle} />
       <RecentlyViewedSection product={product} />
+      <Recommendations title="You may also like" limit={6} />
     </main>
   );
 }

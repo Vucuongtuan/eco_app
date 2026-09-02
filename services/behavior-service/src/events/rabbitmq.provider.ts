@@ -21,7 +21,7 @@ interface RabbitMqConnectionLike {
 
 @Injectable()
 export class RabbitMqHealthIndicator {
-  constructor(private readonly rabbitMqProvider: RabbitMqConnectionLike) {}
+  constructor(@Inject(RABBITMQ_PROVIDER) private readonly rabbitMqProvider: RabbitMqConnectionLike) {}
 
   isHealthy(key: string): HealthIndicatorResult {
     const isHealthy = this.rabbitMqProvider.isConnected();
