@@ -1,0 +1,89 @@
+services:
+  # RabbitMQ
+  rabbitmq:
+    image: rabbitmq:4-management
+    restart: unless-stopped
+
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASS}
+      RABBITMQ_DEFAULT_VHOST: ${RABBITMQ_VHOST}
+
+      RABBITMQ_LOAD_DEFINITIONS: /etc/rabbitmq/definitions.json
+
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+      - ./rabbitmq/definitions.json:/etc/rabbitmq/definitions.json:ro
+
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+    networks:
+      - moon-network
+
+  # Behavior MySQL
+  behavior-db:
+    image: mysql:8.4
+    restart: unless-stopped
+
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${BEHAVIOR_DB_NAME}
+      MYSQL_USER: ${BEHAVIOR_DB_USER}
+      MYSQL_PASSWORD: ${BEHAVIOR_DB_PASSWORD}
+
+    volumes:
+      - behavior_mysql_data:/var/lib/mysql
+
+    healthcheck:
+      test:
+        ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+    networks:
+      - moon-network
+
+  # Recommendation MySQL
+  recommendation-db:
+    image: mysql:8.4
+    restart: unless-stopped
+
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${RECOMMENDATION_DB_NAME}
+      MYSQL_USER: ${RECOMMENDATION_DB_USER}
+      MYSQL_PASSWORD: ${RECOMMENDATION_DB_PASSWORD}
+
+    volumes:
+      - recommendation_mysql_data:/var/lib/mysql
+
+    healthcheck:
+      test:
+        ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+    networks:
+      - moon-network
+
+networks:
+  moon-network:
+    driver: bridge
+
+volumes:
+  rabbitmq_data:
+  behavior_mysql_data:
+  recommendation_mysql_data:
