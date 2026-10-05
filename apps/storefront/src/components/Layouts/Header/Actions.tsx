@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useCartStore } from "@/context/zustand.provider";
@@ -10,7 +9,13 @@ import { CartDrawer } from "@/components/CartDrawer";
 import { WishlistDrawer } from "@/components/WishlistDrawer";
 import type { CurrentCustomer } from "@/lib/shopify";
 
-export default function Actions({ trendingProducts, authenticated, customer }: { trendingProducts: ProductCard[]; authenticated: boolean; customer: CurrentCustomer | null }) {
+type ActionsProps = {
+    trendingProducts: ProductCard[];
+    authenticated: boolean;
+    customer: CurrentCustomer | null;
+};
+
+export default function Actions({ trendingProducts, authenticated, customer }: ActionsProps) {
     const toggleCart = useCartStore((store) => store.toggleCart);
     const cartQuantity = useCartStore((store) => store.cart?.totalQuantity ?? 0);
 
@@ -18,10 +23,11 @@ export default function Actions({ trendingProducts, authenticated, customer }: {
         "group relative inline-flex size-9 items-center justify-center rounded-full text-gray-600 transition-colors hover:bg-gray-100 hover:text-black sm:size-10";
 
     return (
-        <div className="flex items-center justify-end sm:gap-1">
+        <div className="col-start-3 row-start-1 flex items-center justify-end justify-self-end sm:gap-1">
             <Search trendingProducts={trendingProducts} />
             <WishlistButton />
 
+            {/* Mobile: Account nằm trong drawer menu */}
             <span className="hidden md:block">
                 <Account authenticated={authenticated} customer={customer} />
             </span>
@@ -29,7 +35,7 @@ export default function Actions({ trendingProducts, authenticated, customer }: {
             <button
                 type="button"
                 className={actionClass}
-                aria-label="Open cart"
+                aria-label={cartQuantity ? `Open cart, ${cartQuantity} items` : "Open cart"}
                 onClick={toggleCart}
             >
                 <svg aria-hidden="true" viewBox="0 0 24 24" className="size-5 sm:size-6" fill="none" stroke="currentColor" strokeWidth="1.8">
@@ -37,10 +43,15 @@ export default function Actions({ trendingProducts, authenticated, customer }: {
                     <circle cx="10" cy="19" r="1" fill="currentColor" stroke="none" />
                     <circle cx="18" cy="19" r="1" fill="currentColor" stroke="none" />
                 </svg>
-                {cartQuantity ? <span className="absolute right-0 top-0 flex size-4 items-center justify-center rounded-full bg-black text-[0.6rem] text-white">{cartQuantity > 99 ? "99+" : cartQuantity}</span> : null}
+                {cartQuantity ? (
+                    <span className="absolute right-0 top-0 flex size-4 items-center justify-center rounded-full bg-black text-[0.6rem] text-white">
+                        {cartQuantity > 99 ? "99+" : cartQuantity}
+                    </span>
+                ) : null}
             </button>
+
             <CartDrawer />
             <WishlistDrawer authenticated={authenticated} />
         </div>
-    )
+    );
 }
