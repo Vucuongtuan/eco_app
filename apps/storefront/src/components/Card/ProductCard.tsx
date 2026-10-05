@@ -54,7 +54,7 @@ export function ProductCard({ title, href, image, price, variants, className }: 
   return (
     <article className={cn("group min-w-0 motion-safe:animate-[card-fade-in_500ms_ease-out_both] motion-reduce:animate-none", className)}>
       <SendEventClient eventType="product_list_impression" productId={activeVariant.href ?? href} />
-      <div className="relative aspect-[4/6] overflow-hidden bg-[#f3eee9]">
+      <div className="relative aspect-4/6 overflow-hidden bg-[#f3eee9]">
         <WishlistButton productId={activeVariant.href ?? href} item={{ id: activeVariant.href ?? href, title: activeTitle, href: activeHref, image: activeImage?.url, price: activePrice ? `${activePrice.currencyCode} ${activePrice.amount}` : undefined }} />
         <ImageCarousel images={activeVariant.images ?? (activeImage ? [activeImage] : [])} alt={activeTitle} href={activeHref} resetKey={activeVariant.id} />
         {activeVariant.sizes?.length ? <div className="pointer-events-none absolute inset-x-0 bottom-0 translate-y-full bg-white/95 px-4 py-3 opacity-0 transition-all duration-300 group-hover:pointer-events-auto group-hover:translate-y-0 group-hover:opacity-100">
@@ -63,8 +63,8 @@ export function ProductCard({ title, href, image, price, variants, className }: 
           </div>
         </div> : null}
       </div>
-      <h3 className=" px-2 mt-3 text-sm font-medium"><Link href={activeHref} className="transition-colors hover:text-gray-600">{activeTitle}</Link></h3>
-      {activePrice ? <p className=" px-2  mt-1 text-sm text-gray-600">{activePrice.currencyCode} {activePrice.amount}</p> : null}
+      <h3 className="mt-3 px-2 text-sm font-medium"><Link href={activeHref} className="line-clamp-2 block leading-snug text-gray-900 transition-colors hover:text-gray-600">{activeTitle}</Link></h3>
+      {activePrice ? <p className="mt-1 px-2 text-sm text-gray-600">{activePrice.currencyCode} {activePrice.amount}</p> : null}
       {colors.length > 1 ? <div className="px-2 mt-3"><ColorSwatches items={colors.map((variant) => ({ id: variant.id, label: getColor(variant)?.label ?? "Color", value: getColor(variant)?.value ?? getColor(variant)?.label ?? "#808080", selected: variant.id === activeVariant.id }))} onSelect={(item) => { const variant = colors.find((colorVariant) => colorVariant.id === item.id); if (variant) setActiveVariant(variant); }} /></div> : null}
 
     </article>
