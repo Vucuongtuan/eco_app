@@ -1,11 +1,13 @@
 "use client";
 
-import { FormEvent, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
+import { FormEvent, useEffect, useRef, useState } from "react";
+import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
 import { OverlayPanel } from "@/components/common";
 import type { ProductCard } from "@/lib/shopify/types";
-import Link from "next/link";
 import { ProductCard as ProductCardUI } from "@/components/Card";
+
+const CLOSE_ANIMATION_MS = 320;
 
 function SearchIcon() {
     return (
@@ -18,24 +20,43 @@ function SearchIcon() {
 
 export default function Search({ trendingProducts }: { trendingProducts: ProductCard[] }) {
     const router = useRouter();
+    const pathname = usePathname();
     const inputRef = useRef<HTMLInputElement>(null);
     const [isOpen, setIsOpen] = useState(false);
     const [isMounted, setIsMounted] = useState(false);
     const [query, setQuery] = useState("");
 
-    function toggleSearch() {
-        setIsOpen((open) => {
-            if (!open) {
-                setIsMounted(true);
-                window.setTimeout(() => inputRef.current?.focus(), 0);
-            }
-            return !open;
-        });
+    function openSearch() {
+        setIsMounted(true);
+        setIsOpen(true);
     }
 
     function closeSearch() {
         setIsOpen(false);
     }
+
+    useEffect(() => {
+        if (isOpen) inputRef.current?.focus();
+    }, [isOpen]);
+
+    useEffect(() => {
+        if (isOpen) return;
+        const id = window.setTimeout(() => setIsMounted(false), CLOSE_ANIMATION_MS);
+        return () => window.clearTimeout(id);
+    }, [isOpen]);
+
+    useEffect(() => {
+        setIsOpen(false);
+    }, [pathname]);
+
+    useEffect(() => {
+        if (!isOpen) return;
+        const onKey = (event: KeyboardEvent) => {
+            if (event.key === "Escape") setIsOpen(false);
+        };
+        window.addEventListener("keydown", onKey);
+        return () => window.removeEventListener("keydown", onKey);
+    }, [isOpen]);
 
     function submitSearch(event: FormEvent<HTMLFormElement>) {
         event.preventDefault();
@@ -53,22 +74,25 @@ export default function Search({ trendingProducts }: { trendingProducts: Product
                 aria-label={isOpen ? "Close search" : "Open search"}
                 aria-expanded={isOpen}
                 aria-controls="site-search-panel"
-                onClick={toggleSearch}
+                onClick={isOpen ? closeSearch : openSearch}
             >
                 {isOpen ? (
                     <svg aria-hidden="true" viewBox="0 0 24 24" className="size-5 sm:size-6" fill="none" stroke="currentColor" strokeWidth="1.8">
                         <path strokeLinecap="round" d="m6 6 12 12M18 6 6 18" />
                     </svg>
-                ) : <SearchIcon />}
+                ) : (
+                    <SearchIcon />
+                )}
             </button>
 
             {isMounted && (
                 <OverlayPanel
                     id="site-search-panel"
-                    className={` origin-top min-h-32 ${isOpen ? "motion-safe:animate-[search-panel-in_420ms_cubic-bezier(0.22,1,0.36,1)]" : "motion-safe:animate-[search-panel-out_320ms_cubic-bezier(0.4,0,1,1)_forwards]"}`}
-                    onAnimationEnd={() => {
-                        if (!isOpen) setIsMounted(false);
-                    }}
+                    className={`origin-top min-h-34 ${
+                        isOpen
+                            ? "motion-safe:animate-[search-panel-in_420ms_cubic-bezier(0.22,1,0.36,1)]"
+                            : "motion-safe:animate-[search-panel-out_320ms_cubic-bezier(0.4,0,1,1)_forwards]"
+                    }`}
                 >
                     <form role="search" onSubmit={submitSearch}>
                         <label htmlFor="site-search" className="sr-only">Search products</label>
@@ -90,33 +114,42 @@ export default function Search({ trendingProducts }: { trendingProducts: Product
                             </button>
                         </div>
                     </form>
+
                     <section className="mt-8" aria-labelledby="trending-products-title">
                         <div className="mb-4 flex items-center justify-between">
                             <h2 id="trending-products-title" className="text-xs font-semibold uppercase tracking-[0.18em] text-gray-500">Trending Products</h2>
                             <Link href="/collections/all" className="text-xs font-medium text-gray-900 underline underline-offset-4">View more</Link>
                         </div>
-                        <div className="grid grid-cols-6 gap-3">
-                            {trendingProducts.map((product) => {
-                                const variant = product.variants?.nodes[0];
-                                if (!variant) return null;
-                                return <ProductCardUI
-                                    key={product.id}
-                                    href={`/products/${product.handle}`}
-                                    title={product.title}
-                                    image={product.featuredImage}
-                                    price={product.priceRange.minVariantPrice}
-                                    variants={[{
-                                        id: variant.id,
-                                        price: variant.price,
-                                        image: variant.image ?? product.featuredImage,
-                                        images: product.images?.nodes,
-                                        sizes: product.variants?.nodes.map((item) => ({ label: item.title, available: item.availableForSale })),
-                                    }]}
-                                />;
-                            })}
+                        <div
+                            className="max-h-[50vh] max-md:overflow-y-auto pb-2 pr-1 max-md:overscroll-contain [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-100 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-300 [&::-webkit-scrollbar-thumb:hover]:bg-gray-400"
+                            style={{ scrollbarWidth: "thin", msOverflowStyle: "auto" }}
+                        >
+                            <div className="grid grid-cols-2 gap-3   sm:grid-cols-3 lg:grid-cols-6">
+                                {trendingProducts.map((product) => {
+                                    const variant = product.variants?.nodes[0];
+                                    if (!variant) return null;
+                                    return (
+                                        <ProductCardUI
+                                            key={product.id}
+                                            href={`/products/${product.handle}`}
+                                            title={product.title}
+                                            image={product.featuredImage}
+                                            price={product.priceRange.minVariantPrice}
+                                            variants={[
+                                                {
+                                                    id: variant.id,
+                                                    price: variant.price,
+                                                    image: variant.image ?? product.featuredImage,
+                                                    images: product.images?.nodes,
+                                                    sizes: product.variants?.nodes.map((item) => ({ label: item.title, available: item.availableForSale })),
+                                                },
+                                            ]}
+                                        />
+                                    );
+                                })}
+                            </div>
                         </div>
                     </section>
-                    {/* Future search results, suggestions, and merchandising blocks can render here. */}
                 </OverlayPanel>
             )}
         </div>
